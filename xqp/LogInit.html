@@ -1,0 +1,249 @@
+<html>
+<head>
+    <title> 空模版 </title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel=stylesheet href=".css" type="text/css">
+    <script src=".js" type="text/javascript"></script>
+
+</head>
+
+<body>
+<style type="text/css">
+    .arms-box {
+        border: 0 solid #ccd6e0;
+        padding: 20px 16px;
+    }
+
+    .step {
+        float: left;
+        width: 30%;
+        height: 30px;
+        background: dodgerblue;
+        margin-right: 3%;
+        color: white;
+        line-height: 30px;
+    }
+
+    .arms-box-body {
+        margin-top: 20px;
+    }
+
+    .arms-box div {
+        flex: auto;
+    }
+
+    .form-group {
+        display: inline;
+        float: none;
+    }
+
+    .text-danger {
+        color: red;
+    }
+
+    .arms-box-min-body {
+        height: 360px;
+    }
+
+    pre {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: #333;
+        color: white;
+    }
+
+    .control-label {
+        margin-top: 10px;
+    }
+
+    .col-sm-8 {
+        margin-top: 10px;
+        display: block;
+    }
+
+    .arms-box-min {
+        float: left;
+    }
+
+    .arms-box-min-header {
+        margin-bottom: 20px;
+    }
+</style>
+<script type="text/javascript">
+
+</script>
+<div ng-if="!et.loadingTask"
+     class="ng-scope"
+     data-spm-anchor-id="5176.2020520107.0.i1.18a3b902brbMRo">
+
+    <div class="console-step row">
+        <div class="step col-xs-4 step-first step-active"
+             ng-class="{'step-pass':et.currentStep>1, 'step-active': et.currentStep==1}">
+            1、数据源配置
+        </div>
+        <div class="step col-xs-4"
+             ng-class="{'step-pass':et.currentStep>2, 'step-active': et.currentStep==2}"
+             data-spm-anchor-id="5176.2020520107.0.i4.18a3b902brbMRo">
+            2、日志清洗
+        </div>
+        <div class="step step-end col-xs-4"
+             ng-class="{'step-active': et.currentStep==3}"
+             data-spm-anchor-id="5176.2020520107.0.i5.18a3b902brbMRo">
+            3、数据集与报警配置
+        </div>
+    </div>
+
+    <!-- TODO -->
+    <div class="arms-box ng-scope"
+         ng-if="et.currentStep==1"
+         data-spm-anchor-id="5176.2020520107.0.i2.18a3b902brbMRo">
+
+        <div class="arms-box-body">
+            <div class="arms-box-min pull-left"
+                 style="width: 49%">
+                <div class="arms-box-min-header">
+                    <span>日志源配置</span>
+                </div>
+                <div class="arms-box-min-body"
+                     data-spm-anchor-id="5176.2020520107.0.i6.18a3b902brbMRo">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-3 control-label">
+                            <a class="arms-helper-link glyphicon glyphicon-question-sign ng-scope"
+                               aliyun-tooltip="支持各种数据源接入 ARMS 实时计算引擎"
+                               target="_blank"
+                               href="https://help.aliyun.com/document_detail/44583.html">
+                            </a>
+                            <span class="text-danger">*</span>
+                            日志源类型：
+                        </label>
+                        <div class="col-sm-8">
+                            <select ng-disabled="et.taskStatus=='suspend'"
+                                    class="form-control ng-pristine ng-valid"
+                                    ng-model="et.sourceType"
+                                    ng-options="t.key as t.name for t in et.sourceTypes">
+                                <option value="0" selected="selected">云服务器ECS</option>
+                                <option value="1">LogHub数据源</option>
+                                <option value="2">SDK数据源</option>
+                                <option value="3">MQ数据源</option>
+                            </select>
+                            <span ng-if="et.taskStatus == 'suspend'"
+                                  style="color: #999"
+                                  class="ng-scope">
+                                暂停模式下不能修改数据源
+                            </span>
+                        </div>
+                    </div>
+
+                    <div ng-if="et.sourceType == 'LineLog' || (et.sourceType == 'STAR_AGENT' &amp;&amp; !et.sourceDiy)||et.sourceType=='HTTP_API'"
+                         class="form-group clearfix ng-scope">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>
+                            选择日志源：
+                        </label>
+                        <div class="col-sm-9 source-box">
+                            <div class="source-list clearfix ng-scope"
+                                 ng-repeat="item in et.sourceList">
+                                <!-- ngRepeat: e in item.ecss -->
+                                <span class="source-item ng-scope ng-binding"
+                                      ng-repeat="e in item.ecss">
+                                    iZ2zeitotpmd9li8ec8i54Z
+                                </span>
+
+                                <div ng-if="item.paths"
+                                     class="ng-scope ng-binding">
+                                    日志路径：/app/logs/demo.log
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="et.sourceType == 'LineLog' || et.sourceType == 'SLS_SELF' || et.sourceType == 'SLS_API'|| et.sourceType == 'MetaQSpec' || et.sourceType == 'STAR_AGENT'|| et.sourceType == 'STAR_AGENT_QUEQIAO'"
+                         class="form-group clearfix ng-scope">
+                        <label class="col-sm-3 control-label">
+                            <a class="arms-helper-link glyphicon glyphicon-question-sign ng-scope" target="_blank"
+                               aliyun-tooltip="默认为自动探测模式，也可以根据自己的日志编码格式灵活选择。"
+                               href="https://help.aliyun.com/document_detail/47471.html?#charset setting">
+                            </a>
+                            <span class="text-danger">*</span>
+                            编码设置：
+                        </label>
+                        <div class="col-sm-8">
+                            <select ng-disabled="et.taskStatus=='suspend'"
+                                    ng-model="et.extend.charset"
+                                    ng-options="t.key as t.name for t in et.charsets"
+                                    class="form-control ng-pristine ng-valid">
+                                <option value="0">自动探测</option>
+                                <option value="1" selected="selected">UTF-8</option>
+                                <option value="2">UTF-16</option>
+                                <option value="3">GBK</option>
+                                <option value="4">GB2312</option>
+                                <option value="5">ISO-8859-1</option>
+                                <option value="6">ASCII</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TODO -->
+            <div class="arms-box-min pull-right"
+                 style="width: 49%">
+                <div class="arms-box-min-header">
+                    <span data-spm-anchor-id="5176.2020520107.0.i7.18a3b902brbMRo">
+                        日志抓取结果(请确保日志在后台中实时产生)
+                    </span>
+                    <a class="arms-helper-link glyphicon glyphicon-question-sign"
+                       target="_blank"
+                       href="https://help.aliyun.com/document_detail/47471.html?#fetch log">
+                    </a>
+                    <button class="btn btn-xs btn-toinstlist pull-right"
+                            ng-click="et.captureLog()"
+                            ng-disabled="et.taskStatus=='suspend' || et.loadingCaptureLog"
+                            disabled="disabled">
+                        <i ng-show="et.loadingCaptureLog"
+                           class="arms-loading ng-hide">
+                        </i>
+                        日志抓取预览
+                    </button>
+                    <div class="loading-block ng-hide"
+                         ng-style="et.logStyle"
+                         ng-show="et.loadingCaptureLog">
+                    </div>
+                </div>
+                <div class="arms-box-min-body">
+                    <pre class="ng-binding">
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=童装&amp;区域=深圳&amp;eventTeyp=3&amp;性别=1&amp;价格=30
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=女装&amp;区域=上海&amp;eventTeyp=3&amp;性别=0&amp;价格=20
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=童装&amp;区域=深圳&amp;eventTeyp=3&amp;性别=1&amp;价格=30
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=女装&amp;区域=上海&amp;eventTeyp=3&amp;性别=0&amp;价格=20
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=童装&amp;区域=深圳&amp;eventTeyp=3&amp;性别=1&amp;价格=30
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=女装&amp;区域=上海&amp;eventTeyp=3&amp;性别=0&amp;价格=20
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=童装&amp;区域=深圳&amp;eventTeyp=3&amp;性别=1&amp;价格=30
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=女装&amp;区域=上海&amp;eventTeyp=3&amp;性别=0&amp;价格=20
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=童装&amp;区域=深圳&amp;eventTeyp=3&amp;性别=1&amp;价格=30
+2017-11-27 17:10:00|c0a895e114526786450161001d1ed9|9|类目=女装&amp;区域=上海&amp;eventTeyp=3&amp;性别=0&amp;价格=20
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TODO -->
+    <div class="fixed-btn-footer"
+         data-ng-show="et.taskStatus!='running'">
+        <button ng-click="et.saveStep()"
+                ng-disabled="et.savingStep"
+                class="btn btn-default">
+            保存
+        </button>
+        <button ng-hide="et.currentStep == 3"
+                ng-disabled="et.savingStep"
+                ng-click="et.nextStep(1)"
+                class="btn btn-primary">
+            下一步
+        </button>
+    </div>
+</div>
+</body>
+</html>
