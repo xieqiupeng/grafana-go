@@ -21,43 +21,46 @@ public class InfluxdbManager {
 
         influxDB = InfluxDBFactory.connect("http://10.100.139.152:8086");
         dbName = "test";
-        if(!influxDB.databaseExists(dbName)){
+        if (!influxDB.databaseExists(dbName)) {
             influxDB.createDatabase(dbName);
         }
-
     }
 
-    public void insertPoint(List<Map<String, Object>> fields,String measurement){
+    public void insertPoint(List<Map<String, Object>> fields, String measurement) {
 
-        BatchPoints batchPoints = BatchPoints.database(dbName).tag("async","true").consistency(InfluxDB.ConsistencyLevel.ALL).build();
-
+        BatchPoints batchPoints = BatchPoints.database(dbName)
+                .tag("async", "true")
+                .consistency(InfluxDB.ConsistencyLevel.ALL)
+                .build();
+        //
         Point p = null;
-
-        for (Map<String,Object> items:fields) {
-           p = Point.measurement(measurement).time(System.currentTimeMillis(), TimeUnit.MILLISECONDS).fields(items).build();
-
-           batchPoints.point(p);
+        for (Map<String, Object> items : fields) {
+            p = Point.measurement(measurement)
+                    .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                    .fields(items)
+                    .build();
+            batchPoints.point(p);
         }
         influxDB.write(batchPoints);
     }
 
 
-    public static InfluxdbManager getInstance(){
+    public static InfluxdbManager getInstance() {
 
         return Singleton.INSTANCE.getInstance();
     }
 
-    private static  enum Singleton {
+    private static enum Singleton {
 
         INSTANCE;
 
         private InfluxdbManager influxdbManager;
 
-        Singleton(){
+        Singleton() {
             influxdbManager = new InfluxdbManager();
         }
 
-        public InfluxdbManager getInstance(){
+        public InfluxdbManager getInstance() {
             return influxdbManager;
         }
 

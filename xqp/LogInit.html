@@ -9,32 +9,56 @@
 
 <body>
 <style type="text/css">
-    .arms-box {
-        border: 0 solid #ccd6e0;
-        padding: 20px 16px;
+
+    .console-step {
+        width: 100%;
+        height: 25px;
     }
 
     .step {
-        float: left;
-        width: 30%;
-        height: 30px;
-        background: dodgerblue;
-        margin-right: 3%;
+        width: 33%;
+        height: 25px;
+        line-height: 25px;
+        background: #cacaca;
         color: white;
-        line-height: 30px;
+        text-align: center;
+        float: left;
+    }
+
+    .step-active {
+        background: #00a0c7;
+    }
+
+    .arms-box {
+        height: 440px;
+        margin-top: 20px;
+        padding: 20px 16px;
+        border: 1px solid #ccd6e0;
     }
 
     .arms-box-body {
-        margin-top: 20px;
+        padding: 0 20px 20px 20px;
+    }
+
+    .pull-left {
+        border: 1px solid #ccd6e0;
+    }
+
+    .pull-right {
+        border: 1px solid #ccd6e0;
+        margin-left: 20px;
     }
 
     .arms-box div {
         flex: auto;
     }
 
+    .arms-box-body {
+        margin-top: 20px;
+    }
+
     .form-group {
         display: inline;
-        float: none;
     }
 
     .text-danger {
@@ -68,6 +92,10 @@
 
     .arms-box-min-header {
         margin-bottom: 20px;
+    }
+
+    .fixed-btn-footer {
+        float: right;
     }
 </style>
 <script type="text/javascript">
@@ -199,8 +227,7 @@
                     </a>
                     <button class="btn btn-xs btn-toinstlist pull-right"
                             ng-click="et.captureLog()"
-                            ng-disabled="et.taskStatus=='suspend' || et.loadingCaptureLog"
-                            disabled="disabled">
+                            ng-disabled="et.taskStatus=='suspend' || et.loadingCaptureLog">
                         <i ng-show="et.loadingCaptureLog"
                            class="arms-loading ng-hide">
                         </i>
