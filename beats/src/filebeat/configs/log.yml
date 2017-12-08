@@ -1,0 +1,8 @@
+- type: log
+
+  enabled: true
+
+  paths:
+     - /Users/creditease/bingo/test.log
+
+  tail_files: true
