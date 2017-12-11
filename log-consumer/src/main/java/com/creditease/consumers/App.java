@@ -1,55 +1,53 @@
 package com.creditease.consumers;
 
 
-import com.google.common.eventbus.AsyncEventBus;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import com.creditease.consumers.dataclean.DynamicEtcdDataClean;
+import com.creditease.consumers.dataclean.IDataClean;
+import com.creditease.consumers.influxdb.InfluxdbManager;
+import com.creditease.consumers.message.AyncBizLogMessageHandle;
+import com.creditease.consumers.message.MessageHandler;
+import com.creditease.consumers.util.ApplicationProperties;
+import com.creditease.consumers.util.EtcdClientUtil;
+import com.creditease.consumers.util.RocketMqUtil;
+import mousio.etcd4j.EtcdClient;
+import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
-import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class App {
 
-    private static Logger logger = LoggerFactory.getLogger(App.class);
-
-
-    public static void main(String[] args) throws MQClientException {
-
-        logger.info("start consumer .................");
-
-        final AsyncEventBus eventBus = new AsyncEventBus(Executors.newFixedThreadPool(20));
-
-        eventBus.register(new MessageProcessor());
-
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("ConsumerTest");
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        consumer.setConsumeThreadMin(1);
-        consumer.setConsumeThreadMax(5);
-        //wrong time format 2017_0422_221800
-        consumer.setConsumeMessageBatchMaxSize(1000);
-        consumer.setNamesrvAddr("10.100.139.149:9876;10.100.139.150:9876");
-        consumer.subscribe("TopicTest", "*");
-
-        consumer.registerMessageListener(new MessageListenerConcurrently() {
-
-            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
-
-               System.out.printf(Thread.currentThread().getName() + " Receive New Messages: " + msgs.size() + "%n");
-               msgs.forEach(msg ->
-                   eventBus.post(msg)
-               );
-
-               return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    public static void main(String[] args) throws Exception {
+        if(args != null && args.length > 0){
+            //设置log日志位置为指定路径
+            System.setProperty("log.home",args[0]);
+            //设置读取的资源文件
+            if(args.length > 1){
+                System.setProperty("source_location",args[1]);
             }
-        });
-        consumer.start();
-        System.out.printf("Consumer Started.%n");
+        }else{
+            //设置log位置为当前目录
+            System.setProperty("log.home",".");
+        }
+        Logger logger = LoggerFactory.getLogger(App.class);
+        logger.info("start consumer .................");
+        setUp();
+        logger.info("start consumer success.................");
+    }
+
+    private static void setUp() throws MQClientException {
+        EtcdClient etcdClient = EtcdClientUtil.getEtcdClient();
+        IDataClean dataClean = new DynamicEtcdDataClean(etcdClient,"/monitor");
+        InfluxdbManager manager = new InfluxdbManager(ApplicationProperties.getInfluxDbAddress(),ApplicationProperties.getInfluxDBName());
+        MessageHandler bizLogMessageHandler = new AyncBizLogMessageHandle(manager,dataClean,10);
+        RocketMqUtil.startConsumer(ApplicationProperties.getBizlogGroupName(),ApplicationProperties.getBizlogTopic(),ApplicationProperties.getBizlogSubExpression(),bizLogMessageHandler);
     }
 }
