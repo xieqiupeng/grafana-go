@@ -4,12 +4,11 @@ import config from 'app/core/config';
 import appEvents from 'app/core/app_events';
 
 import {MetricsPanelCtrl} from  'app/plugins/sdk';
-
 import _ from 'lodash';
 import moment from 'moment';
-
-
-class InfluxAdminCtrl extends MetricsPanelCtrl {
+import {AddMonitorTask} from './ts/AddMonitorTask';
+import {ShowMonitorTask} from './ts/ShowMonitorTask';
+class MonitorManageCtrl extends MetricsPanelCtrl {
   static templateUrl = 'partials/module.html';
 
   writing: boolean;
@@ -58,66 +57,9 @@ class InfluxAdminCtrl extends MetricsPanelCtrl {
   onPanelInitalized() {
 
   }
-
-   postData(){
-    alert("postData");
-    this.$http({
-        url:'http://localhost:8077/monitorTask/searchTask',
-        method: 'POST',
-        data: '{"data"," post"}'
-        //,
-        // headers: {
-        //     "Content-Type": "plain/text"
-        // }
-    }).then((rsp) => {
-        this.writing = false;
-        console.log( "Wrote OK", rsp );
-    }, err => {
-        this.writing = false;
-        console.log( "Wite ERROR", err );
-        this.error = err.data.error + " ["+err.status+"]";
-        this.inspector = {error: err};
-    });
-  }
-
-    getData(){
-        alert("getData");
-        this.$http({
-            url:'http://localhost:8077/monitorTask/searchTask?data="wawa"',
-            method: 'GET',
-            data: '{"data"," get"}'
-            //,
-            // headers: {
-            //     "Content-Type": "plain/text"
-            // }
-        }).then((rsp) => {
-            this.writing = false;
-            console.log( "Wrote OK", rsp );
-        }, err => {
-            this.writing = false;
-            console.log( "Wite ERROR", err );
-            this.error = err.data.error + " ["+err.status+"]";
-            this.inspector = {error: err};
-        });
-    }
-
-
-
-  isShowQueryWindow() {
-    return this.panel.mode == 'query';
-  }
-
-  isShowCurrentQueries() {
-    return this.panel.mode == 'current';
-  }
-
-
-    public  onInitEditMode() {
+  public  onInitEditMode() {
         this.editorTabIndex = 2;
   }
-
-
-
 
   getQueryHistory() {
     return this.history;
@@ -174,10 +116,20 @@ class InfluxAdminCtrl extends MetricsPanelCtrl {
 
   }
 
+
+    searchTask(){
+        ShowMonitorTask.searchTask();
+    }
+
+    addTask(){
+        AddMonitorTask.addTask();
+    }
+
+
 }
 
 export {
-  InfluxAdminCtrl as PanelCtrl
+  MonitorManageCtrl as PanelCtrl
 };
 
 
