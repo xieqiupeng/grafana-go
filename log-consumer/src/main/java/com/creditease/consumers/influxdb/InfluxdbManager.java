@@ -26,7 +26,7 @@ public class InfluxdbManager {
     }
 
     public void insertPoint(List<InfluxdbPo> influxdbPo){
-        BatchPoints batchPoints = BatchPoints.database(database).tag("async","true").consistency(InfluxDB.ConsistencyLevel.ALL).build();
+        BatchPoints batchPoints = BatchPoints.database(database).consistency(InfluxDB.ConsistencyLevel.ALL).build();
         influxdbPo.forEach(po->{
             Point p = Point.measurement(po.getMeasurement()).time(po.getCreateTime(), TimeUnit.MILLISECONDS).tag(po.getTags()).fields(po.getFields()).build();
             batchPoints.point(p);
@@ -35,7 +35,7 @@ public class InfluxdbManager {
     }
 
     public void insertPoint(InfluxdbPo influxdbPo){
-        BatchPoints batchPoints = BatchPoints.database(database).tag("async","true").consistency(InfluxDB.ConsistencyLevel.ALL).build();
+        BatchPoints batchPoints = BatchPoints.database(database).consistency(InfluxDB.ConsistencyLevel.ALL).build();
         Point p = Point.measurement(influxdbPo.getMeasurement()).time(influxdbPo.getCreateTime(), TimeUnit.MILLISECONDS).tag(influxdbPo.getTags()).fields(influxdbPo.getFields()).build();
         batchPoints.point(p);
         influxDB.write(batchPoints);
