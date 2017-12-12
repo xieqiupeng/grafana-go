@@ -98,7 +98,7 @@ public class AyncSystemLogMessageHandle implements MessageHandler{
                     logger.info("message={} 无数据收集无法解析",message);
                     return po;
                 }
-                po.setMeasurement(module);
+                po.setMeasurement(name);
                 po.setCreateTime(createTime.getTime());
                 JSONObject beatObj = jsonObject.getJSONObject("beat");
                 if(beatObj != null){
