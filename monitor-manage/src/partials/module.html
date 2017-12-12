@@ -1,31 +1,36 @@
+<div align="center" ng-controller="ctrl.monitorManageController">
+    <form action="http://www.cctv.com" method="post">
+        <input type="text" class="bigtext" name="taskName" id="taskName" placeholder=" 根据任务名称模糊查找" ng-model="taskName"></input>
+        <input type="button" value="搜索" ng-click="searchFunction()" />
+        <input type="button" value="新增" ng-click="addFunction()"/>
+    </form>
+    <br/>
+    <table border="2" width="100%" align="center">
+        <tr >
+            <td align="center">任务名称</td>
+            <td align="center">状态</td>
+            <td align="center">更新时间</td>
+            <td align="center">数据集</td>
+            <td align="center" colspan="3">操作</td>
+        </tr>
+        <tr>
+            <td>test</td>
+            <td>启动</td>
+            <td>2017-12-06 09:00:00</td>
+            <td>127.0.0.1/app/demo.test</td>
+            <td  align="center"><input type="button" value="启动/暂停" class="btn btn-primary" ng-click="ctrl.startOrStopTask()"/></td>
+            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="ctrl.editTask()"/></td>
+            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="ctrl.deleteTask()"/></td>
+        </tr>
+    </table>
+    <br/>
+    <input id="lastpage" type="button" value="上一页">
+    <input id="nextpage" type="button" value="下一页">
+    共<input id="page" type="text" size="1" >页&nbsp;&nbsp;
 
-<form action="http://www.cctv.com" method="post">
-    <input type="text" name="taskName" id="taskName" placeholder=" 根据任务名称模糊查找"></input>
-    <input type="button" value="搜索" ng-click="ctrl.searchTask()"/>
-    <input type="button" value="新增" ng-click="ctrl.addTask()"/>
-</form>
-<br/>
-<table>
-    <tr>
-        <th>任务名称</th>
-        <th>状态</th>
-        <th>更新时间</th>
-        <th>数据集</th>
-        <th colspan="3">操作</th>
-    </tr>
-    <tr>
-        <td>test</td>
-        <td>启动</td>
-        <td>2017-12-06 09:00:00</td>
-        <td>127.0.0.1/app/demo.test</td>
-        <td><input type="button" value="启动/暂停" onClick="startOrStopTask()"/></td>
-        <td><input type="button" value="编辑" onClick="editTask()"/></td>
-        <td><input type="button" value="删除" onClick="deleteTask()"/></td>
-    </tr>
-</table>
-<br/>
-<input id="lastpage" type="button" value="上一页">
-<input id="nextpage" type="button" value="下一页">
-共<input id="page" type="text" size="1" readonly="readonly">页
+    每页显示<input id="pageSize" type="text" value="2" size="5">行<input type="button" value="确定" onclick="pageSize2()">
 
-每页显示<input id="pageSize" type="text" value="2" size="5">行<input type="button" value="确定" onclick="pageSize2()">
+</div>
+<style>
+    .bigtext { height: 38px; width: 350px; }
+</style>

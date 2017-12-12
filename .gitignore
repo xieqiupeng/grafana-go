@@ -4,3 +4,4 @@ target/
 *.log
 grafana/
 *.png
+/monitor-manage/dist/
