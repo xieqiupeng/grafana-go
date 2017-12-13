@@ -56,6 +56,15 @@ public class ApplicationProperties {
         return prop.getProperty("rocketmq.bizlog.subExpression");
     }
 
+    public static String getSyslogGroupName(){
+        return prop.getProperty("rocketmq.syslog.groupName");
+    }
+    public static String getSyslogTopic(){
+        return prop.getProperty("rocketmq.syslog.topic");
+    }
+    public static String getSyslogSubExpression(){
+        return prop.getProperty("rocketmq.syslog.subExpression");
+    }
 
     //ETCD属性
     //连接超时时间(毫秒)
