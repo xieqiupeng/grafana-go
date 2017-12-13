@@ -37,11 +37,28 @@ public class MonitorTaskController {
 
     //通过taskName搜索
     @RequestMapping("/searchtaskbytaskname")
-    public Response searchTaskByTaskName(@YXRequestParam(required = true,errmsg = "服务端根据任务名称搜索发生错误") String taskName){
+    public Response searchTaskByTaskName(@YXRequestParam(required = false,errmsg = "服务端根据任务名称搜索发生错误") String taskName){
         logger.info("/searchtaskbytaskname param:taskName:{}",taskName);
         List<MonitorTask> monitorTasksList = monitorTaskService.selectByTaskName(taskName);
         return Response.ok(monitorTasksList);
     }
+
+    //启动/暂停
+    @RequestMapping("/startorpausetask")
+    public Response startOrPauseTask(@YXRequestParam(required = true,errmsg = "服务端启动/暂停任务状态发生错误") Integer taskId){
+        logger.info("/startorpausetask param:taskId:{}",taskId);
+        monitorTaskService.startOrPauseTask(taskId);
+        return Response.ok(null);
+    }
+
+    //删除
+    @RequestMapping("/deletetask")
+    public Response deleteTask(@YXRequestParam(required = true,errmsg = "服务端删除任务发生错误") Integer taskId){
+        logger.info("/deletetask param:taskId:{}",taskId);
+        monitorTaskService.deleteTask(taskId);
+        return Response.ok(null);
+    }
+
 //
 //    //通过taskId搜索
 //    @RequestMapping("/searchtaskbytaskid")
@@ -101,13 +118,7 @@ public class MonitorTaskController {
 //        return Response.ok(user);
 //    }
 //
-//    //删除
-//    @RequestMapping("/deletetask")
-//    public Response deleteTask(@YXRequestParam(required = true,errmsg = "服务端删除任务发生错误") Integer id){
-//        logger.info("demo1 start");
-//        userMapper.deleteByPrimaryKey(id);
-//        return Response.ok(null);
-//    }
+
 //
 //    @RequestMapping("/demo6")
 //    public Response demo6(){
@@ -120,18 +131,10 @@ public class MonitorTaskController {
 //        return Response.ok(null);
 //    }
 //
-//    //启动/暂停
-//    @RequestMapping("/startorstoptask")
-//    public Response startOrStopTask(@YXRequestParam(required = true,errmsg = "服务端启动/暂停任务状态发生错误") Integer id){
-//        logger.info("demo1 start");
-//        User user = new User();
-//        user.setId(id);
-//        user.setVersion(3);
-//        userMapper.updateByPrimaryKeySelective(user);
-//        return Response.ok(user);
-//    }
+
 
     public static void main(String[] args) {
+
         System.out.println(System.currentTimeMillis());
     }
 

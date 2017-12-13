@@ -7,6 +7,8 @@
     <br/>
     <table border="2" width="100%" align="center">
         <tr >
+            <td align="center">序号</td>
+            <td align="center">任务Id</td>
             <td align="center">任务名称</td>
             <td align="center">状态</td>
             <td align="center">数据源</td>
@@ -15,31 +17,36 @@
             <td align="center" colspan="3">操作</td>
         </tr>
         <tr ng-repeat="task in taskArray">
+
+            <td>{{$index+1}}</td>
+            <td>{{task.id}}</td>
             <td>{{task.taskName}}</td>
             <td>{{task.status}}</td>
-            <td>{{task.dataSourceIp}}:{{task.dataSourcePort}}/{{task.dataSourceLog}}</td>
-            <td>{{task.createTime}}</td>
-            <td>{{task.updateTime}}</td>
-            <td  align="center"><input type="button" value="启动/暂停" class="btn btn-primary" ng-click="ctrl.startOrStopTask()"/></td>
-            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="ctrl.editTask()"/></td>
-            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="ctrl.deleteTask()"/></td>
-        </tr>
-        <tr>
-            <td>test</td>
-            <td>启动</td>
-            <td>2017-12-06 09:00:00</td>
-            <td>127.0.0.1/app/demo.test</td>
-            <td  align="center"><input type="button" value="启动/暂停" class="btn btn-primary" ng-click="ctrl.startOrStopTask()"/></td>
-            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="ctrl.editTask()"/></td>
-            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="ctrl.deleteTask()"/></td>
+            <td>主机:{{task.dataSourceIp}}:{{task.dataSourcePort}}&nbsp;&nbsp;文件位置:{{task.dataSourceLog}}</td>
+            <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
+            <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
+            <td  align="center">
+                <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
+                <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
+            </td>
+            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="editTask(task.id)"/></td>
+            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(task.id)"/></td>
         </tr>
     </table>
     <br/>
+
+
+    共69条&nbsp;&nbsp;
+    页面5/10
     <input id="lastpage" type="button" value="上一页">
     <input id="nextpage" type="button" value="下一页">
-    共<input id="page" type="text" size="1" >页&nbsp;&nbsp;
+    每页显示:
+    <select ng-model="pageSize" ng-init="pageSize='10'" size="1" style="width: auto">
+        <option value="10">10
+        <option value="15">15
+        <option value="20">20
+    </select>条
 
-    每页显示<input id="pageSize" type="text" value="2" size="5">行<input type="button" value="确定" onclick="pageSize2()">
 
 </div>
 <style>
