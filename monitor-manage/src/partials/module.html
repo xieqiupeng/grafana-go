@@ -35,13 +35,12 @@
     </table>
     <br/>
 
-
-    共69条&nbsp;&nbsp;
-    页面5/10
-    <input id="lastpage" type="button" value="上一页">
-    <input id="nextpage" type="button" value="下一页">
+    共{{total}}条&nbsp;&nbsp;
+    第{{pageNum}}/{{pages}}页
+    <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction()" value="上一页">
+    <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction()" value="下一页">
     每页显示:
-    <select ng-model="pageSize" ng-init="pageSize='10'" size="1" style="width: auto">
+    <select ng-model="pageSize" ng-init="pageSize='10'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
         <option value="10">10
         <option value="15">15
         <option value="20">20

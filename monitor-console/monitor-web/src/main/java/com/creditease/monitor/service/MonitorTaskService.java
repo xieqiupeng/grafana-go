@@ -10,6 +10,8 @@ import com.creditease.monitor.mybatis.sqllite.grafana.po.Star;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.User;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +43,17 @@ public class MonitorTaskService {
      * @param taskName
      * @return
      */
-    public List selectByTaskName(String taskName){
+    public List selectByTaskName(String taskName,Integer pageNum,Integer pageSize){
+        //设置参数
         if(taskName==null){
             taskName="";
         }
         taskName="%"+taskName+"%";
+        //设置分页
+        PageHelper.startPage(pageNum, pageSize);
+        //执行查询
         List<MonitorTask> monitorTasksList = monitorTaskExMapper.selectByTaskName(taskName);
+        //预处理
         dealWithMonitorTaskList(monitorTasksList);
         return monitorTasksList;
     }

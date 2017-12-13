@@ -11,6 +11,7 @@ import com.creditease.monitor.response.ResponseCode;
 import com.creditease.monitor.service.MonitorTaskService;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,13 @@ public class MonitorTaskController {
 
     //通过taskName搜索
     @RequestMapping("/searchtaskbytaskname")
-    public Response searchTaskByTaskName(@YXRequestParam(required = false,errmsg = "服务端根据任务名称搜索发生错误") String taskName){
-        logger.info("/searchtaskbytaskname param:taskName:{}",taskName);
-        List<MonitorTask> monitorTasksList = monitorTaskService.selectByTaskName(taskName);
-        return Response.ok(monitorTasksList);
+    public Response searchTaskByTaskName(@YXRequestParam(required = false,errmsg = "服务端根据任务名称搜索发生错误(taskName不能为空)") String taskName,
+                                         @YXRequestParam(required = false,errmsg = "服务端根据任务名称搜索发生错误(pageNum不能为空)") Integer pageNum,
+                                         @YXRequestParam(required = false,errmsg = "服务端根据任务名称搜索发生错误(pageSize不能为空)") Integer pageSize){
+        logger.info("/searchtaskbytaskname param:taskName:{},pageNum:{},pageSize:{}",taskName,pageNum,pageSize);
+        List<MonitorTask> monitorTasksList = monitorTaskService.selectByTaskName(taskName,pageNum,pageSize);
+        //分页信息
+        return Response.ok(new PageInfo(monitorTasksList));
     }
 
     //启动/暂停
