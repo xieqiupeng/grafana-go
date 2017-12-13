@@ -1,25 +1,41 @@
 //web服务端地址
-var serverUrl='http://localhost:8080/';
+var serverUrl='http://localhost:8075/';
 
 //Http工具类
 export class HttpUtils {
+
+    static invokeSimpleHttpPOSTRequestMethodByJSON($http,contextPath,param) {
+        console.log("invokeHttpPOSTRequestMethod param:",param);
+
+        $http({
+            url: serverUrl+contextPath,
+            method: 'POST',
+            data: JSON.stringify({"taskName":"标题","dataSourceIp":"10.100.1.67"}),
+        }).then((rsp) => {
+            console.log("invoke invokeHttpPOSTRequestMethod ok:", rsp);
+            alert('rsp.data:'+rsp.data);
+            return JSON.stringify(rsp.data);
+        }, err => {
+            console.log("invoke invokeHttpPOSTRequestMethod error:", err);
+            return err;
+        });
+    }
 
 
     static invokeSimpleHttpPOSTRequestMethod($http,contextPath,param) {
         console.log("invokeHttpPOSTRequestMethod param:",param);
 
         $http({
-            url: serverUrl+contextPath,
+            url: serverUrl+contextPath+"1",
             method: 'POST',
-            data: param
-            // data: '{"data"," post"}'
-            //,
-            // headers: {
-            //     "Content-Type": "plain/text"
-            // }
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: param,
         }).then((rsp) => {
             console.log("invoke invokeHttpPOSTRequestMethod ok:", rsp);
-            return rsp;
+            alert('rsp.data:'+rsp.data);
+            return JSON.stringify(rsp.data);
         }, err => {
             console.log("invoke invokeHttpPOSTRequestMethod error:", err);
             return err;
@@ -29,17 +45,11 @@ export class HttpUtils {
     static invokeSimpleHttpGETRequestMethod($http,contextPath,param) {
         console.log("invokeHttpGETRequestMethod param:"+param);
         $http({
-            url: serverUrl+contextPath,
-            method: 'GET',
-            data: param
-            // data: '{"data"," get"}'
-            //,
-            // headers: {
-            //     "Content-Type": "plain/text"
-            // }
+            url: serverUrl+contextPath+"?"+param,
+            method: 'GET'
         }).then((rsp) => {
-            console.log("invoke invokeHttpGETRequestMethod ok:", rsp);
-            return rsp;
+            console.log("invoke invokeHttpGETRequestMethod ok:", rsp.data);
+            return rsp.data;
         }, err => {
             console.log("invoke invokeHttpGETRequestMethod ok:", err);
             return err;

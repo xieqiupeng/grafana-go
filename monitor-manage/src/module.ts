@@ -31,21 +31,36 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
   monitorManageController($scope, $http) {
       $scope.taskName = "任务test3";
+      //搜索功能
       $scope.searchFunction=function(){
           alert('controller中search');
-          MonitorTaskService.searchTask($http);
+          MonitorTaskService.searchTask($http,$scope.taskName);
       };
+      //新增功能
       $scope.addFunction=function(){
           alert('controller中add');
           MonitorTaskService.addTask($http);
       };
-
+      //启动/暂停
+      $scope.startOrStopTask=function(id){
+          alert('controller中add');
+          MonitorTaskService.startOrStopTask($http,id);
+      };
+      //编辑
+      $scope.editTask=function(id){
+          alert('controller中add');
+          MonitorTaskService.editTask($http,id);
+      };
+      //删除
+      $scope.deleteTask=function(id){
+          alert('controller中add');
+          MonitorTaskService.deleteTask($http,id);
+      };
   }
-
 }
 
-export {
-  MonitorManageCtrl as PanelCtrl
-};
+    export {
+      MonitorManageCtrl as PanelCtrl
+    };
 
 

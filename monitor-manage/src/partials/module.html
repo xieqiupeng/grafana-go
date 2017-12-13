@@ -9,9 +9,20 @@
         <tr >
             <td align="center">任务名称</td>
             <td align="center">状态</td>
+            <td align="center">数据源</td>
+            <td align="center">创建时间</td>
             <td align="center">更新时间</td>
-            <td align="center">数据集</td>
             <td align="center" colspan="3">操作</td>
+        </tr>
+        <tr ng-repeat="task in taskArray">
+            <td>{{task.taskName}}</td>
+            <td>{{task.status}}</td>
+            <td>{{task.dataSourceIp}}:{{task.dataSourcePort}}/{{task.dataSourceLog}}</td>
+            <td>{{task.createTime}}</td>
+            <td>{{task.updateTime}}</td>
+            <td  align="center"><input type="button" value="启动/暂停" class="btn btn-primary" ng-click="ctrl.startOrStopTask()"/></td>
+            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="ctrl.editTask()"/></td>
+            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="ctrl.deleteTask()"/></td>
         </tr>
         <tr>
             <td>test</td>
