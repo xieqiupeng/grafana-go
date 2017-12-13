@@ -2,15 +2,18 @@ package com.creditease;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.creditease.interceptors.AccessInterceptor;
 import com.creditease.response.Response;
 import com.creditease.spring.resolver.YXHandlerExceptionResolver;
 import com.creditease.spring.resolver.YXRequestParamMethodArgumentResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.nio.charset.Charset;
@@ -18,6 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class YXWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
+
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new AccessInterceptor());
+    }
 
     public YXWebMvcConfigurerAdapter() {
         super();
