@@ -51,7 +51,6 @@ class AbstractApiBaseResponse implements Serializable{
 	 * 
 	 * @param resultCode
 	 * @return String
-	 * @create time 2016年1月7日 下午7:30:01
 	 */
 	protected static String getResultMsg(int resultCode) {
 		return resultCodeMsgMap.get(resultCode);
@@ -62,7 +61,6 @@ class AbstractApiBaseResponse implements Serializable{
 	 * 
 	 * @param c
 	 *            -返回码类
-	 * @create time 2016年1月7日 下午8:00:04
 	 */
 	public static void addResultCodeDefinitionClass(Class<?> c) {
 		try {

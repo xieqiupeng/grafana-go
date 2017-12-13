@@ -18,7 +18,6 @@ public @interface YXRequestParam {
      * @Description: 参数是否必须有值。默认是，参数不可为null。若为false则参数值可为null。
      *
      * @return boolean
-     * @create time 2016年1月7日 下午3:02:43
      */
     boolean required() default true;
 
