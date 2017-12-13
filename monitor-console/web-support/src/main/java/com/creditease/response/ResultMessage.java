@@ -1,14 +1,3 @@
-/**
- * @Title: ResultMessage.java
- * @Package com.jrd.response
- *
- * @Description: TODO
- *
- * @Copyright: JunRongDai @ Copyright (c) 2015
- * @author JRDLQ
- * @version V1.0
- * @date   2016年1月7日 下午3:40:47
- */
 package com.creditease.response;
 
 import java.lang.annotation.ElementType;
