@@ -16,6 +16,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.sqlite.JDBC;
 
+
 import javax.sql.DataSource;
 
 @Configuration
@@ -34,7 +35,8 @@ public class GrafanaDataSourceConfig {
     public BasicDataSource createDataSource(){
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(dateSourceConfigure.getDriverClassName());
-        ds.setUrl(JDBC.PREFIX.concat(url));
+//        ds.setUrl(JDBC.PREFIX.concat(url));
+        ds.setUrl(url);
         ds.setUsername(userName);
         ds.setPassword(password);
         ds.setMaxTotal(dateSourceConfigure.getMaxTotal());

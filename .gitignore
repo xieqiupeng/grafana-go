@@ -1,5 +1,7 @@
-
 .idea/
 target/
 *.iml
 *.log
+*.png
+/monitor-manage/dist/
+

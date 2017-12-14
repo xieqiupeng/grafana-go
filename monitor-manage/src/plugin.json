@@ -1,0 +1,36 @@
+{
+  "type": "panel",
+  "name": "Monitor Manage",
+  "id": "monitor-manage-panel",
+
+  "info": {
+    "description": "Monitor Manage for Grafana",
+    "author": {
+      "name": "Credit Ease"
+    },
+    "keywords": [ "monitor", "manage" ],
+    "logos": {
+      "small": "img/monitor-manage-logo.svg",
+      "large": "img/monitor-manage-logo.svg"
+    },
+    "links": [
+      {"name": "Project site", "url": "https://github.com/NatelEnergy/grafana-influx-admin"},
+      {"name": "MIT License",  "url": "https://github.com/NatelEnergy/grafana-influx-admin/blob/master/LICENSE"},
+      {"name": "Natel Energy", "url": "http://www.natelenergy.com/"}
+    ],
+    "screenshots": [
+      { "name": "Current Queries", "path": "img/screenshot-current.png" },
+      { "name": "Kill Query",      "path": "img/screenshot-kill.png"    },
+      { "name": "Query Window",    "path": "img/screenshot-query.png"   },
+      { "name": "Options",         "path": "img/screenshot-options.png" },
+      { "name": "Write Data",      "path": "img/screenshot-write.png"   }
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "4.6.x",
+    "plugins": [ ]
+  }
+}

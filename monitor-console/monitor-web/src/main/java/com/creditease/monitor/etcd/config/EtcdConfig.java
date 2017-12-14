@@ -36,20 +36,34 @@ public class EtcdConfig {
         EtcdNettyConfig nettyConfig = new EtcdNettyConfig();
         nettyConfig.setConnectTimeout(connectTimeout);
         nettyConfig.setMaxFrameSize(maxFrameSize);
-        EtcdNettyClient client= null;
+        EtcdNettyClient client = null;
         try {
             String[] addressArray = addresses.split(",");
             List<URI> list = new ArrayList<>();
-            for(String address : addressArray){
+            for (String address : addressArray) {
                 list.add(new URI(protocol.concat(address)));
             }
-            client = new EtcdNettyClient(nettyConfig,list.toArray(new URI[list.size()]));
+            client = new EtcdNettyClient(nettyConfig, list.toArray(new URI[list.size()]));
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
         EtcdClient etcdClient = new EtcdClient(client);
-        etcdClient.setRetryHandler(new RetryWithExponentialBackOff(1000,3,5000));
+        etcdClient.setRetryHandler(new RetryWithExponentialBackOff(1000, 3, 5000));
         return etcdClient;
+    }
+
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        EtcdNettyConfig nettyConfig = new EtcdNettyConfig();
+        nettyConfig.setConnectTimeout(3000);
+        nettyConfig.setMaxFrameSize(1024 * 100);
+        EtcdNettyClient client = new EtcdNettyClient(nettyConfig, new URI[]{
+                new URI("http://10.100.139.153:2379"),
+                new URI("http://10.100.139.150:2379"),
+                new URI("http://10.100.139.151:2379")
+        });
+        EtcdClient etcdClient = new EtcdClient(client);
+        etcdClient.setRetryHandler(new RetryWithExponentialBackOff(1000, 3, 5000));
+        etcdClient.put("dir3/note21", "note21").send();
     }
 }
