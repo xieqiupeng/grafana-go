@@ -2,6 +2,6 @@
 target/
 *.iml
 *.log
-grafana/
 *.png
 /monitor-manage/dist/
+
