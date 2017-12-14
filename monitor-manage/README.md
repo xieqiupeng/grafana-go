@@ -24,6 +24,9 @@ To complie, run:
 2 yarn install --pure-lockfile
 3 npm run build 
 
+usual command 
+npm install jquery --save
+
 
 
 #### Changelog
