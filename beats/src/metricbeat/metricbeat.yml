@@ -103,7 +103,7 @@ metricbeat.modules:
   metricsets: ["jmx"]
   enabled: true
   period: 10s
-  namespace: "jolokia_metrics"
+  namespace: "jmx"
   hosts: ["localhost:8080"]
   jmx.mappings:
     - mbean: 'java.lang:type=Threading'

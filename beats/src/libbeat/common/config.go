@@ -12,6 +12,7 @@ import (
 
 	"libbeat/common/file"
 	"libbeat/logp"
+
 	ucfg "github.com/elastic/go-ucfg"
 	"github.com/elastic/go-ucfg/cfgutil"
 	cfgflag "github.com/elastic/go-ucfg/flag"

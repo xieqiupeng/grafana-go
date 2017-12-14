@@ -3,7 +3,9 @@ package beater
 import (
 	"flag"
 	"fmt"
+	"libbeat/etcd"
 
+	"github.com/coreos/etcd/clientv3"
 	"github.com/joeshaw/multierror"
 	"github.com/pkg/errors"
 
@@ -39,10 +41,17 @@ type Filebeat struct {
 	config         *cfg.Config
 	moduleRegistry *fileset.ModuleRegistry
 	done           chan struct{}
+	etcd           *etcd.EtcdClient
+}
+
+type EtcdConifg struct {
+	Config     clientv3.Config `config:"config"`
+	ConfigPath string          `config:"configpath"`
 }
 
 // New creates a new Filebeat pointer instance.
 func New(b *beat.Beat, rawConfig *common.Config) (beat.Beater, error) {
+
 	config := cfg.DefaultConfig
 	if err := rawConfig.Unpack(&config); err != nil {
 		return nil, fmt.Errorf("Error reading config file: %v", err)
@@ -67,6 +76,22 @@ func New(b *beat.Beat, rawConfig *common.Config) (beat.Beater, error) {
 	}
 
 	if err := config.FetchConfigs(); err != nil {
+		return nil, err
+	}
+
+	var h map[string]interface{}
+
+	rawConfig.Unpack(&h)
+
+	//创建ETCD客户端并获取全量配置
+
+	etcdConfig := &EtcdConifg{}
+
+	cs, _ := rawConfig.Child("etcd", -1)
+	cs.Unpack(&etcdConfig)
+	etcd := etcd.NewEtcdClient(etcdConfig.Config, etcdConfig.ConfigPath)
+
+	if err := config.FetchConfigsWithEtcd(etcd); err != nil {
 		return nil, err
 	}
 
@@ -98,6 +123,7 @@ func New(b *beat.Beat, rawConfig *common.Config) (beat.Beater, error) {
 		done:           make(chan struct{}),
 		config:         &config,
 		moduleRegistry: moduleRegistry,
+		etcd:           etcd,
 	}
 
 	// register `setup` callback for ML jobs
@@ -265,6 +291,12 @@ func (fb *Filebeat) Run(b *beat.Beat) error {
 		crawler.Stop()
 		return err
 	}
+
+	dogChan := make(chan *clientv3.Event)
+
+	go fb.etcd.WatchDog(dogChan)
+
+	go crawler.ReloadProspector(dogChan, registrar, config.ConfigProspector, config.ConfigModules, pipelineLoaderFactory)
 
 	// If run once, add crawler completion check as alternative to done signal
 	if *once {
