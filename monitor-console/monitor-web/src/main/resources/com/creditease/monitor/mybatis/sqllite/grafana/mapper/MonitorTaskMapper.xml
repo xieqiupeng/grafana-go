@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.monitor.mybatis.sqllite.grafana.mapper.MonitorTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="cut_template" property="cutTemplate" jdbcType="VARCHAR" />
+    <result column="data_source_ip" property="dataSourceIp" jdbcType="VARCHAR" />
+    <result column="data_source_port" property="dataSourcePort" jdbcType="INTEGER" />
+    <result column="data_source_log" property="dataSourceLog" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, task_name, status, cut_template, data_source_ip, data_source_port, data_source_log, 
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from monitor_task
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from monitor_task
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ROWID()
+    </selectKey>
+    insert into monitor_task (task_name, status, cut_template, 
+      data_source_ip, data_source_port, data_source_log, 
+      create_time, update_time)
+    values (#{taskName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{cutTemplate,jdbcType=VARCHAR}, 
+      #{dataSourceIp,jdbcType=VARCHAR}, #{dataSourcePort,jdbcType=INTEGER}, #{dataSourceLog,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ROWID()
+    </selectKey>
+    insert into monitor_task
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="taskName != null" >
+        task_name,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="cutTemplate != null" >
+        cut_template,
+      </if>
+      <if test="dataSourceIp != null" >
+        data_source_ip,
+      </if>
+      <if test="dataSourcePort != null" >
+        data_source_port,
+      </if>
+      <if test="dataSourceLog != null" >
+        data_source_log,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="taskName != null" >
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="cutTemplate != null" >
+        #{cutTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourceIp != null" >
+        #{dataSourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourcePort != null" >
+        #{dataSourcePort,jdbcType=INTEGER},
+      </if>
+      <if test="dataSourceLog != null" >
+        #{dataSourceLog,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
+    update monitor_task
+    <set >
+      <if test="taskName != null" >
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="cutTemplate != null" >
+        cut_template = #{cutTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourceIp != null" >
+        data_source_ip = #{dataSourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourcePort != null" >
+        data_source_port = #{dataSourcePort,jdbcType=INTEGER},
+      </if>
+      <if test="dataSourceLog != null" >
+        data_source_log = #{dataSourceLog,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
+    update monitor_task
+    set task_name = #{taskName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      cut_template = #{cutTemplate,jdbcType=VARCHAR},
+      data_source_ip = #{dataSourceIp,jdbcType=VARCHAR},
+      data_source_port = #{dataSourcePort,jdbcType=INTEGER},
+      data_source_log = #{dataSourceLog,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

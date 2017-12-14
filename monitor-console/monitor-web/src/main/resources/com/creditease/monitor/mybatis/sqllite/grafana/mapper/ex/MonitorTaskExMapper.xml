@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper" >
+  <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="cut_template" property="cutTemplate" jdbcType="VARCHAR" />
+    <result column="data_source_ip" property="dataSourceIp" jdbcType="VARCHAR" />
+    <result column="data_source_port" property="dataSourcePort" jdbcType="INTEGER" />
+    <result column="data_source_log" property="dataSourceLog" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, task_name,status, cut_template, data_source_ip, data_source_port, data_source_log, create_time,
+    update_time
+  </sql>
+  <select id="selectByTaskName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from monitor_task
+    where task_name like #{taskName}
+  </select>
+</mapper>
