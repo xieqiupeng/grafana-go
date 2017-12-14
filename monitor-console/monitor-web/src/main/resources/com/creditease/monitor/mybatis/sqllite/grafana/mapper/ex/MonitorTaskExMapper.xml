@@ -4,17 +4,18 @@
   <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
     <result column="cut_template" property="cutTemplate" jdbcType="VARCHAR" />
-    <result column="data_source_ip" property="dataSourceIp" jdbcType="VARCHAR" />
-    <result column="data_source_port" property="dataSourcePort" jdbcType="INTEGER" />
+    <result column="data_source_server_ip" property="dataSourceServerIp" jdbcType="VARCHAR" />
     <result column="data_source_log" property="dataSourceLog" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
-    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="is_monitor_tomcat_server" property="isMonitorTomcatServer" jdbcType="TINYINT" />
+    <result column="tomcat_server_host" property="tomcatServerHost" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, task_name,status, cut_template, data_source_ip, data_source_port, data_source_log, create_time,
-    update_time
+    id, task_name, status, cut_template, data_source_server_ip, data_source_log, is_monitor_tomcat_server,
+    tomcat_server_host, create_time, update_time
   </sql>
   <select id="selectByTaskName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select

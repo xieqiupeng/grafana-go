@@ -4,17 +4,18 @@
   <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
     <result column="cut_template" property="cutTemplate" jdbcType="VARCHAR" />
-    <result column="data_source_ip" property="dataSourceIp" jdbcType="VARCHAR" />
-    <result column="data_source_port" property="dataSourcePort" jdbcType="INTEGER" />
+    <result column="data_source_server_ip" property="dataSourceServerIp" jdbcType="VARCHAR" />
     <result column="data_source_log" property="dataSourceLog" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
-    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="is_monitor_tomcat_server" property="isMonitorTomcatServer" jdbcType="TINYINT" />
+    <result column="tomcat_server_host" property="tomcatServerHost" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, task_name, status, cut_template, data_source_ip, data_source_port, data_source_log, 
-    create_time, update_time
+    id, task_name, status, cut_template, data_source_server_ip, data_source_log, is_monitor_tomcat_server, 
+    tomcat_server_host, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -31,11 +32,13 @@
       SELECT LAST_INSERT_ROWID()
     </selectKey>
     insert into monitor_task (task_name, status, cut_template, 
-      data_source_ip, data_source_port, data_source_log, 
-      create_time, update_time)
-    values (#{taskName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{cutTemplate,jdbcType=VARCHAR}, 
-      #{dataSourceIp,jdbcType=VARCHAR}, #{dataSourcePort,jdbcType=INTEGER}, #{dataSourceLog,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+      data_source_server_ip, data_source_log, is_monitor_tomcat_server, 
+      tomcat_server_host, create_time, update_time
+      )
+    values (#{taskName,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{cutTemplate,jdbcType=VARCHAR}, 
+      #{dataSourceServerIp,jdbcType=VARCHAR}, #{dataSourceLog,jdbcType=VARCHAR}, #{isMonitorTomcatServer,jdbcType=TINYINT}, 
+      #{tomcatServerHost,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
@@ -52,14 +55,17 @@
       <if test="cutTemplate != null" >
         cut_template,
       </if>
-      <if test="dataSourceIp != null" >
-        data_source_ip,
-      </if>
-      <if test="dataSourcePort != null" >
-        data_source_port,
+      <if test="dataSourceServerIp != null" >
+        data_source_server_ip,
       </if>
       <if test="dataSourceLog != null" >
         data_source_log,
+      </if>
+      <if test="isMonitorTomcatServer != null" >
+        is_monitor_tomcat_server,
+      </if>
+      <if test="tomcatServerHost != null" >
+        tomcat_server_host,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -73,25 +79,28 @@
         #{taskName,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
-        #{status,jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT},
       </if>
       <if test="cutTemplate != null" >
         #{cutTemplate,jdbcType=VARCHAR},
       </if>
-      <if test="dataSourceIp != null" >
-        #{dataSourceIp,jdbcType=VARCHAR},
-      </if>
-      <if test="dataSourcePort != null" >
-        #{dataSourcePort,jdbcType=INTEGER},
+      <if test="dataSourceServerIp != null" >
+        #{dataSourceServerIp,jdbcType=VARCHAR},
       </if>
       <if test="dataSourceLog != null" >
         #{dataSourceLog,jdbcType=VARCHAR},
       </if>
+      <if test="isMonitorTomcatServer != null" >
+        #{isMonitorTomcatServer,jdbcType=TINYINT},
+      </if>
+      <if test="tomcatServerHost != null" >
+        #{tomcatServerHost,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null" >
-        #{createTime,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        #{updateTime,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -102,25 +111,28 @@
         task_name = #{taskName,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
-        status = #{status,jdbcType=VARCHAR},
+        status = #{status,jdbcType=TINYINT},
       </if>
       <if test="cutTemplate != null" >
         cut_template = #{cutTemplate,jdbcType=VARCHAR},
       </if>
-      <if test="dataSourceIp != null" >
-        data_source_ip = #{dataSourceIp,jdbcType=VARCHAR},
-      </if>
-      <if test="dataSourcePort != null" >
-        data_source_port = #{dataSourcePort,jdbcType=INTEGER},
+      <if test="dataSourceServerIp != null" >
+        data_source_server_ip = #{dataSourceServerIp,jdbcType=VARCHAR},
       </if>
       <if test="dataSourceLog != null" >
         data_source_log = #{dataSourceLog,jdbcType=VARCHAR},
       </if>
+      <if test="isMonitorTomcatServer != null" >
+        is_monitor_tomcat_server = #{isMonitorTomcatServer,jdbcType=TINYINT},
+      </if>
+      <if test="tomcatServerHost != null" >
+        tomcat_server_host = #{tomcatServerHost,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=VARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -128,13 +140,14 @@
   <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     update monitor_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
       cut_template = #{cutTemplate,jdbcType=VARCHAR},
-      data_source_ip = #{dataSourceIp,jdbcType=VARCHAR},
-      data_source_port = #{dataSourcePort,jdbcType=INTEGER},
+      data_source_server_ip = #{dataSourceServerIp,jdbcType=VARCHAR},
       data_source_log = #{dataSourceLog,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=VARCHAR}
+      is_monitor_tomcat_server = #{isMonitorTomcatServer,jdbcType=TINYINT},
+      tomcat_server_host = #{tomcatServerHost,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

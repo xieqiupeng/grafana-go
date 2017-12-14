@@ -83,7 +83,7 @@ public class MonitorTaskController {
         user.setUpdated("2017-11-24 06:00:52");
         //userMapper.insertSelective(user);
         System.out.println("monitorTask:"+monitorTask);
-        System.out.println("monitorTask:"+monitorTask.getTaskName()+" "+monitorTask.getDataSourceIp());
+//        System.out.println("monitorTask:"+monitorTask.getTaskName()+" "+monitorTask.getDataSourceHost());
         return Response.ok(user);
     }
 

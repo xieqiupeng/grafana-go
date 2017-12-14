@@ -1,29 +1,31 @@
 package com.creditease.monitor.mybatis.sqllite.grafana.po;
 
+import java.util.Date;
+
 public class MonitorTask {
     private Integer id;
 
     private String taskName;
 
-
-    private String status;
+    private Byte status;
 
     private String cutTemplate;
 
-    private String dataSourceIp;
-
-    private Integer dataSourcePort;
+    private String dataSourceServerIp;
 
     private String dataSourceLog;
 
-    private String createTime;
+    private Byte isMonitorTomcatServer;
 
-    private String updateTime;
+    private String tomcatServerHost;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     public Integer getId() {
         return id;
     }
-
 
     public void setId(Integer id) {
         this.id = id;
@@ -37,12 +39,12 @@ public class MonitorTask {
         this.taskName = taskName == null ? null : taskName.trim();
     }
 
-    public String getStatus() {
+    public Byte getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Byte status) {
+        this.status = status;
     }
 
     public String getCutTemplate() {
@@ -53,20 +55,12 @@ public class MonitorTask {
         this.cutTemplate = cutTemplate == null ? null : cutTemplate.trim();
     }
 
-    public String getDataSourceIp() {
-        return dataSourceIp;
+    public String getDataSourceServerIp() {
+        return dataSourceServerIp;
     }
 
-    public void setDataSourceIp(String dataSourceIp) {
-        this.dataSourceIp = dataSourceIp == null ? null : dataSourceIp.trim();
-    }
-
-    public Integer getDataSourcePort() {
-        return dataSourcePort;
-    }
-
-    public void setDataSourcePort(Integer dataSourcePort) {
-        this.dataSourcePort = dataSourcePort;
+    public void setDataSourceServerIp(String dataSourceServerIp) {
+        this.dataSourceServerIp = dataSourceServerIp == null ? null : dataSourceServerIp.trim();
     }
 
     public String getDataSourceLog() {
@@ -77,19 +71,35 @@ public class MonitorTask {
         this.dataSourceLog = dataSourceLog == null ? null : dataSourceLog.trim();
     }
 
-    public String getCreateTime() {
+    public Byte getIsMonitorTomcatServer() {
+        return isMonitorTomcatServer;
+    }
+
+    public void setIsMonitorTomcatServer(Byte isMonitorTomcatServer) {
+        this.isMonitorTomcatServer = isMonitorTomcatServer;
+    }
+
+    public String getTomcatServerHost() {
+        return tomcatServerHost;
+    }
+
+    public void setTomcatServerHost(String tomcatServerHost) {
+        this.tomcatServerHost = tomcatServerHost == null ? null : tomcatServerHost.trim();
+    }
+
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime == null ? null : createTime.trim();
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime == null ? null : updateTime.trim();
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

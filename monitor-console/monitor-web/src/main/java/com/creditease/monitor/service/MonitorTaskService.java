@@ -67,11 +67,11 @@ public class MonitorTaskService {
         //查询当前监控任务
         MonitorTask monitorTask = monitorTaskMapper.selectByPrimaryKey(taskId);
         //启动/暂停状态发生切换
-        if(monitorTask.getStatus().equals(MonitorTaskStatus.START.getValue())){
-            monitorTask.setStatus(MonitorTaskStatus.PAUSE.getValue());
-        }else if(monitorTask.getStatus().equals(MonitorTaskStatus.PAUSE.getValue())){
-            monitorTask.setStatus(MonitorTaskStatus.START.getValue());
-        }
+//        if(monitorTask.getStatus().equals(MonitorTaskStatus.START.getValue())){
+//            monitorTask.setStatus(MonitorTaskStatus.PAUSE.getValue());
+//        }else if(monitorTask.getStatus().equals(MonitorTaskStatus.PAUSE.getValue())){
+//            monitorTask.setStatus(MonitorTaskStatus.START.getValue());
+//        }
         monitorTaskMapper.updateByPrimaryKeySelective(monitorTask);
     }
 
@@ -92,15 +92,15 @@ public class MonitorTaskService {
      * @param monitorTasksList
      */
     private void dealWithMonitorTaskList(List<MonitorTask> monitorTasksList){
-        if(monitorTasksList!=null){
-            for(int i=0;i<monitorTasksList.size();i++){
-                if(monitorTasksList.get(i).getStatus().equals(MonitorTaskStatus.START.getValue())){
-                    monitorTasksList.get(i).setStatus(MonitorTaskStatus.START.getMsg());
-                }else if (monitorTasksList.get(i).getStatus().equals(MonitorTaskStatus.PAUSE.getValue())){
-                    monitorTasksList.get(i).setStatus(MonitorTaskStatus.PAUSE.getMsg());
-                }
-            }
-        }
+//        if(monitorTasksList!=null){
+//            for(int i=0;i<monitorTasksList.size();i++){
+//                if(monitorTasksList.get(i).getStatus().equals(MonitorTaskStatus.START.getValue())){
+//                    monitorTasksList.get(i).setStatus(MonitorTaskStatus.START.getMsg());
+//                }else if (monitorTasksList.get(i).getStatus().equals(MonitorTaskStatus.PAUSE.getValue())){
+//                    monitorTasksList.get(i).setStatus(MonitorTaskStatus.PAUSE.getMsg());
+//                }
+//            }
+//        }
     }
 
 }

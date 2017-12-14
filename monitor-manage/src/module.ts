@@ -1,6 +1,6 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 //web服务端地址
-var serverUrl='http://localhost:8075/';
+var serverUrl='http://localhost:8080/';
 import {MetricsPanelCtrl} from 'app/plugins/sdk';
 import _ from 'lodash';
 

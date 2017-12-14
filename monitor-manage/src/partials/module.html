@@ -12,17 +12,18 @@
             <td align="center">任务名称</td>
             <td align="center">状态</td>
             <td align="center">数据源</td>
+            <td align="center">tomcat服务器</td>
             <td align="center">创建时间</td>
             <td align="center">更新时间</td>
             <td align="center" colspan="3">操作</td>
         </tr>
         <tr ng-repeat="task in taskArray">
-
             <td>{{$index+1}}</td>
             <td>{{task.id}}</td>
             <td>{{task.taskName}}</td>
             <td>{{task.status}}</td>
-            <td>主机:{{task.dataSourceIp}}:{{task.dataSourcePort}}&nbsp;&nbsp;文件位置:{{task.dataSourceLog}}</td>
+            <td>数据源Ip:{{task.dataSourceServerIp}}:&nbsp;&nbsp;文件位置:{{task.dataSourceLog}}</td>
+            <td>{{task.tomcatServerHost}}</td>
             <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td  align="center">
