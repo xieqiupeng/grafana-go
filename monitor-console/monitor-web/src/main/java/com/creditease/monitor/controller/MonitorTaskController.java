@@ -1,13 +1,7 @@
 package com.creditease.monitor.controller;
 
-import com.creditease.monitor.mybatis.sqllite.grafana.mapper.MonitorTaskMapper;
-import com.creditease.monitor.mybatis.sqllite.grafana.mapper.StarMapper;
-import com.creditease.monitor.mybatis.sqllite.grafana.mapper.UserMapper;
-import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
-import com.creditease.monitor.mybatis.sqllite.grafana.po.Star;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.User;
-import com.creditease.monitor.response.ResponseCode;
 import com.creditease.monitor.service.MonitorTaskService;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
@@ -35,6 +29,7 @@ public class MonitorTaskController {
 
     @Autowired
     private MonitorTaskService monitorTaskService;
+
 
     //通过taskName搜索
     @RequestMapping("/searchtaskbytaskname")
