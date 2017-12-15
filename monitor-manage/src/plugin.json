@@ -6,7 +6,8 @@
   "info": {
     "description": "Monitor Manage for Grafana",
     "author": {
-      "name": "Credit Ease"
+      "name": "Credit Ease",
+      "url": "http://raintank.io"
     },
     "keywords": [ "monitor", "manage" ],
     "logos": {

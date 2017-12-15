@@ -1,25 +1,35 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 //web服务端地址
 var serverUrl='http://localhost:8080/';
-import {MetricsPanelCtrl} from 'app/plugins/sdk';
+import {MetricsPanelCtrl, PanelCtrl} from 'app/plugins/sdk';
 import _ from 'lodash';
+import './css/module.css!';
+import './css/jqui.css!';
+// import './css/bs.css!';
+import './js/jq.js';
+import './js/jqui.js';
+import './js/bs.js';
+
+const panelDefaults = {
+};
 
 class MonitorManageCtrl extends MetricsPanelCtrl {
   static templateUrl = 'partials/module.html';
-
+  serverHost="http://127.0.0.1:8080/";
   defaults = {
 
   };
 
   /** @ngInject **/
   constructor($scope, $injector, private $http, private uiSegmentSrv) {
+      // super($scope, $injector);
     super($scope, $injector);
-
+      // defaults configs
+      _.defaultsDeep(this.panel, panelDefaults);
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-    this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
+    // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
+    this.events.on('panel-initialized', this.render.bind(this));
 
-    // defaults configs
-    _.defaultsDeep(this.panel, this.defaults);
 
   }
 
@@ -27,12 +37,18 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
   }
   public  onInitEditMode() {
-
+      this.addEditorTab('Options', 'public/plugins/monitor-manage-panel/partials/option.html', 1);
   }
+
+  changeServerHost(object){
+      // alert(this.serverHost);
+      // console.log(object);
+  }
+
 
   monitorManageController($scope, $http) {
       //查询参数
-      $scope.taskName = "";
+      $scope.searchTaskName = "";
       //列表内容
       $scope.taskArray =[];
       //分页参数
@@ -44,11 +60,12 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
       $scope.hasNextPage=false;//有后一页
 
       //搜索功能
-      $scope.searchFunction=function(){
+      $scope.searchFunction=function(serverHost){
           $scope.taskArray =[];
-          var param='taskName='+$scope.taskName+"&pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;
+
+          var param='taskName='+$scope.searchTaskName+"&pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;
           $http({
-              url: serverUrl+'monitortask/searchtaskbytaskname'+"?"+param,
+              url: serverHost+'monitortask/searchtaskbytaskname'+"?"+param,
               method: 'GET'
           }).then((rsp) => {
               console.log("invoke searchFunction ok:", rsp.data.data);
@@ -96,24 +113,24 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
       };
 
       //下一页
-      $scope.nextPageFunction=function(){
+      $scope.nextPageFunction=function(serverHost){
           $scope.pageNum+=1;
           //重新拉取监控任务
-          $scope.searchFunction();
+          $scope.searchFunction(serverHost);
       };
 
       //上一页
-      $scope.lastPageFunction=function(){
+      $scope.lastPageFunction=function(serverHost){
           $scope.pageNum-=1;
           //重新拉取监控任务
-          $scope.searchFunction();
+          $scope.searchFunction(serverHost);
       };
 
-      //上一页
-      $scope.selectChangePageSize=function(){
-          //重新拉取监控任务
-          $scope.searchFunction();
-      };
+      // //上一页
+      // $scope.selectChangePageSize=function(){
+      //     //重新拉取监控任务
+      //     $scope.searchFunction();
+      // };
 
       // //新增功能
       // $scope.addFunction=function(){

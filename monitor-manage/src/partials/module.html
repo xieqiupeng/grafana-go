@@ -1,9 +1,10 @@
 <div align="center" ng-controller="ctrl.monitorManageController">
-    <form action="http://www.cctv.com" method="post">
-        <input type="text" class="bigtext" name="taskName" id="taskName" placeholder=" 根据任务名称模糊查找" ng-model="taskName"></input>
-        <input type="button" value="搜索" ng-click="searchFunction()" />
-        <input type="button" value="新增" ng-click="addFunction()"/>
-    </form>
+
+        <input type="text" class="bigtext" name="searchTaskName" id="searchTaskName" placeholder=" 根据任务名称模糊查找" ng-model="searchTaskName"></input>
+        <input type="button" value="搜索" ng-click="searchFunction(ctrl.serverHost)" />
+        <input type="button" value="新增" id="showAddMonitorTaskModal"/>
+
+
     <br/>
     <table border="2" width="100%" align="center">
         <tr >
@@ -27,8 +28,8 @@
             <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td  align="center">
-                <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
-                <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
+                <input type="button" value="暂停" ng-if="task.status=='0'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
+                <input type="button" value="启动" ng-if="task.status=='1'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
             </td>
             <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="editTask(task.id)"/></td>
             <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(task.id)"/></td>
@@ -38,26 +39,176 @@
 
     共{{total}}条&nbsp;&nbsp;
     第{{pageNum}}/{{pages}}页
-    <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction()" value="上一页">
-    <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction()" value="下一页">
+    <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction(ctrl.serverHost)" value="上一页">
+    <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction(ctrl.serverHost)" value="下一页">
     每页显示:
     <select ng-model="pageSize" ng-init="pageSize='10'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
         <option value="10">10
         <option value="15">15
         <option value="20">20
     </select>条
+    <div id="dialog" title="创建监控任务" style="background-color: #4cae4c">
+        <div class="row" >
+            <div class="col-md-6">
+                <label for="taskName">任务名称:</label>
+                <input type="text" name="taskName" id="taskName" style="width: 100%" placeholder="请输入任务名称"  >
+                <label for="dataSourceServerIp">数据源Ip:</label>
+                <input type="text" name="dataSourceServerIp" id="dataSourceServerIp" style="width: 100%" value="" placeholder="请输入数据源ip,多个用英文逗号分隔">
+                <label for="dataSourceLog">数据源文件位置:</label>
+                <input type="text" name="dataSourceLog" id="dataSourceLog" style="width: 100%" value="" placeholder="请输入数据源文件位置" >
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label >是否为tomcat服务器:</label>
+                    <input type="radio" name="isMonitorTomcatServer"  value="false" checked onclick="changeIsMonitorTomcatServer(false)">非tomcat
+                    <input type="radio" name="isMonitorTomcatServer" value="true" onclick="changeIsMonitorTomcatServer(true)">是tomcat
+                </div>
 
+                <div class="form-group" id="tomcatServerHostDiv" style="display: none">
+                    <label for="tomcatServerHost">tomcat服务器地址:</label>
+                    <input type="text" name="tomcatServerHost" id="tomcatServerHost" style="width: 100%" value="" placeholder="请输入tomcat地址(ip和port),多个用英文逗号分隔">
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-4">
+                <select ng-model="textTemplate" ng-init="textTemplate='CommonTextTemplate'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
+                    <option value="CommonTextTemplate">普通切分模板
+                </select>
+            </div>
+            <div class="col-md-4">
+                 是否为正则:
+                <input type="radio" name="isRegex"  value="false" checked >非正则
+                <input type="radio" name="isRegex" value="true" >是正则
+            </div>
+            <div class="col-md-4">
+                是否为有序:
+                <input type="radio" name="isOrder"  value="false" checked >非有序
+                <input type="radio" name="isOrder" value="true" >是有序
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-2">
+                <input type="button" value="新增分隔符" />
+                <table border="2">
+                    <tr>
+                        <th >分隔符</th>
+                        <th >操作</th>
+                    </tr>
+                    <tr>
+                        <td ><input style="width: 80px;"  type="text" value="#"/></td>
+                        <td> <input style="width: 50px;"  type="button" value="删除" /></td>
+                    </tr>
+                    <tr>
+                        <td ><input style="width: 80px;" type="text" value=","/></td>
+                        <td ><input style="width: 50px;" type="button" value="删除" /></td>
+                    </tr>
+                </table>
+            </div>
 
+            <div class="col-md-10">
+                <input type="button" value="新增结果列" />
+                <table border="2" align="left">
+                    <tr>
+                        <th>columnSeq</th>
+                        <th>columnName</th>
+                        <th>columnType</th>
+                        <th>format(可为空)</th>
+                        <th>tagOrField</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" value="0" style="width: 100%;"/></td>
+                        <td><input type="text" value="id" style="width: 118px;"/></td>
+                        <td>
+                            <select ng-model="columnType" ng-init="columnType='boolean'" size="1" style="width: 100%">
+                                <option value="boolean">boolean</option>
+                                <option value="long">long</option>
+                                <option value="double">double</option>
+                                <option value="date">date</option>
+                            </select>
+                        </td>
+                        <td><input type="text" value="yyyy-MM-dd HH-mm-ss"/></td>
+                        <td>
+                            <select ng-model="tagOrField" ng-init="tagOrField='tag'" size="1" style="width: 100%">
+                                <option value="tag">tag</option>
+                                <option value="field">field</option>
+                            </select>
+                        </td>
+                        <td><input type="button" value="删除" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="dataSourceLogSample">输入数据源内容样例:</label>
+                <textarea rows="1" cols="20" name="dataSourceLogSample" id="dataSourceLogSample" style="width: 100%" placeholder="请输入一行完整的数据源内容" ></textarea>
+            </div>
+            <br/>
+
+            <br/>
+            <div class="col-md-12">
+                <input type="button" value="执行解析" />
+                <label for="dataSourceLogSampleResult">输出数据源解析结果:</label>
+                <textarea rows="1" cols="20" name="dataSourceLogSample" id="dataSourceLogSampleResult" style="width: 100%" placeholder="输出数据源解析结果" ></textarea>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script>
+    function changeIsMonitorTomcatServer(judgeIsMonitorTomcatServer){
+        if(judgeIsMonitorTomcatServer==true){
+            $("#tomcatServerHostDiv").css({"display":"block"});
+        }else{
+            $("#tomcatServerHostDiv").css({"display":"none"});
+        }
+    }
 
+    $(function() {
+        $( "#dialog" ).dialog({
+            autoOpen: false,
+            modal: true,
+            height: 500,
+            width: 850,
+            buttons: {
+                "创建": function() {
+                    var bValid = true;
 
-<style>
-    .bigtext { height: 38px; width: 350px; }
+                    bValid = bValid && checkLength( name, "username", 3, 16 );
+                    bValid = bValid && checkLength( email, "email", 6, 80 );
+                    bValid = bValid && checkLength( password, "password", 5, 16 );
+                    bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "用户名必须由 a-z、0-9、下划线组成，且必须以字母开头。" );
+                    // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+                    bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
+                    bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "密码字段只允许： a-z 0-9" );
 
-</style>
+                    if ( bValid ) {
+                        $( "#users tbody" ).append( "<tr>" +
+                            "<td>" + name.val() + "</td>" +
+                            "<td>" + email.val() + "</td>" +
+                            "<td>" + password.val() + "</td>" +
+                            "</tr>" );
+                        $( this ).dialog( "close" );
+                    }
+                },
+                "取消": function() {
+                    $( this ).dialog( "close" );
+                }
+            },
+            "取消": function() {
 
-
+            }
+        });
+        $( "#showAddMonitorTaskModal" ).click(function() {
+            $( "#dialog" ).dialog( "open" );
+        });
+    });
+</script>
 
 
 

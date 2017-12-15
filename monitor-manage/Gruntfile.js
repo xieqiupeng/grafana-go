@@ -13,6 +13,12 @@ module.exports = function(grunt) {
 
     copy: {
       dist_js: {
+          expand: true,
+          cwd: 'src/js',
+          src: ['*.js'],
+          dest: 'dist/js'
+      },
+      dist_ts: {
         expand: true,
         cwd: 'src',
         src: ['**/*.ts', '**/*.d.ts'],
@@ -95,9 +101,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'clean',
-    'copy:dist_js',
+    'copy:dist_ts',
     'typescript:build',
     'copy:dist_html',
+    'copy:dist_js',
     'copy:dist_css',
     'copy:dist_img',
     'copy:dist_statics',
