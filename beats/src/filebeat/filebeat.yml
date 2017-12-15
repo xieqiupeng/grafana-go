@@ -12,11 +12,20 @@
 
 #=========================== Filebeat prospectors =============================
 
-filebeat.config.prospectors:
-  enabled: true
-  path: configs/*.yml
-  reload.enabled: true
-  reload.period: 10s
+filebeat.prospectors:
+  - type: log
+
+    key:  test
+
+    enabled: true
+
+    paths:
+       - /Users/creditease/bingo/test2.log
+
+    tail_files: true
+
+    fields:
+        tag1: BBBBBB
 
 
 #filebeat.prospectors:
@@ -99,7 +108,7 @@ filebeat.config.prospectors:
 
 filebeat.config.modules:
   # Glob pattern for configuration loading
-  path: ${path.config}/modules.d/*.yml
+  path: ${path.config}/modules.d/log.yml
 
   # Set to true to enable config reloading
   reload.enabled: false
@@ -206,6 +215,16 @@ filebeat.config.modules:
 
 #================================ Logging =====================================
 
+#================================ Etcd config ==================================
+filebeat.etcd:
+  config:
+    endpoints: ["10.100.139.150:2379","10.100.139.152:2379","10.100.139.153:2379"]
+    dialtimeout: 5
+    username: test
+    password: 123456
+
+  configpath: /prospectorconfig/
+
 # Sets log level. The default log level is info.
 # Available log levels are: critical, error, warning, info, debug
 #logging.level: debug
@@ -226,7 +245,7 @@ output.rocket:
   namesrv: 10.100.139.149:9876;10.100.139.150:9876
   # The Kafka topic used for produced events. The setting can be a format string
   # using any event field. To set the topic from document type use `%{[type]}`.
-  topic: TopicTest
+  topic: TopicTest1
 
   producergroup:  ProducerGroupName
 

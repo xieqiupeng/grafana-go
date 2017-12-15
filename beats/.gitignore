@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+/pkg/darwin_amd64/vendor/
+/pkg/darwin_amd64/libbeat/
+/pkg/darwin_amd64/rocketgo.a
+/pkg/darwin_amd64/filebeat/
+/pkg/darwin_amd64/

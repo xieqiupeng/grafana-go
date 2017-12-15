@@ -3,6 +3,9 @@
   enabled: true
 
   paths:
-     - /Users/creditease/bingo/test.log
+     - /Users/creditease/bingo/test2.log
 
   tail_files: true
+
+  fields:
+      tag1: BBBBBB

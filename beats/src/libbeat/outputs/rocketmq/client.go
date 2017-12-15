@@ -15,14 +15,14 @@ import (
 )
 
 type client struct {
-	stats  *outputs.Stats
-	hosts  string
-	topic  outil.Selector
-	key    *fmtstr.EventFormatString
-	index  string
-	codec  codec.Codec
-	config rocketmq.Config
-	group  string
+	stats    *outputs.Stats
+	hosts    string
+	topic    outil.Selector
+	key      *fmtstr.EventFormatString
+	index    string
+	codec    codec.Codec
+	config   rocketmq.Config
+	group    string
 	producer rocketmq.Producer
 
 	wg sync.WaitGroup
@@ -55,7 +55,7 @@ func newRocketClient(
 		index:  index,
 		codec:  writer,
 		config: *cfg,
-		group: cfg.ProducerGroup,
+		group:  cfg.ProducerGroup,
 	}
 	return c, nil
 }
@@ -113,16 +113,30 @@ func (c *client) Publish(batch publisher.Batch) error {
 		msg.ref = ref
 		msg.initProducerMessage()
 
+		sendCallback := func(result *rocketmq.SendResult, err2 error) error {
+			if err2 != nil {
+				logp.Err("err->%s", err)
+				return err2
+			} else {
+				id, status := result.GetInfo()
+				logp.Info("%s:%d", id, status)
+			}
 
-		if sendResult, err := c.producer.Send(&msg.msg); err != nil {
-			logp.Err("Sync send fail!") // 如果不是如预期的那么就报错
-			logp.Err("err->%s", err)
 			msg.ref.done()
-		} else {
-			logp.Info("sendResult", sendResult)
-			logp.Info("Sync send success, %d", i)
-			msg.ref.done()
+			return nil
 		}
+
+		c.producer.SendAsync(&msg.msg, sendCallback)
+		//
+		//if sendResult, err := c.producer.Send(&msg.msg); err != nil {
+		//	logp.Err("Sync send fail!") // 如果不是如预期的那么就报错
+		//	logp.Err("err->%s", err)
+		//	msg.ref.done()
+		//} else {
+		//	logp.Info("sendResult", sendResult)
+		//	logp.Info("Sync send success, %d", i)
+		//	msg.ref.done()
+		//}
 	}
 
 	return nil
@@ -173,6 +187,7 @@ func (c *client) getEventMessage(data *publisher.Event) (*message, error) {
 
 	return msg, nil
 }
+
 /*
 func (c *client) successWorker(ch <-chan *sarama.ProducerMessage) {
 	defer c.wg.Done()

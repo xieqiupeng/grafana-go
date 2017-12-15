@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"libbeat/etcd"
 	"log"
 	"os"
 	"path/filepath"
@@ -115,6 +116,19 @@ func (config *Config) FetchConfigs() error {
 		log.Fatal("Error merging config files: ", err)
 		return err
 	}
+
+	return nil
+}
+
+// 从ETCD获取全量配置信息并覆盖配置文件配置
+func (config *Config) FetchConfigsWithEtcd(etcdClient *etcd.EtcdClient) error {
+
+	conf, err := etcdClient.GetAllConfig()
+	if err != nil {
+		log.Fatalln("Error get all config from etcd:", err)
+		return nil
+	}
+	config.Prospectors = append(config.Prospectors, conf...)
 
 	return nil
 }
