@@ -1,6 +1,7 @@
 package com.creditease.consumers.dataclean;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import mousio.client.promises.ResponsePromise;
 import mousio.client.retry.RetryWithExponentialBackOff;
 import mousio.etcd4j.EtcdClient;
@@ -141,8 +142,10 @@ public class DynamicEtcdDataClean implements IDataClean {
                 cleanRuleMap.remove(dateSoureName);
                 logger.info("删除dateSoureName={}成功", dateSoureName);
             } else {
-                MonitorNoteDataEntity noteData = JSON.parseObject(nodeValue,MonitorNoteDataEntity.class);
-                String cleanRuleStr = noteData.getCleanRule();
+                JSONObject jsonObject = JSON.parseObject(nodeValue);
+                //MonitorNoteDataEntity noteData = JSON.parseObject(nodeValue,MonitorNoteDataEntity.class);
+                //String cleanRuleStr = noteData.getCleanRule();
+                String cleanRuleStr = jsonObject.getString("cleanRule");
                 if(StringUtils.isNotBlank(cleanRuleStr)){
                     DataCleanRuleEntity dataCleanEntity = JSON.parseObject(cleanRuleStr,DataCleanRuleEntity.class);
                     IDataCleanRule dataCleanRule = DataCleanUtil.getDataCleanRule(dataCleanEntity);
