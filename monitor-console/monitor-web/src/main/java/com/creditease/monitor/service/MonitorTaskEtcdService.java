@@ -5,6 +5,7 @@ import com.creditease.monitor.etcd.entity.MonitorNoteDataEntity;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
+import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +70,12 @@ public class MonitorTaskEtcdService {
             EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcdClient.delete(key).send();
             responsePromise.get();
             return true;
+        }catch (EtcdException e){
+            if(e.getErrorCode() == EtcdErrorCode.KeyNotFound){
+                return true;
+            }
+            logger.info("delete key={} error,msg={}",key,e.getMessage());
+            return false;
         }catch (Exception e){
             logger.info("delete key={} error,msg={}",key,e.getMessage());
             return false;
@@ -86,7 +93,10 @@ public class MonitorTaskEtcdService {
                     return JSON.parseObject(nodeValue,MonitorNoteDataEntity.class);
                 }
             }catch (EtcdException e){
-                return null;
+                if(e.getErrorCode() == EtcdErrorCode.KeyNotFound){
+                    return null;
+                }
+               throw e;
             }
         }
         return  null;

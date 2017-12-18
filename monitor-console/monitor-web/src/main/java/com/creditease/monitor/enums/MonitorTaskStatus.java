@@ -13,15 +13,15 @@ package com.creditease.monitor.enums;
  */
 public enum MonitorTaskStatus {
 
-    START("0","启动"), PAUSE("1","暂停");
-    private String value;
+    START((byte)0,"启动"), PAUSE((byte)1,"暂停");
+    private byte value;
     private String msg;
-    MonitorTaskStatus(String value,String msg){
+    MonitorTaskStatus(byte value,String msg){
         this.value=value;
         this.msg=msg;
     }
 
-    public String getValue() {
+    public byte getValue() {
         return value;
     }
 

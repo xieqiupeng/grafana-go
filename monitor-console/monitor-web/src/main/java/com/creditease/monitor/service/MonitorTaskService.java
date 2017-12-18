@@ -2,22 +2,13 @@ package com.creditease.monitor.service;
 
 import com.creditease.monitor.enums.MonitorTaskStatus;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.MonitorTaskMapper;
-import com.creditease.monitor.mybatis.sqllite.grafana.mapper.StarMapper;
-import com.creditease.monitor.mybatis.sqllite.grafana.mapper.UserMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
-import com.creditease.monitor.mybatis.sqllite.grafana.po.Star;
-import com.creditease.monitor.mybatis.sqllite.grafana.po.User;
-import com.creditease.response.Response;
-import com.creditease.spring.annotation.YXRequestParam;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -37,6 +28,8 @@ public class MonitorTaskService {
 
     @Autowired
     private MonitorTaskMapper monitorTaskMapper;
+    @Autowired
+    private MonitorTaskEtcdService monitorTaskEtcdService;
 
     /**
      * 根据任务名称模糊查找
@@ -63,16 +56,32 @@ public class MonitorTaskService {
      * @param taskId
      * @return
      */
-    public void startOrPauseTask(Integer taskId){
+    public boolean startOrPauseTask(Integer taskId,byte status){
         //查询当前监控任务
         MonitorTask monitorTask = monitorTaskMapper.selectByPrimaryKey(taskId);
-        //启动/暂停状态发生切换
-//        if(monitorTask.getStatus().equals(MonitorTaskStatus.START.getValue())){
-//            monitorTask.setStatus(MonitorTaskStatus.PAUSE.getValue());
-//        }else if(monitorTask.getStatus().equals(MonitorTaskStatus.PAUSE.getValue())){
-//            monitorTask.setStatus(MonitorTaskStatus.START.getValue());
-//        }
-        monitorTaskMapper.updateByPrimaryKeySelective(monitorTask);
+        if(monitorTask != null ){
+            boolean isStart = false;
+            //启动/暂停状态发生切换
+            if(MonitorTaskStatus.START.getValue() == status){
+                monitorTask.setStatus(MonitorTaskStatus.PAUSE.getValue());
+                isStart = true;
+            }else if(MonitorTaskStatus.PAUSE.getValue() == status){
+                monitorTask.setStatus(MonitorTaskStatus.START.getValue());
+            }else{
+                return false;
+            }
+            boolean ok;
+            if(isStart){
+                ok = monitorTaskEtcdService.upSert(monitorTask);
+            }else{
+                ok = monitorTaskEtcdService.delete(monitorTask.getTaskName());
+            }
+            if(ok){
+                monitorTaskMapper.updateByPrimaryKeySelective(monitorTask);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -80,10 +89,17 @@ public class MonitorTaskService {
      * @param taskId
      * @return
      */
-    public void deleteTask(Integer taskId) {
-        //删除当前监控任务
-        monitorTaskMapper.deleteByPrimaryKey(taskId);
-
+    public boolean deleteTask(Integer taskId) {
+        MonitorTask monitorTask = monitorTaskMapper.selectByPrimaryKey(taskId);
+        if(monitorTask != null){
+            boolean ok = monitorTaskEtcdService.delete(monitorTask.getTaskName());
+            if(ok){
+                //删除当前监控任务
+                monitorTaskMapper.deleteByPrimaryKey(taskId);
+                return ok;
+            }
+        }
+        return false;
     }
 
 

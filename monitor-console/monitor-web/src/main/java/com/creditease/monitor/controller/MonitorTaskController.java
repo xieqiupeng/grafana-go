@@ -44,18 +44,19 @@ public class MonitorTaskController {
 
     //启动/暂停
     @RequestMapping("/startorpausetask")
-    public Response startOrPauseTask(@YXRequestParam(required = true,errmsg = "服务端启动/暂停任务状态发生错误") Integer taskId){
+    public Response startOrPauseTask(@YXRequestParam(required = true,errmsg = "服务端启动/暂停任务状态发生错误") Integer taskId,
+                                     @YXRequestParam(required = true,errmsg = "服务端启动/暂停任务状态发生错误") Byte status){
         logger.info("/startorpausetask param:taskId:{}",taskId);
-        monitorTaskService.startOrPauseTask(taskId);
-        return Response.ok(null);
+        boolean ok = monitorTaskService.startOrPauseTask(taskId,status);
+        return Response.ok(ok);
     }
 
     //删除
     @RequestMapping("/deletetask")
     public Response deleteTask(@YXRequestParam(required = true,errmsg = "服务端删除任务发生错误") Integer taskId){
         logger.info("/deletetask param:taskId:{}",taskId);
-        monitorTaskService.deleteTask(taskId);
-        return Response.ok(null);
+        boolean ok = monitorTaskService.deleteTask(taskId);
+        return Response.ok(ok);
     }
 
 //
