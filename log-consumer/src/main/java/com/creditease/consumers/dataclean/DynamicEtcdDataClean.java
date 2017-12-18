@@ -6,6 +6,8 @@ import mousio.client.promises.ResponsePromise;
 import mousio.client.retry.RetryWithExponentialBackOff;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
+import mousio.etcd4j.responses.EtcdErrorCode;
+import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -73,25 +75,28 @@ public class DynamicEtcdDataClean implements IDataClean {
                         try {
                             Throwable es = response.getException();
                             if (es != null) {
-                                logger.error("watch error", es);
-                                logger.info("全量数据重新更新开始");
-                                for (;;) {
-                                    try {
-                                        EtcdResponsePromise<EtcdKeysResponse> promise = etcdClient.getDir(watchPath).recursive()
-                                                .setRetryPolicy(RetryWithExponentialBackOff.DEFAULT).send();
-                                        EtcdKeysResponse totalResponse = promise.get();
-                                        refreshCleanRule(totalResponse.getNode().getNodes());
-                                        index = totalResponse.etcdIndex + 1;
-                                        break;
-                                    } catch (Exception e) {
-                                        logger.error("全量数据更新异常", e);
+                                //如果是The event in requested index is outdated and cleared 则进行全量更新
+                                if(es instanceof EtcdException && ((EtcdException) es).getErrorCode() == EtcdErrorCode.EventIndexCleared){
+                                    logger.error("watch error", es);
+                                    logger.info("全量数据重新更新开始");
+                                    for (;;) {
                                         try {
-                                            Thread.sleep(2000);
-                                        }catch (Exception ex){}
-                                        logger.error("全量数据重新更新重试开始", e);
+                                            EtcdResponsePromise<EtcdKeysResponse> promise = etcdClient.getDir(watchPath).recursive()
+                                                    .setRetryPolicy(RetryWithExponentialBackOff.DEFAULT).send();
+                                            EtcdKeysResponse totalResponse = promise.get();
+                                            refreshCleanRule(totalResponse.getNode().getNodes());
+                                            index = totalResponse.etcdIndex + 1;
+                                            break;
+                                        } catch (Exception e) {
+                                            logger.error("全量数据更新异常", e);
+                                            try {
+                                                Thread.sleep(2000);
+                                            }catch (Exception ex){}
+                                            logger.error("全量数据重新更新重试开始", e);
+                                        }
                                     }
+                                    logger.info("全量数据重新更新结束");
                                 }
-                                logger.info("全量数据重新更新结束");
                             } else {
                                 logger.info("增量数据更新开始");
                                 EtcdKeysResponse keysResponse = response.getNow();
