@@ -1,4 +1,4 @@
-package com.creditease.monitor.etcd.config.entity;
+package com.creditease.monitor.etcd.entity;
 
 import java.util.List;
 

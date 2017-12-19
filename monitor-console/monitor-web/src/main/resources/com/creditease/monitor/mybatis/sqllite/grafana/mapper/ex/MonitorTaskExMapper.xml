@@ -23,4 +23,10 @@
     from monitor_task
     where task_name like #{taskName}
   </select>
+  <select id="selectOneByTaskName" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM monitor_task
+    WHERE task_name = #{taskName}
+  </select>
 </mapper>

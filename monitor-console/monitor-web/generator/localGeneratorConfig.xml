@@ -15,9 +15,9 @@
 		</commentGenerator>
 
 		<!-- 数据库连接信息 -->
-		<jdbcConnection driverClass="org.sqlite.JDBC"
-			connectionURL="jdbc:sqlite:E:\grafana.db"
-			userId="" password="">
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://10.100.140.12:3306/monitor"
+			userId="root" password="fintech123">
 		</jdbcConnection>
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
@@ -25,26 +25,26 @@
 
 		<!-- po实体代码位置 -->
 		<javaModelGenerator targetPackage="com.creditease.monitor.mybatis.sqllite.grafana.po"
-			targetProject="D:\ideaWorkSpace\monitor\monitor-web\src\main\java">
+			targetProject="D:\ideaWorkSpace\monitor\monitor-console\monitor-web\src\main\java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 		<!-- sql代码的xml映射文件位置 -->
 		<sqlMapGenerator targetPackage="com.creditease.monitor.mybatis.sqllite.grafana.mapper"
-			targetProject="D:\ideaWorkSpace\monitor\monitor-web\src\main\resources">
+			targetProject="D:\ideaWorkSpace\monitor\monitor-console\monitor-web\src\main\resources">
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- mapper接口位置 -->
 		<javaClientGenerator type="XMLMAPPER" targetPackage="com.creditease.monitor.mybatis.sqllite.grafana.mapper"
-			targetProject="D:\ideaWorkSpace\monitor\monitor-web\src\main\java">
+			targetProject="D:\ideaWorkSpace\monitor\monitor-console\monitor-web\src\main\java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 		
-		<table tableName="star" domainObjectName="Star"
+		<table tableName="monitor_task" domainObjectName="MonitorTask"
 			enableSelectByExample="false" enableDeleteByExample="false"
 			enableCountByExample="false"  enableUpdateByExample="false">
 			<property name="useActualColumnNames" value="false" />
-			<generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ROWID()" identity="true" />
+			<generatedKey column="id" sqlStatement="mysql" identity="true" />
 			<columnRenamingRule searchString="^C_" replaceString="" />
 		</table>
 	</context>

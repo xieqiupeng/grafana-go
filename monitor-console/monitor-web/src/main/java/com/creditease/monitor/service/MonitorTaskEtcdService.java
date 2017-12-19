@@ -1,7 +1,7 @@
 package com.creditease.monitor.service;
 
 import com.alibaba.fastjson.JSON;
-import com.creditease.monitor.etcd.config.entity.MonitorNoteDataEntity;
+import com.creditease.monitor.etcd.entity.MonitorNoteDataEntity;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;

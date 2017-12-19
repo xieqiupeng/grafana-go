@@ -11,7 +11,7 @@ import java.util.List;
 public class generatorTool {
 
     public static void main(String[] args) throws Exception{
-        String generatorConfigXml = "D:/ideaWorkSpace/monitor/monitor-web/generator/localGeneratorConfig.xml";
+        String generatorConfigXml = "D:/ideaWorkSpace/monitor/monitor-console/monitor-web/generator/localGeneratorConfig.xml";
         List<String> warnings = new ArrayList<String>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(new File(generatorConfigXml));
