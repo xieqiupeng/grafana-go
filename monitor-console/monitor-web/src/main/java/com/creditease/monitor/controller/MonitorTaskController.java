@@ -63,8 +63,13 @@ public class MonitorTaskController {
             return Response.ok(true);
         }
         monitorTask.setStatus(status);
-        boolean ok = monitorTaskService.startOrPauseTask(monitorTask);
-        return Response.ok(ok);
+        try {
+            boolean ok = monitorTaskService.startOrPauseTask(monitorTask);
+            return Response.ok(ok);
+        }catch (MonitorTaskException e){
+            logger.error("startOrPauseTask error param:taskName:{},status={}",taskName,status);
+            return Response.fail(e.getErrorCode(),e.getMessage());
+        }
     }
 
     //删除
@@ -130,14 +135,9 @@ public class MonitorTaskController {
             logger.info("addtask taskName={} has exists",taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_HAS_EXISTS);
         }
-        try {
-            boolean ok = monitorTaskService.addTask(taskName,cutTemplate,dataSourceLog,dataSourceServerIp,isMonitorTomcatServer,tomcatServerHost);
-            logger.info("addtask end taskName={},result={}",taskName,ok);
-            return Response.ok(ok);
-        }catch (MonitorTaskException e){
-            logger.info("addtask error taskName={}",taskName);
-            return Response.fail(e.getErrorCode(),e.getMessage());
-        }
+        boolean ok = monitorTaskService.addTask(taskName,cutTemplate,dataSourceLog,dataSourceServerIp,isMonitorTomcatServer,tomcatServerHost);
+        logger.info("addtask end taskName={},result={}",taskName,ok);
+        return Response.ok(ok);
     }
 
     /**
@@ -168,14 +168,9 @@ public class MonitorTaskController {
             logger.info("edittask fail taskName={} is starting",taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
-        try {
-            boolean ok = monitorTaskService.editTask(monitorTask.getId(),cutTemplate,dataSourceLog,dataSourceServerIp,isMonitorTomcatServer,tomcatServerHost);
-            logger.info("edittask end taskName={},result={}",taskName,ok);
-            return Response.ok(ok);
-        }catch (MonitorTaskException e){
-            logger.info("edittask error taskName={}",taskName);
-            return Response.fail(e.getErrorCode(),e.getMessage());
-        }
+        boolean ok = monitorTaskService.editTask(monitorTask.getId(),cutTemplate,dataSourceLog,dataSourceServerIp,isMonitorTomcatServer,tomcatServerHost);
+        logger.info("edittask end taskName={},result={}",taskName,ok);
+        return Response.ok(ok);
     }
 
 }
