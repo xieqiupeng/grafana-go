@@ -1,8 +1,12 @@
 package com.creditease.monitor.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.User;
 import com.creditease.monitor.service.MonitorTaskService;
+import com.creditease.monitor.vo.CutExampleVo;
+import com.creditease.response.BaseResultCode;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
 import com.github.pagehelper.PageInfo;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,6 +62,28 @@ public class MonitorTaskController {
         logger.info("/deletetask param:taskId:{}",taskId);
         boolean ok = monitorTaskService.deleteTask(taskId);
         return Response.ok(ok);
+    }
+
+    /**
+     * 数据清洗
+     * @param data 数据
+     * @param dataCleanRule 清洗规则
+     * @return
+     */
+    @RequestMapping("/dataClean")
+    public Response dataClean(@YXRequestParam(required = true,errmsg = "数据为空") String data,
+                              @YXRequestParam(required = true,errmsg = "数据为空") String dataCleanRule){
+        logger.info("数据清洗开始 data={},dataCleanRule={}",data,dataCleanRule);
+        try {
+            String str = data.trim();
+            List<String> monitorDates = Arrays.asList(str.split("\\r\\n"));
+            DataCleanRuleEntity dataCleanRuleEntity = JSON.parseObject(dataCleanRule, DataCleanRuleEntity.class);
+            List<CutExampleVo> vos = monitorTaskService.dataClean(monitorDates,dataCleanRuleEntity);
+            logger.info("数据清洗完成 data={},dataCleanRule={}",data,dataCleanRule);
+            return Response.ok(vos);
+        }catch (Exception e){
+            return Response.fail(BaseResultCode.COMMON_SYSTEM_ERROR,"数据清洗异常");
+        }
     }
 
 //

@@ -1,15 +1,21 @@
 package com.creditease.monitor.service;
 
+import com.creditease.monitor.dataclean.DataCleanRuleEntity;
+import com.creditease.monitor.dataclean.DataCleanUtil;
+import com.creditease.monitor.dataclean.IDataCleanRule;
 import com.creditease.monitor.enums.MonitorTaskStatus;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.MonitorTaskMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
+import com.creditease.monitor.vo.CutExampleVo;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,6 +108,24 @@ public class MonitorTaskService {
         return false;
     }
 
+    /**
+     * 数据清洗
+     * @param monitorDates
+     * @param dataCleanRuleEntity
+     * @return
+     */
+    public List<CutExampleVo> dataClean(List<String> monitorDates,DataCleanRuleEntity dataCleanRuleEntity){
+        List<CutExampleVo> vos = new ArrayList<>();
+        if(monitorDates != null && !monitorDates.isEmpty() && dataCleanRuleEntity != null){
+            IDataCleanRule dataCleanRule = DataCleanUtil.getDataCleanRule(dataCleanRuleEntity);
+            monitorDates.forEach(monitorDate->{
+                if(StringUtils.isNotBlank(monitorDate)){
+                    vos.addAll(dataCleanRule.clean(monitorDate));
+                }
+            });
+        }
+        return vos;
+    }
 
     /**
      * 预处理
