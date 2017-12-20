@@ -90,11 +90,11 @@ public class MonitorTaskController {
         logger.info("/deleteTask param:taskName:{}", taskName);
         MonitorTask monitorTask = monitorTaskService.selectOneByTaskName(taskName);
         if(monitorTask == null){
-            logger.info("edittask fail taskName={} not exists",taskName);
+            logger.info("deleteTask fail taskName={} not exists",taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
         if(MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()){
-            logger.info("edittask fail taskName={} is starting",taskName);
+            logger.info("deleteTask fail taskName={} is starting",taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
         boolean ok = monitorTaskService.deleteTask(monitorTask.getId());
@@ -134,11 +134,11 @@ public class MonitorTaskController {
         logger.info("addTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
                 monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
         if(monitorTaskService.isExists(monitorTask.getTaskName())){
-            logger.info("addtask taskName={} has exists",monitorTask.getTaskName());
+            logger.info("addTask taskName={} has exists",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_HAS_EXISTS);
         }
         boolean ok = monitorTaskService.addTask(monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
-        logger.info("addtask end taskName={},result={}",monitorTask.getTaskName(),ok);
+        logger.info("addTask end taskName={},result={}",monitorTask.getTaskName(),ok);
         return Response.ok(ok);
     }
 
@@ -155,15 +155,15 @@ public class MonitorTaskController {
 
         MonitorTask monitorTaskDB = monitorTaskService.selectOneByTaskName(monitorTask.getTaskName());
         if(monitorTaskDB == null){
-            logger.info("edittask fail taskName={} not exists",monitorTask.getTaskName());
+            logger.info("editTask fail taskName={} not exists",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
         if(MonitorTaskConstant.MonitorTaskStatus.START == monitorTaskDB.getStatus()){
-            logger.info("edittask fail taskName={} is starting",monitorTask.getTaskName());
+            logger.info("editTask fail taskName={} is starting",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
         boolean ok = monitorTaskService.editTask(monitorTaskDB.getId(),monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
-        logger.info("edittask end taskName={},result={}",monitorTask.getTaskName(),ok);
+        logger.info("editTask end taskName={},result={}",monitorTask.getTaskName(),ok);
         return Response.ok(ok);
     }
 
