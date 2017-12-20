@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.dataclean.DataCleanUtil;
 import com.creditease.monitor.dataclean.IDataCleanRule;
-import com.creditease.monitor.enums.MonitorTaskConstant;
+import com.creditease.monitor.constant.MonitorTaskConstant;
 import com.creditease.monitor.exception.MonitorTaskException;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;

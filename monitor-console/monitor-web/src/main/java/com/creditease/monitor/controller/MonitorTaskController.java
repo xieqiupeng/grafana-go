@@ -2,7 +2,7 @@ package com.creditease.monitor.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.creditease.monitor.dataclean.DataCleanRuleEntity;
-import com.creditease.monitor.enums.MonitorTaskConstant;
+import com.creditease.monitor.constant.MonitorTaskConstant;
 import com.creditease.monitor.exception.MonitorTaskException;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
 import com.creditease.monitor.response.ResponseCode;
@@ -75,8 +75,13 @@ public class MonitorTaskController {
             return Response.ok(true);
         }
         monitorTask.setStatus(status);
-        boolean ok = monitorTaskService.startOrPauseTask(monitorTask);
-        return Response.ok(ok);
+        try {
+            boolean ok = monitorTaskService.startOrPauseTask(monitorTask);
+            return Response.ok(ok);
+        }catch (MonitorTaskException e){
+            logger.error("startOrPauseTask error param:taskName:{},status={}",taskName,status);
+            return Response.fail(e.getErrorCode(),e.getMessage());
+        }
     }
 
     //删除
@@ -100,7 +105,7 @@ public class MonitorTaskController {
      * 数据清洗
      *
      * @param data          数据
-     * @param dataCleanRuleEntity 清洗规则
+     * @param dataCleanRule 清洗规则
      * @return
      */
     @RequestMapping("/dataClean")
@@ -112,7 +117,7 @@ public class MonitorTaskController {
             List<String> monitorDates = Arrays.asList(str.split("\\r\\n"));
             DataCleanRuleEntity dataCleanRuleEntity = JSON.parseObject(dataCleanRule, DataCleanRuleEntity.class);
             List<CutExampleVo> vos = monitorTaskService.dataClean(monitorDates, dataCleanRuleEntity);
-            logger.info("数据清洗完成 data={},dataCleanRule={}", data, dataCleanRuleEntity);
+            logger.info("数据清洗完成 data={},dataCleanRule={}", data, dataCleanRule);
             return Response.ok(vos);
         } catch (Exception e) {
             return Response.fail(BaseResultCode.COMMON_SYSTEM_ERROR, "数据清洗异常");
@@ -132,14 +137,9 @@ public class MonitorTaskController {
             logger.info("addtask taskName={} has exists",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_HAS_EXISTS);
         }
-        try {
-            boolean ok = monitorTaskService.addTask(monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
-            logger.info("addtask end taskName={},result={}",monitorTask.getTaskName(),ok);
-            return Response.ok(ok);
-        }catch (MonitorTaskException e){
-            logger.info("addtask error taskName={}",monitorTask.getTaskName());
-            return Response.fail(e.getErrorCode(),e.getMessage());
-        }
+        boolean ok = monitorTaskService.addTask(monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+        logger.info("addtask end taskName={},result={}",monitorTask.getTaskName(),ok);
+        return Response.ok(ok);
     }
 
     /**
@@ -162,14 +162,9 @@ public class MonitorTaskController {
             logger.info("edittask fail taskName={} is starting",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
-        try {
-            boolean ok = monitorTaskService.editTask(monitorTaskDB.getId(),monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
-            logger.info("editTask end taskName={},result={}",monitorTask.getTaskName(),ok);
-            return Response.ok(ok);
-        }catch (MonitorTaskException e){
-            logger.info("editTask error taskName={}",monitorTask.getTaskName());
-            return Response.fail(e.getErrorCode(),e.getMessage());
-        }
+        boolean ok = monitorTaskService.editTask(monitorTaskDB.getId(),monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+        logger.info("edittask end taskName={},result={}",monitorTask.getTaskName(),ok);
+        return Response.ok(ok);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.creditease.monitor.enums;
+package com.creditease.monitor.constant;
 
 public class MonitorTaskConstant {
 
