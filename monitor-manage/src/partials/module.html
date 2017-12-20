@@ -2,8 +2,8 @@
 
         <input type="text" class="bigtext" name="searchTaskName" id="searchTaskName" placeholder=" 根据任务名称模糊查找" ng-model="searchTaskName"></input>
         <input type="button" value="搜索" ng-click="searchFunction(ctrl.serverHost)" />
-        <input type="button" value="新增" id="showAddMonitorTaskModal"/>
-
+        <label hidden id="serverHost">{{ctrl.serverHost}}</label>
+        <input type="button" value="新增" id="showAddMonitorTaskModal" />
 
     <br/>
     <table border="2" width="100%" align="center">
@@ -28,11 +28,12 @@
             <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td  align="center">
-                <input type="button" value="暂停" ng-if="task.status=='0'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
-                <input type="button" value="启动" ng-if="task.status=='1'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(task.id)"/>
+                <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(ctrl.serverHost,task.taskName,1)"/>
+                <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(ctrl.serverHost,task.taskName,0)"/>
             </td>
-            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="editTask(task.id)"/></td>
-            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(task.id)"/></td>
+            <td  align="center"><input type="button" value="编辑" class="btn btn-primary" id="{{task.taskName}}" onclick="showEditMonitorTaskDialog(this.id)"/></td>
+            <!--<td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="editTask(task.id)"/></td>-->
+            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(ctrl.serverHost,task.taskName)"/></td>
         </tr>
     </table>
     <br/>
@@ -47,21 +48,22 @@
         <option value="15">15
         <option value="20">20
     </select>条
-    <div id="dialog" title="创建监控任务" style="background-color: #4cae4c">
-        <div class="row" >
+    <div id="monitorTaskDialog" title="编辑监控任务" style="background-color: #4cae4c">
+        <div class="row" style="border-style:solid; border-width:1px; border-color:#00F" >
             <div class="col-md-6">
+
                 <label for="taskName">任务名称:</label>
-                <input type="text" name="taskName" id="taskName" style="width: 100%" placeholder="请输入任务名称"  >
+                <input type="text" name="taskName" ng-modal="taskName" id="taskName" style="width: 100%" placeholder="请填写任务名称"  >
                 <label for="dataSourceServerIp">数据源Ip:</label>
-                <input type="text" name="dataSourceServerIp" id="dataSourceServerIp" style="width: 100%" value="" placeholder="请输入数据源ip,多个用英文逗号分隔">
+                <input type="text" name="dataSourceServerIp" id="dataSourceServerIp" style="width: 100%" value="" placeholder="请填写数据源ip,多个用英文逗号分隔">
                 <label for="dataSourceLog">数据源文件位置:</label>
-                <input type="text" name="dataSourceLog" id="dataSourceLog" style="width: 100%" value="" placeholder="请输入数据源文件位置" >
+                <input type="text" name="dataSourceLog" id="dataSourceLog" style="width: 100%" value="" placeholder="请填写数据源文件位置" >
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label >是否为tomcat服务器:</label>
-                    <input type="radio" name="isMonitorTomcatServer"  value="false" checked onclick="changeIsMonitorTomcatServer(false)">非tomcat
-                    <input type="radio" name="isMonitorTomcatServer" value="true" onclick="changeIsMonitorTomcatServer(true)">是tomcat
+                    <input type="radio" name="isMonitorTomcatServer"  value="1" checked onclick="changeIsMonitorTomcatServer(1)">非tomcat
+                    <input type="radio" name="isMonitorTomcatServer" value="0" onclick="changeIsMonitorTomcatServer(0)">是tomcat
                 </div>
 
                 <div class="form-group" id="tomcatServerHostDiv" style="display: none">
@@ -71,144 +73,498 @@
             </div>
         </div>
         <br/>
-        <div class="row">
-            <div class="col-md-4">
-                <select ng-model="textTemplate" ng-init="textTemplate='CommonTextTemplate'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
-                    <option value="CommonTextTemplate">普通切分模板
+        <div class="row" style="border-style:solid; border-width:1px; border-color:#00F">
+            <div class="col-md-6">
+                <select name="template" id="template" size="1" style="width: auto">
+                    <option value="0" selected>普通切分模板
                 </select>
+                <br/>
+                分隔符是否为正则:
+                <input type="radio" name="isRegex"  value="false" >非正则
+                <input type="radio" name="isRegex"  value="true" >是正则
+                <br/>
+                分隔符是否为有序:
+                <input type="radio" name="isOrder"  value="false" >无序
+                <input type="radio" name="isOrder" value="true" >有序
             </div>
-            <div class="col-md-4">
-                 是否为正则:
-                <input type="radio" name="isRegex"  value="false" checked >非正则
-                <input type="radio" name="isRegex" value="true" >是正则
-            </div>
-            <div class="col-md-4">
-                是否为有序:
-                <input type="radio" name="isOrder"  value="false" checked >非有序
-                <input type="radio" name="isOrder" value="true" >是有序
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-md-2">
-                <input type="button" value="新增分隔符" />
-                <table border="2">
+            <div class="col-md-6">
+                <input type="button" value="新增分隔符" onclick="addSeparatorKey()" />
+                <table border="2"  id="separatorKeysTable">
                     <tr>
-                        <th >分隔符</th>
-                        <th >操作</th>
-                    </tr>
-                    <tr>
-                        <td ><input style="width: 80px;"  type="text" value="#"/></td>
-                        <td> <input style="width: 50px;"  type="button" value="删除" /></td>
-                    </tr>
-                    <tr>
-                        <td ><input style="width: 80px;" type="text" value=","/></td>
-                        <td ><input style="width: 50px;" type="button" value="删除" /></td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="col-md-10">
-                <input type="button" value="新增结果列" />
-                <table border="2" align="left">
-                    <tr>
-                        <th>columnSeq</th>
-                        <th>columnName</th>
-                        <th>columnType</th>
-                        <th>format(可为空)</th>
-                        <th>tagOrField</th>
+                        <th>分隔符</th>
                         <th>操作</th>
                     </tr>
+                </table>
+            </div>
+        </div>
+        <br/>
+        <div class="row" style="border-style:solid; border-width:1px; border-color:#00F">
+            <div class="col-md-12">
+                <!--<label><b>填写结果列，以行分隔。每行由columnSeq,columnName,columnType,format,tagOrField构成。
+                    1、columnSeq起始为0；<br/>
+                    2、columnType为boolean,long, double, date之一；<br/>
+                    3、format可以为空串；<br/>
+                    4、tagOrField为tag或field。
+                </b></label>
+                <textarea cols="83" rows="2" id="resultTextArea" placeholder="每行由columnSeq,columnName,columnType,format,tagOrField构成"></textarea>-->
+
+                <input type="button" value="新增结果列" onclick="addResultColumn()" />
+                <table border="2" align="left" id="resultColumnTable">
                     <tr>
-                        <td><input type="text" value="0" style="width: 100%;"/></td>
-                        <td><input type="text" value="id" style="width: 118px;"/></td>
-                        <td>
-                            <select ng-model="columnType" ng-init="columnType='boolean'" size="1" style="width: 100%">
-                                <option value="boolean">boolean</option>
-                                <option value="long">long</option>
-                                <option value="double">double</option>
-                                <option value="date">date</option>
-                            </select>
-                        </td>
-                        <td><input type="text" value="yyyy-MM-dd HH-mm-ss"/></td>
-                        <td>
-                            <select ng-model="tagOrField" ng-init="tagOrField='tag'" size="1" style="width: 100%">
-                                <option value="tag">tag</option>
-                                <option value="field">field</option>
-                            </select>
-                        </td>
-                        <td><input type="button" value="删除" /></td>
+                        <th>列索引(从0起始)</th>
+                        <th>列名称</th>
+                        <th>列类型</th>
+                        <th>格式化(可为空)</th>
+                        <th>标签还是值</th>
+                        <th>操作</th>
                     </tr>
                 </table>
             </div>
         </div>
         <br/>
-        <div class="row">
+        <div class="row" style="border-style:solid; border-width:1px; border-color:#00F">
             <div class="col-md-12">
-                <label for="dataSourceLogSample">输入数据源内容样例:</label>
+                <label for="dataSourceLogSample">输入数据源内容样例，然后点击<input type="button" value="执行解析"  onclick="dataClean()"/></label>
                 <textarea rows="1" cols="20" name="dataSourceLogSample" id="dataSourceLogSample" style="width: 100%" placeholder="请输入一行完整的数据源内容" ></textarea>
             </div>
             <br/>
 
             <br/>
-            <div class="col-md-12">
-                <input type="button" value="执行解析" />
-                <label for="dataSourceLogSampleResult">输出数据源解析结果:</label>
-                <textarea rows="1" cols="20" name="dataSourceLogSample" id="dataSourceLogSampleResult" style="width: 100%" placeholder="输出数据源解析结果" ></textarea>
+            <div class="col-md-12" align="center">
+                <label for="dataSourceLogSampleResultTable">输出数据源解析结果:</label>
+                <table border="2" id="dataSourceLogSampleResultTable" align="center">
+                    <tr>
+                        <th>列名称</th>
+                        <th>列类型</th>
+                        <th>数据源内容</th>
+                    </tr>
+                </table>
             </div>
         </div>
+        <div align="center">
+            <input type="button" value="保存" class="btn btn-primary" ng-click="searchFunction(ctrl.serverHost)" onclick="saveOrUpdateMonitorTask()"/>
+            <input type="button" value="取消" class="btn btn-primary" onclick="closeAddMonitorTaskDialog()"/>
+        </div>
+        <label hidden id="saveOrUpdateContextPath"></label>
     </div>
 </div>
 
-<script>
+
+<script type="text/javascript">
+    //结果列索引
+    var resultColumnIndex=0;
+    //分隔符索引
+    var separatorKeyIndex=0;
+    //解析结果索引
+    var dataSourceLogSampleResultIndex=0;
+
+    //数据清洗
+    function dataClean(){
+
+        //切割模板类型
+        var template=$("#template").val();
+        //是否为正则
+        var isRegex=$("input[name='isRegex']:checked").val();
+        //是否为有序
+        var isOrder=$("input[name='isOrder']:checked").val();
+
+        //请填写分隔符
+        var separatorKeys=new Array();
+        $(".separatorKeyTr").each(function(){
+            var separatorKeyObject=getSeparatorKeyObject($(this).attr('id').substr('separatorKeyTr'.length));
+            separatorKeys.push(separatorKeyObject);
+        });
+
+        //请填写结果列
+        var resultColumns=new Array();
+        $(".resultColumnTr").each(function(){
+            var resultColumnObject=getResultColumnObject($(this).attr('id').substr('resultColumnTr'.length));
+            resultColumns.push(resultColumnObject);
+        });
+
+        //获得切割模板对象
+        var cutTemplateObject=getCutTemplateObject(template,isOrder,isRegex,separatorKeys,resultColumns);
+
+
+
+        //传输数据
+        var dataCleanRule=JSON.stringify(cutTemplateObject);
+        var data="data="+document.getElementById('dataSourceLogSample').value+"&dataCleanRule="+dataCleanRule;
+        //服务器地址
+        var serverHost=document.getElementById('serverHost').innerHTML;
+        $.ajax({
+            "type": "post",
+            "dataType": "json",
+            "data":data,
+            "url" : serverHost+"monitorTask/dataClean",
+            "success": function(result)
+            {
+
+                if(result.resultCode==0){
+                    for(var i=0;i< result.data.length;i++){
+                        console.log(result.data[i].columnName+" "+result.data[i].columnFormat+" "+result.data[i].columnExampleValue);
+                        addDataSourceLogSampleResult(result.data[i].columnName,result.data[i].columnFormat,result.data[i].columnExampleValue);
+                    }
+                }else{
+                    alert('解析失败!具体原因：'+result.resultMsg);
+                }
+            }
+        });
+
+    }
+
+    //新增分隔符
+    function addDataSourceLogSampleResult(columnName,columnFormat,columnExampleValue) {
+        $("#dataSourceLogSampleResultTable").append(
+            '<tr class="dataSourceLogSampleResultTr">' +
+            '   <td>'+columnName+'</td>' +
+            '   <td>'+columnFormat+'</td>' +
+            '   <td>'+columnExampleValue+'</td>' +
+            '</tr>');
+    }
+
+    //新增分隔符
+    function addSeparatorKey() {
+        $("#separatorKeysTable").append(
+            '<tr id="separatorKeyTr'+separatorKeyIndex+'" class="separatorKeyTr">' +
+            '   <td><input id="separatorKey'+separatorKeyIndex+'" type="text" style="width: 100%;"/></td>' +
+            '   <td><input type="button" value="删除" onclick="removeSeparatorKey('+separatorKeyIndex+')" ></input></td>\n' +
+            '</tr>');
+        return separatorKeyIndex++;
+    }
+
+    //新增结果列
+    function addResultColumn() {
+        $("#resultColumnTable").append(
+            '<tr id="resultColumnTr'+resultColumnIndex+'" class="resultColumnTr">' +
+            '   <td><input id="columnSeq'+resultColumnIndex+'" type="text" style="width: 118px;"/></td>' +
+            '   <td><input id="columnName'+resultColumnIndex+'" type="text" style="width: 138px;"/></td>\n' +
+            '   <td>' +
+            '       <select id="columnType'+resultColumnIndex+'" size="1" style="width: 100%">\n' +
+            '            <option value="boolean" selected>boolean</option>\n' +
+            '            <option value="long">long</option>\n' +
+            '            <option value="double">double</option>\n' +
+            '            <option value="string">string</option>\n' +
+            '            <option value="date">date</option>\n' +
+            '       </select>\n' +
+            '   </td>\n' +
+            '   <td><input id="format'+resultColumnIndex+'" type="text" /></td>\n' +
+            '   <td>\n' +
+            '       <select id="tagOrField'+resultColumnIndex+'" size="1" style="width: 100%">\n' +
+            '            <option value="0" selected>tag</option>\n' +
+            '            <option value="1">field</option>\n' +
+            '       </select>\n' +
+            '   </td>\n' +
+            '   <td><input type="button" value="删除" onclick="removeResultColumn('+resultColumnIndex+')"></input></td>\n' +
+            '</tr>');
+        return resultColumnIndex++;
+    }
+
+    function removeSeparatorKey(separatorKey){
+        $("#separatorKeyTr"+separatorKey).remove();
+    }
+
+    function removeResultColumn(resultColumn){
+        $("#resultColumnTr"+resultColumn).remove();
+    }
+
+    function showEditMonitorTaskDialog(taskName) {
+        //清空表单
+        clearMonitorTaskDialog();
+
+        //清除上一次解析结果
+        $(".dataSourceLogSampleResultTr").remove();
+
+        //服务器地址
+        var serverHost=document.getElementById('serverHost').innerHTML;
+        $("#saveOrUpdateContextPath").html('monitorTask/editTask');
+
+
+        $.ajax({
+            "type": "get",
+            "dataType": "json",
+            "data":{'taskName':taskName},
+            "url" : serverHost+"monitorTask/getTaskByTaskName",
+            "success": function(result)
+            {
+                if(result.resultCode==0){
+
+                    result.data.cutTemplate=JSON.parse(result.data.cutTemplate);
+                    //任务名称
+                    document.getElementById('taskName').value=result.data.taskName;
+                    $("#taskName").attr('disabled','disabled');
+
+                    //数据源Ip
+                    document.getElementById('dataSourceServerIp').value=result.data.dataSourceServerIp;
+                    //数据源文件位置
+                    document.getElementById('dataSourceLog').value=result.data.dataSourceLog;
+                    //是否为tomcat服务器 =1非tomcat
+                    setCheckRegex(result.data.isMonitorTomcatServer==1?false:true,"isMonitorTomcatServer");
+                    changeIsMonitorTomcatServer(result.data.isMonitorTomcatServer);
+
+
+                    document.getElementById('tomcatServerHost').value=result.data.tomcatServerHost;
+
+                    //设置切割模板类型
+                    $("#template").val(result.data.cutTemplate.template);
+                    //是否为正则
+                    setCheckRegex(result.data.cutTemplate.separator.isRegex,"isRegex");
+                    //是否为有序
+                    setCheckRegex(result.data.cutTemplate.separator.isOrder,"isOrder");
+
+
+                    //分隔符数组
+                    var separatorKeys=result.data.cutTemplate.separator.separatorKeys;
+                    //新增分隔符
+                    for(var i=0;i<separatorKeys.length;i++){
+                        var currentSeparatorKeyIndex=addSeparatorKey();
+                        initSeparatorKey(currentSeparatorKeyIndex,separatorKeys[i]);
+                    }
+                    //结果列数组
+                    var resultColumns=result.data.cutTemplate.resultColumns;
+                    //新增结果列
+                    for(var i=0;i<resultColumns.length;i++){
+                        var currentResultColumnIndex=addResultColumn();
+                        initResultColumn(currentResultColumnIndex,resultColumns[i]);
+                    }
+
+                    $("#monitorTaskDialog" ).dialog( "open" );
+
+
+                }else{
+                    alert('后台服务失败!具体原因：'+result.resultMsg);
+                }
+            }
+        });
+
+
+    }
+
+    //设置isRegex
+    function setCheckRegex(checkFlag,checkName){
+        if(checkFlag==true){
+            //alert(checkFlag+" "+checkName);
+            $("input[name="+checkName+"]:eq(1)").prop("checked","checked");
+            $("input[name="+checkName+"]:eq(0)").removeAttr("checked");
+        }else if(checkFlag==false){
+            //alert(checkFlag+" "+checkName);
+            $("input[name="+checkName+"]:eq(0)").prop("checked","checked");
+            $("input[name="+checkName+"]:eq(1)").removeAttr("checked");
+        }
+    }
+    function initSeparatorKey(currentSeparatorKeyIndex,separatorKey){
+        //初始化分隔符
+        document.getElementById('separatorKey'+currentSeparatorKeyIndex).value=separatorKey;
+    }
+
+    function initResultColumn(currentResultColumnIndex,resultColumnObject){
+        //初始化结果列
+        document.getElementById('columnSeq'+currentResultColumnIndex).value=resultColumnObject.columnSeq;
+        document.getElementById('columnName'+currentResultColumnIndex).value=resultColumnObject.columnName;
+        $("#columnType"+currentResultColumnIndex).val(resultColumnObject.columnType);
+        document.getElementById('format'+currentResultColumnIndex).value=resultColumnObject.format;
+        $("#tagOrField"+currentResultColumnIndex).val(resultColumnObject.tagOrField);
+    }
+
+
+    function closeAddMonitorTaskDialog() {
+        $( "#monitorTaskDialog" ).dialog( "close" );
+    }
     function changeIsMonitorTomcatServer(judgeIsMonitorTomcatServer){
-        if(judgeIsMonitorTomcatServer==true){
+        if(judgeIsMonitorTomcatServer==0){
             $("#tomcatServerHostDiv").css({"display":"block"});
         }else{
             $("#tomcatServerHostDiv").css({"display":"none"});
         }
     }
 
+    //获得结果列对象
+    function getResultColumnObject(resultColumnIndex){
+        var resultColumnObject=new Object();
+        resultColumnObject.columnSeq=parseInt($("#columnSeq"+resultColumnIndex).val());
+        resultColumnObject.columnName=$("#columnName"+resultColumnIndex).val();
+        resultColumnObject.columnType=$("#columnType"+resultColumnIndex).val();
+        resultColumnObject.format=$("#format"+resultColumnIndex).val();
+        resultColumnObject.tagOrField=parseInt($("#tagOrField"+resultColumnIndex).val());
+        console.log('resultColumnIndex '+resultColumnIndex+"  "+JSON.stringify(resultColumnObject));
+        return resultColumnObject;
+    }
+
+    //获得分隔符对象
+    function getSeparatorKeyObject(separatorKeyIndex){
+        return $("#separatorKey"+separatorKeyIndex).val();
+    }
+
+
+
+    //保存或者更新
+    function saveOrUpdateMonitorTask() {
+
+        //任务名称
+        var taskName=document.getElementById('taskName').value;
+        if(taskName==null||taskName.trim()==''){
+            alert('请填写任务名称!');
+            return ;
+        }
+        //数据源Ip
+        var dataSourceServerIp=document.getElementById('dataSourceServerIp').value;
+        if(dataSourceServerIp==null||dataSourceServerIp.trim()==''){
+            alert('请填写数据源Ip!');
+            return ;
+        }
+        //数据源文件位置
+        var dataSourceLog=document.getElementById('dataSourceLog').value;
+        if(dataSourceLog==null||dataSourceLog.trim()==''){
+            alert('请填写数据源文件位置!');
+            return ;
+        }
+
+        //是否为tomcat服务器
+        var isMonitorTomcatServer=$("input[name='isMonitorTomcatServer']:checked").val();
+        var tomcatServerHost='';
+        if(isMonitorTomcatServer==0){
+            tomcatServerHost=document.getElementById('tomcatServerHost').value;
+            if(tomcatServerHost==null||tomcatServerHost.trim()==''){
+                alert('请填写tomcat服务器地址!');
+                return ;
+            }
+        }
+
+
+        //切割模板类型
+        var template=$("#template").val();
+        //是否为正则
+        var isRegex=$("input[name='isRegex']:checked").val();
+        //是否为有序
+        var isOrder=$("input[name='isOrder']:checked").val();
+
+        //请填写分隔符
+        var separatorKeys=new Array();
+        $(".separatorKeyTr").each(function(){
+            var separatorKeyObject=getSeparatorKeyObject($(this).attr('id').substr('separatorKeyTr'.length));
+            separatorKeys.push(separatorKeyObject);
+        });
+
+        //请填写结果列
+        var resultColumns=new Array();
+        $(".resultColumnTr").each(function(){
+            var resultColumnObject=getResultColumnObject($(this).attr('id').substr('resultColumnTr'.length));
+            resultColumns.push(resultColumnObject);
+        });
+
+        //获得切割模板对象
+        var cutTemplateObject=getCutTemplateObject(template,isOrder,isRegex,separatorKeys,resultColumns);
+        //服务器地址
+        var serverHost=document.getElementById('serverHost').innerHTML;
+
+        var saveOrUpdateContextPath=$("#saveOrUpdateContextPath").html();
+        //传输数据
+        var data=JSON.stringify({
+            taskName:taskName,
+            dataSourceServerIp:dataSourceServerIp,
+            dataSourceLog:dataSourceLog,
+            isMonitorTomcatServer:isMonitorTomcatServer,
+            tomcatServerHost:tomcatServerHost,
+            cutTemplate:cutTemplateObject
+        });
+        console.log('data:'+data);
+        $.ajax({
+            "type": "post",
+            "dataType": "json",
+            "data":data,
+            "contentType": "application/json; charset=utf-8",
+            "url" : serverHost+saveOrUpdateContextPath,
+            "success": function(result)
+            {
+                if(result.resultCode==0){
+                    alert('保存成功!');
+                    $( "#monitorTaskDialog" ).dialog( "close" );
+                }else{
+                    alert('保存失败!具体原因：'+result.resultMsg);
+                }
+            }
+        });
+    }
+
+    function clearMonitorTaskDialog() {
+
+        //任务名称
+        document.getElementById('taskName').value='';
+        //数据源Ip
+        document.getElementById('dataSourceServerIp').value='';
+        //数据源文件位置
+        document.getElementById('dataSourceLog').value='';
+
+        document.getElementById('tomcatServerHost').value='';
+
+        //切割模板类型-默认普通文本类型
+        $("input[name='template']").val(0);
+//        //非正则
+//        $("input[name='isRegex']").val(false);
+//        //无序
+//        $("input[name='isOrder']").val(false);
+
+        setCheckRegex(false,"isMonitorTomcatServer");
+
+        //是否为正则
+        setCheckRegex(false,"isRegex");
+        //是否为有序
+        setCheckRegex(false,"isOrder");
+
+
+
+
+        //清除分隔符
+        $(".separatorKeyTr").each(function(){
+            removeSeparatorKey($(this).attr('id').substr("separatorKeyTr".length));
+        });
+
+        //清除结果列
+        $(".resultColumnTr").each(function(){
+            removeResultColumn($(this).attr('id').substr("resultColumnTr".length));
+        });
+
+        
+    }
+    
+    function getCutTemplateObject(template,isOrder,isRegex,separatorKeys,resultColumns) {
+        //拼接切割模板
+        var cutTemplate=new Object();
+        cutTemplate.template=template;
+
+        var separatorObject=new Object();
+        separatorObject.isOrder=(isOrder=='false'?false:true);
+        separatorObject.isRegex=(isRegex=='false'?false:true);
+        separatorObject.separatorKeys=separatorKeys;
+
+        cutTemplate.separator=separatorObject;
+        cutTemplate.resultColumns=resultColumns;
+        return cutTemplate;
+    }
+
+     //显示新增窗口
     $(function() {
-        $( "#dialog" ).dialog({
+        $( "#monitorTaskDialog" ).dialog({
             autoOpen: false,
             modal: true,
             height: 500,
-            width: 850,
-            buttons: {
-                "创建": function() {
-                    var bValid = true;
-
-                    bValid = bValid && checkLength( name, "username", 3, 16 );
-                    bValid = bValid && checkLength( email, "email", 6, 80 );
-                    bValid = bValid && checkLength( password, "password", 5, 16 );
-                    bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "用户名必须由 a-z、0-9、下划线组成，且必须以字母开头。" );
-                    // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-                    bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-                    bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "密码字段只允许： a-z 0-9" );
-
-                    if ( bValid ) {
-                        $( "#users tbody" ).append( "<tr>" +
-                            "<td>" + name.val() + "</td>" +
-                            "<td>" + email.val() + "</td>" +
-                            "<td>" + password.val() + "</td>" +
-                            "</tr>" );
-                        $( this ).dialog( "close" );
-                    }
-                },
-                "取消": function() {
-                    $( this ).dialog( "close" );
-                }
-            },
-            "取消": function() {
-
-            }
+            width: 750
         });
+
         $( "#showAddMonitorTaskModal" ).click(function() {
-            $( "#dialog" ).dialog( "open" );
+            //清空表单
+             clearMonitorTaskDialog();
+            //清除上一次解析结果
+            $(".dataSourceLogSampleResultTr").remove();
+            $("#saveOrUpdateContextPath").html('monitorTask/addTask');
+            $("#taskName").removeAttr('disabled','disabled');
+            $( "#monitorTaskDialog" ).dialog( "open" );
         });
+
     });
 </script>
+
+
 
 
 
