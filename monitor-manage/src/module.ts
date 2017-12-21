@@ -25,6 +25,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
   /** @ngInject **/
   constructor($scope, $injector, private $http, private uiSegmentSrv) {
+      // super();
       // super($scope, $injector);
     super($scope, $injector);
       // defaults configs
