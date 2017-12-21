@@ -13,3 +13,8 @@ usual command
 4、npm install @types/bootstrap --save-dev
 
 
+目录
+/var/lib/grafana/plugins/monitor-manage
+重启命令
+service grafana-server restart
+
