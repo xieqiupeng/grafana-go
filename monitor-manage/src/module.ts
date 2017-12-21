@@ -14,11 +14,12 @@ import './js/jqui.js';
 import './js/bs.js';
 
 const panelDefaults = {
+    serverHost:'http://127.0.0.1:8080/'
 };
 
 class MonitorManageCtrl extends MetricsPanelCtrl {
   static templateUrl = 'partials/module.html';
-  serverHost="http://127.0.0.1:8080/";
+
   defaults = {
 
   };

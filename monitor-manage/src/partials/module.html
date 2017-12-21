@@ -1,8 +1,8 @@
 <div align="center" ng-controller="ctrl.monitorManageController">
 
         <input type="text" class="bigtext" name="searchTaskName" id="searchTaskName" placeholder=" 根据任务名称模糊查找" ng-model="searchTaskName"></input>
-        <input type="button" value="搜索" ng-click="searchFunction(ctrl.serverHost)" />
-        <label hidden id="serverHost">{{ctrl.serverHost}}</label>
+        <input type="button" value="搜索" ng-click="searchFunction(ctrl.panel.serverHost)" />
+        <label hidden id="serverHost">{{ctrl.panel.serverHost}}</label>
         <input type="button" value="新增" id="showAddMonitorTaskModal" />
 
     <br/>
@@ -28,20 +28,20 @@
             <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td  align="center">
-                <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(ctrl.serverHost,task.taskName,1)"/>
-                <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(ctrl.serverHost,task.taskName,0)"/>
+                <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(ctrl.panel.serverHost,task.taskName,1)"/>
+                <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFuction(ctrl.panel.serverHost,task.taskName,0)"/>
             </td>
             <td  align="center"><input type="button" value="编辑" class="btn btn-primary" id="{{task.taskName}}" onclick="showEditMonitorTaskDialog(this.id)"/></td>
             <!--<td  align="center"><input type="button" value="编辑" class="btn btn-primary" ng-click="editTask(task.id)"/></td>-->
-            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(ctrl.serverHost,task.taskName)"/></td>
+            <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(ctrl.panel.serverHost,task.taskName)"/></td>
         </tr>
     </table>
     <br/>
 
     共{{total}}条&nbsp;&nbsp;
     第{{pageNum}}/{{pages}}页
-    <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction(ctrl.serverHost)" value="上一页">
-    <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction(ctrl.serverHost)" value="下一页">
+    <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction(ctrl.panel.serverHost)" value="上一页">
+    <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction(ctrl.panel.serverHost)" value="下一页">
     每页显示:
     <select ng-model="pageSize" ng-init="pageSize='10'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
         <option value="10">10
@@ -151,7 +151,7 @@
 
     <div id="saveConfirmDialog" title="保存成功!" >
         <div align="center">
-            <input type="button" value="确定" id="closeSaveConfirmDialog" class="btn btn-primary" ng-click="searchFunction(ctrl.serverHost)" />
+            <input type="button" value="确定" id="closeSaveConfirmDialog" class="btn btn-primary" ng-click="searchFunction(ctrl.panel.serverHost)" />
         </div>
     </div>
 
