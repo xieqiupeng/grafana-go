@@ -1,23 +1,15 @@
 package com.creditease.consumers.util;
 
-import com.alibaba.fastjson.JSON;
-import com.creditease.consumers.dataclean.DataCleanRuleEntity;
-import com.creditease.consumers.dataclean.DynamicEtcdDataClean;
-import com.creditease.consumers.dataclean.MonitorNoteDataEntity;
 import mousio.client.retry.RetryWithExponentialBackOff;
 import mousio.etcd4j.EtcdClient;
-import mousio.etcd4j.responses.EtcdAuthenticationException;
-import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.transport.EtcdNettyClient;
 import mousio.etcd4j.transport.EtcdNettyConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 public class EtcdClientUtil {
     private static final Logger logger = LoggerFactory.getLogger(EtcdClientUtil.class);
