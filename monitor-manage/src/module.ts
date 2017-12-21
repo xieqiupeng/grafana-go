@@ -1,6 +1,9 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 //web服务端地址
-var serverUrl='http://localhost:8080/';
+/*var serverUrl='http://localhost:8080/';*/
+
+
+
 import {MetricsPanelCtrl, PanelCtrl} from 'app/plugins/sdk';
 import _ from 'lodash';
 import './css/module.css!';
@@ -46,6 +49,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
   }
 
 
+
   monitorManageController($scope, $http) {
       //查询参数
       $scope.searchTaskName = "";
@@ -59,17 +63,33 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
       $scope.hasPreviousPage=false;//有前一页
       $scope.hasNextPage=false;//有后一页
 
+      //分隔符数组
+      $scope.separatorArray=["*","-","|"];
+
+      $scope.test=function(serverHost){
+          $scope.searchFunction(serverHost);
+      }
+
+
       //搜索功能
       $scope.searchFunction=function(serverHost){
           $scope.taskArray =[];
 
           var param='taskName='+$scope.searchTaskName+"&pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;
           $http({
-              url: serverHost+'monitortask/searchtaskbytaskname'+"?"+param,
+              url: serverHost+'monitorTask/searchTaskByTaskName'+"?"+param,
               method: 'GET'
           }).then((rsp) => {
               console.log("invoke searchFunction ok:", rsp.data.data);
               //设置列表内容
+
+              for(var i=0;i<rsp.data.data.list.length;i++){
+                  if(0==rsp.data.data.list[i].status){
+                      rsp.data.data.list[i].status='启动';
+                  }else if(1==rsp.data.data.list[i].status){
+                      rsp.data.data.list[i].status='暂停';
+                  }
+              }
               $scope.taskArray=rsp.data.data.list;
               //设置分页内容
               $scope.pageNum=rsp.data.data.pageNum; //当前页面
@@ -83,32 +103,32 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
       };
 
       //启动/暂停
-      $scope.startOrPauseTaskFuction=function(id){
-          var param='taskId='+id;
+      $scope.startOrPauseTaskFuction=function(serverHost,taskName,status){
+          var param='taskName='+taskName+'&status='+status;
           $http({
-              url: serverUrl+'monitortask/startorpausetask'+"?"+param,
+              url: serverHost+'monitorTask/startOrPauseTask'+"?"+param,
               method: 'GET'
           }).then((rsp) => {
-              console.log("invoke startorpausetask ok:", rsp.data.resultCode,rsp.data.resultMsg);
+              console.log("invoke startOrPauseTask ok:", rsp.data.resultCode,rsp.data.resultMsg);
               //重新拉取监控任务
-              $scope.searchFunction();
+              $scope.searchFunction(serverHost);
           }, err => {
-              console.log("invoke startorpausetask err:", err);
+              console.log("invoke startOrPauseTask err:", err);
           });
       };
 
       //删除
-      $scope.deleteTaskFunction=function(id){
-          var param='taskId='+id;
+      $scope.deleteTaskFunction=function(serverHost,taskName){
+          var param='taskName='+taskName;
           $http({
-              url: serverUrl+'monitortask/deletetask'+"?"+param,
+              url: serverHost+'monitorTask/deleteTask'+"?"+param,
               method: 'GET'
           }).then((rsp) => {
-              console.log("invoke deletetask ok:", rsp.data.resultCode,rsp.data.resultMsg);
+              console.log("invoke deleteTask ok:", rsp.data.resultCode,rsp.data.resultMsg);
               //重新拉取监控任务
-              $scope.searchFunction();
+              $scope.searchFunction(serverHost);
           }, err => {
-              console.log("invoke startorpausetask err:", err);
+              console.log("invoke deleteTask err:", err);
           });
       };
 
@@ -126,17 +146,29 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
           $scope.searchFunction(serverHost);
       };
 
-      // //上一页
-      // $scope.selectChangePageSize=function(){
-      //     //重新拉取监控任务
-      //     $scope.searchFunction();
-      // };
 
-      // //新增功能
-      // $scope.addFunction=function(){
-      //     alert('controller中add');
-      //     MonitorTaskService.addTask($http);
-      // };
+      // $scope.deleteSeparator=function(index){
+      //   var newSeparatorArray=new Array();
+      //   for(var i=0;i<$scope.separatorArray.length;i++){
+      //       if(i!=index){
+      //           newSeparatorArray.push($scope.separatorArray[i]);
+      //       }
+      //   }
+      //   $scope.separatorArray=newSeparatorArray;
+      // }
+
+      // $scope.chakan=function(){
+      //
+      //     console.log(JSON.stringify($scope.separatorArray));
+      // }
+
+      // $scope.updateSeparator=function(index,text){
+      //     // var id='separatorTableTd'+index;
+      //     console.log(index+"  "+text)
+      //     // var valueText=document.getElementById(id).nodeValue;
+      //     // console.log(valueText);
+      // }
+
 
       // //编辑
       // $scope.editTask=function(id){

@@ -15,6 +15,7 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * @Other: All Copyright @ CreditEase
  */
 @RestController
-@RequestMapping("monitortask")
+@RequestMapping("monitorTask")
 public class MonitorTaskController {
     private static Logger logger = LoggerFactory.getLogger(MonitorTaskController.class);
 
@@ -37,16 +38,27 @@ public class MonitorTaskController {
     private MonitorTaskService monitorTaskService;
 
 
-    //通过taskName搜索
-    @RequestMapping("/searchtaskbytaskname")
-    public Response searchTaskByTaskName(@YXRequestParam(required = false, errmsg = "服务端根据任务名称搜索发生错误(taskName不能为空)") String taskName,
-                                         @YXRequestParam(required = false, errmsg = "服务端根据任务名称搜索发生错误(pageNum不能为空)") Integer pageNum,
-                                         @YXRequestParam(required = false, errmsg = "服务端根据任务名称搜索发生错误(pageSize不能为空)") Integer pageSize) {
-        logger.info("/searchtaskbytaskname param:taskName:{},pageNum:{},pageSize:{}", taskName, pageNum, pageSize);
+    //通过taskName模糊搜索
+    @RequestMapping("/searchTaskByTaskName")
+    public Response searchTaskByTaskName(@YXRequestParam(required = false, errmsg = "服务端根据任务名称模糊搜索发生错误(taskName不能为空)") String taskName,
+                                         @YXRequestParam(required = false, errmsg = "服务端根据任务名称模糊搜索发生错误(pageNum不能为空)") Integer pageNum,
+                                         @YXRequestParam(required = false, errmsg = "服务端根据任务名称模糊搜索发生错误(pageSize不能为空)") Integer pageSize) {
+        logger.info("/searchTaskByTaskName param:taskName:{},pageNum:{},pageSize:{}", taskName, pageNum, pageSize);
         List<MonitorTask> monitorTasksList = monitorTaskService.selectByTaskName(taskName, pageNum, pageSize);
         //分页信息
         return Response.ok(new PageInfo(monitorTasksList));
     }
+
+    //通过taskName查找
+    @RequestMapping("/getTaskByTaskName")
+    public Response getTaskByTaskName(@YXRequestParam(required = false, errmsg = "服务端根据任务名称查找发生错误(taskName不能为空)") String taskName) {
+        logger.info("/getTaskByTaskName param:taskName:{}", taskName);
+        MonitorTask monitorTask = monitorTaskService.selectOneByTaskName(taskName);
+        //分页信息
+        return Response.ok(monitorTask);
+    }
+
+
 
     //启动/暂停
     @RequestMapping("/startOrPauseTask")
@@ -78,11 +90,11 @@ public class MonitorTaskController {
         logger.info("/deleteTask param:taskName:{}", taskName);
         MonitorTask monitorTask = monitorTaskService.selectOneByTaskName(taskName);
         if(monitorTask == null){
-            logger.info("edittask fail taskName={} not exists",taskName);
+            logger.info("deleteTask fail taskName={} not exists",taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
         if(MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()){
-            logger.info("edittask fail taskName={} is starting",taskName);
+            logger.info("deleteTask fail taskName={} is starting",taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
         boolean ok = monitorTaskService.deleteTask(monitorTask.getId());
@@ -97,8 +109,8 @@ public class MonitorTaskController {
      * @return
      */
     @RequestMapping("/dataClean")
-    public Response dataClean(@YXRequestParam(required = true, errmsg = "数据为空") String data,
-                              @YXRequestParam(required = true, errmsg = "数据为空") String dataCleanRule) {
+    public Response dataClean(@YXRequestParam(required = true, errmsg = "测试数据为空") String data,
+                              @YXRequestParam(required = true, errmsg = "清洗规则为空") String  dataCleanRule) {
         logger.info("数据清洗开始 data={},dataCleanRule={}", data, dataCleanRule);
         try {
             String str = data.trim();
@@ -114,62 +126,44 @@ public class MonitorTaskController {
 
     /**
      * 新增监控任务
-     * @param taskName
-     * @param cutTemplate
-     * @param dataSourceLog
-     * @param dataSourceServerIp
-     * @param isMonitorTomcatServer
-     * @param tomcatServerHost
+     * @param monitorTask
      * @return
      */
     @RequestMapping("/addTask")
-    public Response addTask(@YXRequestParam(required = true, errmsg = "数据源名称不能为空") String taskName,
-                            @YXRequestParam(required = true, errmsg = "切割模板不能为空") String cutTemplate,
-                            @YXRequestParam(required = true, errmsg = "日志文件路径不能为空") String dataSourceLog,
-                            @YXRequestParam(required = true, errmsg = "服务器host不能为空") String dataSourceServerIp,
-                            @YXRequestParam(required = true, errmsg = "") Byte isMonitorTomcatServer,
-                            @YXRequestParam(required = false) String tomcatServerHost) {
-        logger.info("addtask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
-                taskName, cutTemplate,dataSourceLog, dataSourceServerIp, isMonitorTomcatServer, tomcatServerHost);
-        if(monitorTaskService.isExists(taskName)){
-            logger.info("addtask taskName={} has exists",taskName);
+    public Response addTask( @RequestBody MonitorTask monitorTask){
+        logger.info("addTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
+                monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+        if(monitorTaskService.isExists(monitorTask.getTaskName())){
+            logger.info("addTask taskName={} has exists",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_HAS_EXISTS);
         }
-        boolean ok = monitorTaskService.addTask(taskName,cutTemplate,dataSourceLog,dataSourceServerIp,isMonitorTomcatServer,tomcatServerHost);
-        logger.info("addtask end taskName={},result={}",taskName,ok);
+        boolean ok = monitorTaskService.addTask(monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+        logger.info("addTask end taskName={},result={}",monitorTask.getTaskName(),ok);
         return Response.ok(ok);
     }
 
     /**
      * 编辑监控任务
-     * @param taskName
-     * @param cutTemplate
-     * @param dataSourceLog
-     * @param dataSourceServerIp
-     * @param isMonitorTomcatServer
-     * @param tomcatServerHost
+     * @param monitorTask
+
      * @return
      */
     @RequestMapping("/editTask")
-    public Response editTask(@YXRequestParam(required = true, errmsg = "数据源名称不能为空") String taskName,
-                             @YXRequestParam(required = true, errmsg = "切割模板不能为空") String cutTemplate,
-                             @YXRequestParam(required = true, errmsg = "日志文件路径不能为空") String dataSourceLog,
-                             @YXRequestParam(required = true, errmsg = "服务器host不能为空") String dataSourceServerIp,
-                             @YXRequestParam(required = true, errmsg = "") Byte isMonitorTomcatServer,
-                             @YXRequestParam(required = false) String tomcatServerHost) {
-        logger.info("edittask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
-                taskName, cutTemplate,dataSourceLog, dataSourceServerIp, isMonitorTomcatServer, tomcatServerHost);
-        MonitorTask monitorTask = monitorTaskService.selectOneByTaskName(taskName);
-        if(monitorTask == null){
-            logger.info("edittask fail taskName={} not exists",taskName);
+    public Response editTask(@RequestBody MonitorTask monitorTask) {
+        logger.info("editTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
+                monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+
+        MonitorTask monitorTaskDB = monitorTaskService.selectOneByTaskName(monitorTask.getTaskName());
+        if(monitorTaskDB == null){
+            logger.info("editTask fail taskName={} not exists",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
-        if(MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()){
-            logger.info("edittask fail taskName={} is starting",taskName);
+        if(MonitorTaskConstant.MonitorTaskStatus.START == monitorTaskDB.getStatus()){
+            logger.info("editTask fail taskName={} is starting",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
-        boolean ok = monitorTaskService.editTask(monitorTask.getId(),cutTemplate,dataSourceLog,dataSourceServerIp,isMonitorTomcatServer,tomcatServerHost);
-        logger.info("edittask end taskName={},result={}",taskName,ok);
+        boolean ok = monitorTaskService.editTask(monitorTaskDB.getId(),monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+        logger.info("editTask end taskName={},result={}",monitorTask.getTaskName(),ok);
         return Response.ok(ok);
     }
 
