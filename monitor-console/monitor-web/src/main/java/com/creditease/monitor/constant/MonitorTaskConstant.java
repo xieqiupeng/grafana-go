@@ -19,4 +19,12 @@ public class MonitorTaskConstant {
         public static final byte NO = 1;
     }
 
+    /***
+     * 监控服务类型
+     */
+    public static class MonitorServerType{
+        /**tomcat服务*/
+        public static final int tomcatServer = 1;
+    }
+
 }

@@ -8,11 +8,59 @@ public class MonitorNoteDataEntity {
     //日志路径
     private List<String> path;
     //IP地址
-    private List<String> ipAddress;
+    private List<MonitorService> services;
+
+    public static class MonitorService{
+
+        private String host;
+
+        private List<ServerTypeParam> serverTypeParams;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public List<ServerTypeParam> getServerTypeParams() {
+            return serverTypeParams;
+        }
+
+        public void setServerTypeParams(List<ServerTypeParam> serverTypeParams) {
+            this.serverTypeParams = serverTypeParams;
+        }
+    }
+
+    /**
+     * 服务类型端口
+     */
+    public static class ServerTypeParam{
+        /**服务类型 参照:MonitorTaskConstant.MonitorServerType*/
+        private int type;
+        /**服务端口*/
+        private List<String> param;
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public List<String> getParam() {
+            return param;
+        }
+
+        public void setParam(List<String> param) {
+            this.param = param;
+        }
+    }
+
     //切割规则存储
     private String cleanRule;
-
-    private List<String> tomcatHostPort;
 
     public String getType() {
         return type;
@@ -30,14 +78,6 @@ public class MonitorNoteDataEntity {
         this.path = path;
     }
 
-    public List<String> getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(List<String> ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
     public String getCleanRule() {
         return cleanRule;
     }
@@ -46,11 +86,11 @@ public class MonitorNoteDataEntity {
         this.cleanRule = cleanRule;
     }
 
-    public List<String> getTomcatHostPort() {
-        return tomcatHostPort;
+    public List<MonitorService> getServices() {
+        return services;
     }
 
-    public void setTomcatHostPort(List<String> tomcatHostPort) {
-        this.tomcatHostPort = tomcatHostPort;
+    public void setServices(List<MonitorService> services) {
+        this.services = services;
     }
 }

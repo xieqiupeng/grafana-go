@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * 监控任务针对ETCD的操作
@@ -26,6 +26,8 @@ public class MonitorTaskEtcdService {
     private static final Logger logger = LoggerFactory.getLogger(MonitorTaskEtcdService.class);
 
     private static final String separator = ",";
+
+    private static final String colon_separator = ":";
 
     @Autowired
     private EtcdClient etcdClient;
@@ -47,13 +49,75 @@ public class MonitorTaskEtcdService {
             String[] pathArr = dataSourceLog.split(separator);
             noteDataEntity.setPath(Arrays.asList(pathArr));
             String[] dataSourceServerIpArr = dataSourceServerIp.split(separator);
-            noteDataEntity.setIpAddress(Arrays.asList(dataSourceServerIpArr));
+            LinkedHashSet<String> ips = new LinkedHashSet<>();
+            for(String ip : dataSourceServerIpArr){
+                ips.add(ip);
+            }
+            //存储HOST,类型，对应IP
+            Map<String, Map<Integer,List<Integer>>> map = new HashMap<>();
+            Map<String,List<Integer>> ipPorts = new HashMap<>();
+            ips.forEach(ip->{
+                map.put(ip,new HashMap<>());
+                ipPorts.put(ip,new ArrayList<>());
+            });
+
             String tomcatServerHost = monitorTask.getTomcatServerHost();
             if(monitorTask.getIsMonitorTomcatServer() != null
                     && MonitorTaskConstant.MonitorTomcatServer.YES == monitorTask.getIsMonitorTomcatServer()
                     && StringUtils.isNotBlank(tomcatServerHost)){
-                noteDataEntity.setTomcatHostPort(Arrays.asList(tomcatServerHost.split(separator)));
+                String[] ipPortsArray = tomcatServerHost.split(separator);
+                for(String ipPortStr : ipPortsArray){
+                    String[] ipPort = ipPortStr.split(colon_separator);
+                    if(ipPort.length > 1){
+                        String ip = ipPort[0];
+                        if(ipPorts.containsKey(ip)){
+                            int port = Integer.parseInt(ipPort[1]);
+                            List<Integer> ports = ipPorts.get(ip);
+                            if(!ports.contains(port)){
+                                List<Integer> list = map.get(ip).get(MonitorTaskConstant.MonitorServerType.tomcatServer);
+                                if(list == null){
+                                    list = new ArrayList<>();
+                                    map.get(ip).put(MonitorTaskConstant.MonitorServerType.tomcatServer,list);
+                                }
+                                list.add(port);
+                                ports.add(port);
+                            }else{
+                                logger.info("host={},port={}重复",ip,port);
+                            }
+                        }
+                    }
+                }
             }
+            if(map.isEmpty()){
+                logger.info("监控节点没有host");
+                return false;
+            }
+            List<MonitorNoteDataEntity.MonitorService> monitorServices = new ArrayList<>();
+            for(Iterator<String> it = map.keySet().iterator();it.hasNext();){
+                String host = it.next();
+                List<MonitorNoteDataEntity.ServerTypeParam> serverTypePorts = new ArrayList<>();
+                Map<Integer,List<Integer>> listMap = map.get(host);
+                for(Iterator<Integer> ite = listMap.keySet().iterator();ite.hasNext();){
+                    Integer type = ite.next();
+                    List<Integer> ports = listMap.get(type);
+                    List<String> params = new ArrayList<>();
+                    ports.forEach(port->{
+                        StringBuffer buffer = new StringBuffer(host);
+                        buffer.append(colon_separator);
+                        buffer.append(port);
+                        params.add(buffer.toString());
+                    });
+                    MonitorNoteDataEntity.ServerTypeParam serverTypePort = new MonitorNoteDataEntity.ServerTypeParam();
+                    serverTypePort.setType(type);
+                    serverTypePort.setParam(params);
+                    serverTypePorts.add(serverTypePort);
+                }
+                MonitorNoteDataEntity.MonitorService monitorService = new MonitorNoteDataEntity.MonitorService();
+                monitorService.setHost(host);
+                monitorService.setServerTypeParams(serverTypePorts);
+                monitorServices.add(monitorService);
+            }
+            noteDataEntity.setServices(monitorServices);
             try {
                 String str = JSON.toJSONString(noteDataEntity);
                 EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcdClient.put(key,str).send();
