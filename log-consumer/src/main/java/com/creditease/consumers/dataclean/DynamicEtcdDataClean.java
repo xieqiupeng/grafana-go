@@ -148,8 +148,6 @@ public class DynamicEtcdDataClean implements IDataClean {
                 logger.info("删除dateSoureName={}成功", dateSoureName);
             } else {
                 JSONObject jsonObject = JSON.parseObject(nodeValue);
-                //MonitorNoteDataEntity noteData = JSON.parseObject(nodeValue,MonitorNoteDataEntity.class);
-                //String cleanRuleStr = noteData.getCleanRule();
                 String cleanRuleStr = jsonObject.getString("cleanRule");
                 if(StringUtils.isNotBlank(cleanRuleStr)){
                     DataCleanRuleEntity dataCleanEntity = JSON.parseObject(cleanRuleStr,DataCleanRuleEntity.class);
