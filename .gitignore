@@ -5,3 +5,6 @@ target/
 *.png
 /monitor-manage/dist/
 
+grafana/
+monitor-log-add/dist/
+monitor-log-add/node_modules/
