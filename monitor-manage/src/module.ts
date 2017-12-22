@@ -1,8 +1,4 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-//web服务端地址
-/*var serverUrl='http://localhost:8080/';*/
-
-
 
 import {MetricsPanelCtrl, PanelCtrl} from 'app/plugins/sdk';
 import _ from 'lodash';
@@ -26,16 +22,13 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
   /** @ngInject **/
   constructor($scope, $injector, private $http, private uiSegmentSrv) {
-      // super();
-      // super($scope, $injector);
+
     super($scope, $injector);
       // defaults configs
       _.defaultsDeep(this.panel, panelDefaults);
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
     this.events.on('panel-initialized', this.render.bind(this));
-
-
   }
 
   onPanelInitalized() {
@@ -96,7 +89,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                   var tomcatServerHostStr="";
                   if(rsp.data.data.list[i].tomcatServerHost!=null&&""!=rsp.data.data.list[i].tomcatServerHost){
                      var tomcatServerHostArray=rsp.data.data.list[i].tomcatServerHost.split(",");
-                     console.log(rsp.data.data.list[i].taskName+" "+tomcatServerHostArray.length);
+
                      for(var j=0;j<tomcatServerHostArray.length;j++){
                          tomcatServerHostStr=tomcatServerHostStr+tomcatServerHostArray[j]+"<br/>";
                      }
@@ -109,7 +102,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                   var dataSourceServerIpStr="";
                   if(rsp.data.data.list[i].dataSourceServerIp!=null&&""!=rsp.data.data.list[i].dataSourceServerIp){
                       var dataSourceServerIpArray=rsp.data.data.list[i].dataSourceServerIp.split(",");
-                      console.log(rsp.data.data.list[i].taskName+" "+dataSourceServerIpArray.length);
+
                       for(var j=0;j<dataSourceServerIpArray.length;j++){
                           dataSourceServerIpStr=dataSourceServerIpStr+dataSourceServerIpArray[j]+"<br/>";
                       }
