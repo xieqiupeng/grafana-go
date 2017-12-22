@@ -18,6 +18,6 @@ usual command
 重启命令
 service grafana-server restart
 
-
+关闭命令
 service grafana-server stop
 

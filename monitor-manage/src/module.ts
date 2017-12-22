@@ -127,6 +127,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
               $scope.hasNextPage=rsp.data.data.hasNextPage;//有后一页
           }, err => {
               console.log("invoke searchFunction err:", err);
+              alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
           });
       };
 
@@ -138,25 +139,44 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
               method: 'GET'
           }).then((rsp) => {
               console.log("invoke startOrPauseTask ok:", rsp.data.resultCode,rsp.data.resultMsg);
-              //重新拉取监控任务
-              $scope.searchFunction(serverHost);
+
+              if(rsp.data.resultCode==0){
+                  //重新拉取监控任务
+                  $scope.searchFunction(serverHost);
+              }else{
+                  alert('启动/暂停失败！具体原因：'+rsp.data.resultMsg+"。");
+              }
+
           }, err => {
               console.log("invoke startOrPauseTask err:", err);
+              alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
           });
       };
 
       //删除
       $scope.deleteTaskFunction=function(serverHost,taskName){
+
+          if(!confirm("确定要删除"+taskName+"吗？"))
+          {
+              return;
+          }
+
           var param='taskName='+taskName;
           $http({
               url: serverHost+'monitorTask/deleteTask'+"?"+param,
               method: 'GET'
           }).then((rsp) => {
               console.log("invoke deleteTask ok:", rsp.data.resultCode,rsp.data.resultMsg);
-              //重新拉取监控任务
-              $scope.searchFunction(serverHost);
+              if(rsp.data.resultCode==0){
+                  //重新拉取监控任务
+                  $scope.searchFunction(serverHost);
+              }else{
+                  alert('删除失败！具体原因：'+rsp.data.resultMsg+"。");
+              }
+
           }, err => {
               console.log("invoke deleteTask err:", err);
+              alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
           });
       };
 
@@ -173,37 +193,6 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
           //重新拉取监控任务
           $scope.searchFunction(serverHost);
       };
-
-
-      // $scope.deleteSeparator=function(index){
-      //   var newSeparatorArray=new Array();
-      //   for(var i=0;i<$scope.separatorArray.length;i++){
-      //       if(i!=index){
-      //           newSeparatorArray.push($scope.separatorArray[i]);
-      //       }
-      //   }
-      //   $scope.separatorArray=newSeparatorArray;
-      // }
-
-      // $scope.chakan=function(){
-      //
-      //     console.log(JSON.stringify($scope.separatorArray));
-      // }
-
-      // $scope.updateSeparator=function(index,text){
-      //     // var id='separatorTableTd'+index;
-      //     console.log(index+"  "+text)
-      //     // var valueText=document.getElementById(id).nodeValue;
-      //     // console.log(valueText);
-      // }
-
-
-      // //编辑
-      // $scope.editTask=function(id){
-      //     alert('controller中add');
-      //     MonitorTaskService.editTask($http,id);
-      // };
-
   }
 }
 
