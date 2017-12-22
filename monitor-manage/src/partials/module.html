@@ -236,7 +236,6 @@
 
                 if(result.resultCode==0){
                     for(var i=0;i< result.data.length;i++){
-                        console.log(result.data[i].columnName+" "+result.data[i].columnFormat+" "+result.data[i].columnExampleValue);
                         addDataSourceLogSampleResult(result.data[i].columnName,result.data[i].columnFormat,result.data[i].columnExampleValue);
                     }
                 }else{
@@ -422,7 +421,6 @@
         resultColumnObject.columnType=$("#columnType"+resultColumnIndex).val();
         resultColumnObject.format=$("#format"+resultColumnIndex).val();
         resultColumnObject.tagOrField=parseInt($("#tagOrField"+resultColumnIndex).val());
-        console.log('resultColumnIndex '+resultColumnIndex+"  "+JSON.stringify(resultColumnObject));
         return resultColumnObject;
     }
 
@@ -522,7 +520,6 @@
             tomcatServerHost:tomcatServerHost,
             cutTemplate:cutTemplateObject
         });
-        console.log('data:'+data);
         $.ajax({
             "type": "post",
             "dataType": "json",
