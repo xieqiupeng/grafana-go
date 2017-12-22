@@ -61,7 +61,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
       $scope.total=0; //总条数
       $scope.pages=0; //总页面
       $scope.pageNum=0; //当前页面
-      $scope.pageSize=10;//页面大小
+      $scope.pageSize=5;//页面大小
       $scope.hasPreviousPage=false;//有前一页
       $scope.hasNextPage=false;//有后一页
 
