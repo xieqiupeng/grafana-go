@@ -25,10 +25,6 @@ public class MonitorTaskEtcdService {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorTaskEtcdService.class);
 
-    private static final String separator = ",";
-
-    private static final String colon_separator = ":";
-
     @Autowired
     private EtcdClient etcdClient;
 
@@ -46,9 +42,9 @@ public class MonitorTaskEtcdService {
             MonitorNoteDataEntity noteDataEntity = new MonitorNoteDataEntity();
             noteDataEntity.setType("log");
             noteDataEntity.setCleanRule(cutTemplate);
-            String[] pathArr = dataSourceLog.split(separator);
+            String[] pathArr = dataSourceLog.split(MonitorTaskConstant.comma);
             noteDataEntity.setPath(Arrays.asList(pathArr));
-            String[] dataSourceServerIpArr = dataSourceServerIp.split(separator);
+            String[] dataSourceServerIpArr = dataSourceServerIp.split(MonitorTaskConstant.comma);
             LinkedHashSet<String> ips = new LinkedHashSet<>();
             for(String ip : dataSourceServerIpArr){
                 ips.add(ip);
@@ -65,9 +61,9 @@ public class MonitorTaskEtcdService {
             if(monitorTask.getIsMonitorTomcatServer() != null
                     && MonitorTaskConstant.MonitorTomcatServer.YES == monitorTask.getIsMonitorTomcatServer()
                     && StringUtils.isNotBlank(tomcatServerHost)){
-                String[] ipPortsArray = tomcatServerHost.split(separator);
+                String[] ipPortsArray = tomcatServerHost.split(MonitorTaskConstant.comma);
                 for(String ipPortStr : ipPortsArray){
-                    String[] ipPort = ipPortStr.split(colon_separator);
+                    String[] ipPort = ipPortStr.split(MonitorTaskConstant.colon);
                     if(ipPort.length > 1){
                         String ip = ipPort[0];
                         if(ipPorts.containsKey(ip)){
@@ -103,7 +99,7 @@ public class MonitorTaskEtcdService {
                     List<String> params = new ArrayList<>();
                     ports.forEach(port->{
                         StringBuffer buffer = new StringBuffer(host);
-                        buffer.append(colon_separator);
+                        buffer.append(MonitorTaskConstant.colon);
                         buffer.append(port);
                         params.add(buffer.toString());
                     });

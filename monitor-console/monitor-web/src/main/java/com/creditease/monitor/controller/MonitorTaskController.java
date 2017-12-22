@@ -1,17 +1,20 @@
 package com.creditease.monitor.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.constant.MonitorTaskConstant;
+import com.creditease.monitor.constant.VerifyUtil;
+import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.exception.MonitorTaskException;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
 import com.creditease.monitor.response.ResponseCode;
 import com.creditease.monitor.service.MonitorTaskService;
 import com.creditease.monitor.vo.CutExampleVo;
+import com.creditease.monitor.vo.EditMonitorTaskVo;
 import com.creditease.response.BaseResultCode;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author: created by zhixinsong2
@@ -130,9 +132,13 @@ public class MonitorTaskController {
      * @return
      */
     @RequestMapping("/addTask")
-    public Response addTask( @RequestBody MonitorTask monitorTask){
+    public Response addTask(@RequestBody EditMonitorTaskVo monitorTask){
         logger.info("addTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
                 monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
+        Response response = paramVerification(monitorTask);
+        if(response != null){
+            return response;
+        }
         if(monitorTaskService.isExists(monitorTask.getTaskName())){
             logger.info("addTask taskName={} has exists",monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_HAS_EXISTS);
@@ -142,6 +148,77 @@ public class MonitorTaskController {
         return Response.ok(ok);
     }
 
+    private Response paramVerification(EditMonitorTaskVo monitorTask){
+        if(StringUtils.isBlank(monitorTask.getTaskName())){
+            return Response.fail(BaseResultCode.COMMON_HTTP_PARAM_RESOVE_OR_VALIDATE_ERROR,"数据源名称不能为空");
+        }
+        if(StringUtils.isBlank(monitorTask.getCutTemplate())){
+            return Response.fail(BaseResultCode.COMMON_HTTP_PARAM_RESOVE_OR_VALIDATE_ERROR,"切割模板不能为空");
+        }
+        if(StringUtils.isBlank(monitorTask.getDataSourceLog())){
+            return Response.fail(BaseResultCode.COMMON_HTTP_PARAM_RESOVE_OR_VALIDATE_ERROR,"数据源日志不能为空");
+        }
+        if(StringUtils.isBlank(monitorTask.getDataSourceServerIp())){
+            return Response.fail(BaseResultCode.COMMON_HTTP_PARAM_RESOVE_OR_VALIDATE_ERROR,"服务器IP不能为空");
+        }
+        String dataSourceServerIp = monitorTask.getDataSourceServerIp();
+        String[] dataSourceServerIpArray = dataSourceServerIp.split(MonitorTaskConstant.comma);
+        Set<String> ips = new HashSet<>();
+        for(String ip : dataSourceServerIpArray){
+            if(!VerifyUtil.isIP(ip)){
+                logger.info("存在无效IP地址,ip={}",ip);
+                return Response.fail(ResponseCode.INVALID_IP,new Object[]{ip});
+            }
+            if(ips.contains(ip)){
+                logger.info("addTask 重复IP={}",ip);
+                return Response.fail(ResponseCode.IP_REPEAT,new Object[]{ip});
+            }
+            ips.add(ip);
+        }
+
+        if(MonitorTaskConstant.MonitorTomcatServer.YES == monitorTask.getIsMonitorTomcatServer()
+                && StringUtils.isNotBlank(monitorTask.getTomcatServerHost())){
+            Map<String,List<Integer>> map = new HashMap<>();
+            String tomcatServerHostStr = monitorTask.getTomcatServerHost();
+            String[] tomcatServerHostArray = tomcatServerHostStr.split(MonitorTaskConstant.comma);
+            for(String tomcatServerHost : tomcatServerHostArray){
+                String[] ipPort = tomcatServerHost.split(MonitorTaskConstant.colon);
+                if(ipPort.length < 1){
+                    logger.info("addTask fail 存在无效的tomcat服务地址 {}",ipPort);
+                    return Response.fail(ResponseCode.INVALID_TOMCAT_ADDRESS,new Object[]{tomcatServerHost});
+                }
+                String ip = ipPort[0];
+                if(!ips.contains(ip)){
+                    logger.info("监控服务地址和服务器地址IP不一致:{}",tomcatServerHost);
+                    return Response.fail(ResponseCode.IP_HAS_DIFFER,new Object[]{tomcatServerHost});
+                }
+                String portStr = ipPort[1];
+                int port = 0;
+                try {
+                    port = Integer.parseInt(portStr);
+                }catch (Exception e){
+                    logger.info("无效端口 port={}",portStr);
+                }
+                if(port <= 0 || port > 65535){
+                    logger.info("存在无效的端口{}",portStr);
+                    return Response.fail(ResponseCode.INVALID_PORT,new Object[]{portStr});
+
+                }
+                List<Integer> list = map.get(ip);
+                if(list == null){
+                    list = new ArrayList<>();
+                    map.put(ip,list);
+                }
+                if(list.contains(port)){
+                    logger.info("存在重复的端口{}",portStr);
+                    return Response.fail(ResponseCode.TOMCAT_ADDRESS_REPEAT,new Object[]{port});
+                }
+                list.add(port);
+            }
+        }
+        return null;
+    }
+
     /**
      * 编辑监控任务
      * @param monitorTask
@@ -149,10 +226,13 @@ public class MonitorTaskController {
      * @return
      */
     @RequestMapping("/editTask")
-    public Response editTask(@RequestBody MonitorTask monitorTask) {
+    public Response editTask(@RequestBody EditMonitorTaskVo monitorTask) {
         logger.info("editTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
                 monitorTask.getTaskName(), monitorTask.getCutTemplate(),monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
-
+        Response response = paramVerification(monitorTask);
+        if(response != null){
+            return response;
+        }
         MonitorTask monitorTaskDB = monitorTaskService.selectOneByTaskName(monitorTask.getTaskName());
         if(monitorTaskDB == null){
             logger.info("editTask fail taskName={} not exists",monitorTask.getTaskName());
