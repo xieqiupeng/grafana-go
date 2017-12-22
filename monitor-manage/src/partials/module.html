@@ -23,8 +23,15 @@
             <td>{{task.id}}</td>
             <td>{{task.taskName}}</td>
             <td>{{task.status}}</td>
-            <td>数据源Ip:{{task.dataSourceServerIp}}:&nbsp;&nbsp;文件位置:{{task.dataSourceLog}}</td>
-            <td>{{task.tomcatServerHost}}</td>
+            <td>
+                <table>
+                    <tr><td>数据源Ip:</td></tr>
+                    <tr><td ng-bind-html="task.dataSourceServerIp"></td></tr>
+                    <tr><td>文件位置:</td></tr>
+                    <tr><td ng-bind-html="task.dataSourceLog"></td></tr>
+                </table>
+            </td>
+            <td ng-bind-html="task.tomcatServerHost"></td>
             <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td  align="center">
@@ -154,21 +161,6 @@
             <input type="button" value="确定" id="closeSaveConfirmDialog" class="btn btn-primary" ng-click="searchFunction(ctrl.panel.serverHost)" />
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </div>
 
 

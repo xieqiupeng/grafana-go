@@ -86,11 +86,37 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
               //设置列表内容
 
               for(var i=0;i<rsp.data.data.list.length;i++){
+                  //处理状态
                   if(0==rsp.data.data.list[i].status){
                       rsp.data.data.list[i].status='启动';
                   }else if(1==rsp.data.data.list[i].status){
                       rsp.data.data.list[i].status='暂停';
                   }
+                  //处理tomcat服务器
+                  var tomcatServerHostStr="";
+                  if(rsp.data.data.list[i].tomcatServerHost!=null&&""!=rsp.data.data.list[i].tomcatServerHost){
+                     var tomcatServerHostArray=rsp.data.data.list[i].tomcatServerHost.split(",");
+                     console.log(rsp.data.data.list[i].taskName+" "+tomcatServerHostArray.length);
+                     for(var j=0;j<tomcatServerHostArray.length;j++){
+                         tomcatServerHostStr=tomcatServerHostStr+tomcatServerHostArray[j]+"<br/>";
+                     }
+                  }
+                  rsp.data.data.list[i].tomcatServerHost=tomcatServerHostStr;
+
+
+
+                  //处理数据源服务器ip
+                  var dataSourceServerIpStr="";
+                  if(rsp.data.data.list[i].dataSourceServerIp!=null&&""!=rsp.data.data.list[i].dataSourceServerIp){
+                      var dataSourceServerIpArray=rsp.data.data.list[i].dataSourceServerIp.split(",");
+                      console.log(rsp.data.data.list[i].taskName+" "+dataSourceServerIpArray.length);
+                      for(var j=0;j<dataSourceServerIpArray.length;j++){
+                          dataSourceServerIpStr=dataSourceServerIpStr+dataSourceServerIpArray[j]+"<br/>";
+                      }
+                  }
+                  rsp.data.data.list[i].dataSourceServerIp=dataSourceServerIpStr;
+
+
               }
               $scope.taskArray=rsp.data.data.list;
               //设置分页内容
