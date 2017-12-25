@@ -51,8 +51,7 @@ public class MonitorTaskService {
         PageHelper.startPage(pageNum, pageSize);
         //执行查询
         List<MonitorTask> monitorTasksList = monitorTaskExMapper.selectByTaskName(taskName);
-        //预处理
-        dealWithMonitorTaskList(monitorTasksList);
+
         return monitorTasksList;
     }
 
@@ -214,21 +213,6 @@ public class MonitorTaskService {
             return true;
         }
         return false;
-    }
-    /**
-     * 预处理
-     * @param monitorTasksList
-     */
-    private void dealWithMonitorTaskList(List<MonitorTask> monitorTasksList){
-//        if(monitorTasksList!=null){
-//            for(int i=0;i<monitorTasksList.size();i++){
-//                if(monitorTasksList.get(i).getStatus().equals(MonitorTaskStatus.START.getValue())){
-//                    monitorTasksList.get(i).setStatus(MonitorTaskStatus.START.getMsg());
-//                }else if (monitorTasksList.get(i).getStatus().equals(MonitorTaskStatus.PAUSE.getValue())){
-//                    monitorTasksList.get(i).setStatus(MonitorTaskStatus.PAUSE.getMsg());
-//                }
-//            }
-//        }
     }
 
 }
