@@ -17,26 +17,37 @@ public class InfluxdbManager {
     private static final String protocol = "http://";
     private InfluxDB influxDB;
     private String database;
-    public InfluxdbManager(String address,String database) {
+
+    public InfluxdbManager(String address, String database) {
         influxDB = InfluxDBFactory.connect(protocol.concat(address));
-        if(!influxDB.databaseExists(database)){
+        if (!influxDB.databaseExists(database)) {
             influxDB.createDatabase(database);
         }
         this.database = database;
     }
 
-    public void insertPoint(List<InfluxdbPo> influxdbPo){
+    public void insertPoint(List<InfluxdbPo> influxdbPo) {
         BatchPoints batchPoints = BatchPoints.database(database).consistency(InfluxDB.ConsistencyLevel.ALL).build();
-        influxdbPo.forEach(po->{
-            Point p = Point.measurement(po.getMeasurement()).time(po.getCreateTime(), TimeUnit.MILLISECONDS).tag(po.getTags()).fields(po.getFields()).build();
+        influxdbPo.forEach(po -> {
+            Point p = Point.measurement(po.getMeasurement())
+                    .time(po.getCreateTime(), TimeUnit.MILLISECONDS)
+                    .tag(po.getTags())
+                    .fields(po.getFields())
+                    .build();
             batchPoints.point(p);
         });
         influxDB.write(batchPoints);
     }
 
-    public void insertPoint(InfluxdbPo influxdbPo){
-        BatchPoints batchPoints = BatchPoints.database(database).consistency(InfluxDB.ConsistencyLevel.ALL).build();
-        Point p = Point.measurement(influxdbPo.getMeasurement()).time(influxdbPo.getCreateTime(), TimeUnit.MILLISECONDS).tag(influxdbPo.getTags()).fields(influxdbPo.getFields()).build();
+    public void insertPoint(InfluxdbPo influxdbPo) {
+        BatchPoints batchPoints = BatchPoints.database(database)
+                .consistency(InfluxDB.ConsistencyLevel.ALL)
+                .build();
+        Point p = Point.measurement(influxdbPo.getMeasurement())
+                .time(influxdbPo.getCreateTime(), TimeUnit.MILLISECONDS)
+                .tag(influxdbPo.getTags())
+                .fields(influxdbPo.getFields())
+                .build();
         batchPoints.point(p);
         influxDB.write(batchPoints);
     }

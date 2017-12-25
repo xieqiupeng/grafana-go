@@ -15,6 +15,7 @@ public class EtcdClientUtil {
     private static final Logger logger = LoggerFactory.getLogger(EtcdClientUtil.class);
     private static final String protocol = "http://";
     private static EtcdClient etcdClient;
+
     static {
         setup();
     }
@@ -29,15 +30,15 @@ public class EtcdClientUtil {
                 EtcdNettyConfig nettyConfig = new EtcdNettyConfig();
                 nettyConfig.setConnectTimeout(ApplicationProperties.getEtcdConnectTimeout());
                 nettyConfig.setMaxFrameSize(ApplicationProperties.getEtcdMaxFrameSize());
-                EtcdNettyClient client= null;
+                EtcdNettyClient client = null;
                 String[] addressArray = ApplicationProperties.getEtcdAddresses().split(",");
                 List<URI> list = new ArrayList<>();
-                for(String address : addressArray){
+                for (String address : addressArray) {
                     list.add(new URI(protocol.concat(address)));
                 }
-                client = new EtcdNettyClient(nettyConfig,list.toArray(new URI[list.size()]));
+                client = new EtcdNettyClient(nettyConfig, list.toArray(new URI[list.size()]));
                 etcdClient = new EtcdClient(client);
-                etcdClient.setRetryHandler(new RetryWithExponentialBackOff(1000,3,5000));
+                etcdClient.setRetryHandler(new RetryWithExponentialBackOff(1000, 3, 5000));
             } catch (Throwable e) {
                 logger.error("Setting up etcdClient fail!", e);
                 System.exit(1);
@@ -46,7 +47,7 @@ public class EtcdClientUtil {
         logger.info("Done.");
     }
 
-    public static EtcdClient getEtcdClient(){
+    public static EtcdClient getEtcdClient() {
         return etcdClient;
     }
 }
