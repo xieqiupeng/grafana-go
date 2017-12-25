@@ -23,8 +23,15 @@
             <td>{{task.id}}</td>
             <td>{{task.taskName}}</td>
             <td>{{task.status}}</td>
-            <td>数据源Ip:{{task.dataSourceServerIp}}:&nbsp;&nbsp;文件位置:{{task.dataSourceLog}}</td>
-            <td>{{task.tomcatServerHost}}</td>
+            <td>
+                <table>
+                    <tr><td>数据源Ip:</td></tr>
+                    <tr><td ng-bind-html="task.dataSourceServerIp"></td></tr>
+                    <tr><td>文件位置:</td></tr>
+                    <tr><td ng-bind-html="task.dataSourceLog"></td></tr>
+                </table>
+            </td>
+            <td ng-bind-html="task.tomcatServerHost"></td>
             <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td  align="center">
@@ -43,10 +50,10 @@
     <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction(ctrl.panel.serverHost)" value="上一页">
     <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction(ctrl.panel.serverHost)" value="下一页">
     每页显示:
-    <select ng-model="pageSize" ng-init="pageSize='10'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
+    <select ng-model="pageSize" ng-init="pageSize='5'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
+        <option value="5">5
         <option value="10">10
         <option value="15">15
-        <option value="20">20
     </select>条
     <div id="monitorTaskDialog" title="编辑监控任务" style="background-color: #4cae4c">
         <div class="row" style="border-style:solid; border-width:1px; border-color:#00F" >
@@ -154,21 +161,6 @@
             <input type="button" value="确定" id="closeSaveConfirmDialog" class="btn btn-primary" ng-click="searchFunction(ctrl.panel.serverHost)" />
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </div>
 
 
@@ -244,7 +236,6 @@
 
                 if(result.resultCode==0){
                     for(var i=0;i< result.data.length;i++){
-                        console.log(result.data[i].columnName+" "+result.data[i].columnFormat+" "+result.data[i].columnExampleValue);
                         addDataSourceLogSampleResult(result.data[i].columnName,result.data[i].columnFormat,result.data[i].columnExampleValue);
                     }
                 }else{
@@ -430,7 +421,6 @@
         resultColumnObject.columnType=$("#columnType"+resultColumnIndex).val();
         resultColumnObject.format=$("#format"+resultColumnIndex).val();
         resultColumnObject.tagOrField=parseInt($("#tagOrField"+resultColumnIndex).val());
-        console.log('resultColumnIndex '+resultColumnIndex+"  "+JSON.stringify(resultColumnObject));
         return resultColumnObject;
     }
 
@@ -530,7 +520,6 @@
             tomcatServerHost:tomcatServerHost,
             cutTemplate:cutTemplateObject
         });
-        console.log('data:'+data);
         $.ajax({
             "type": "post",
             "dataType": "json",
@@ -543,7 +532,7 @@
                     $( "#saveConfirmDialog" ).dialog( "open" );
 
                 }else{
-                    alert('保存失败!具体原因：'+result.resultMsg);
+                    alert('保存失败！具体原因：'+result.resultMsg);
                 }
             }
         });
