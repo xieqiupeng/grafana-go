@@ -4,7 +4,6 @@
         <input type="button" value="搜索" ng-click="searchFunction(ctrl.panel.serverHost)" />
         <label hidden id="serverHost">{{ctrl.panel.serverHost}}</label>
         <input type="button" value="新增" id="showAddMonitorTaskModal" />
-
     <br/>
     <table border="2" width="100%" align="center">
         <tr >
@@ -165,6 +164,7 @@
 
 
 <script type="text/javascript">
+
     //结果列索引
     var resultColumnIndex=0;
     //分隔符索引
@@ -229,6 +229,9 @@
             "dataType": "json",
             "data":data,
             "url" : serverHost+"monitorTask/dataClean",
+            "xhrFields":{
+                withCredentials:true
+            },
             "success": function(result)
             {
                 //清除上一次解析结果
@@ -315,6 +318,9 @@
             "dataType": "json",
             "data":{'taskName':taskName},
             "url" : serverHost+"monitorTask/getTaskByTaskName",
+            "xhrFields":{
+                withCredentials:true
+            },
             "success": function(result)
             {
                 if(result.resultCode==0){
@@ -526,6 +532,9 @@
             "data":data,
             "contentType": "application/json; charset=utf-8",
             "url" : serverHost+saveOrUpdateContextPath,
+            "xhrFields":{
+                withCredentials:true
+            },
             "success": function(result)
             {
                 if(result.resultCode==0){

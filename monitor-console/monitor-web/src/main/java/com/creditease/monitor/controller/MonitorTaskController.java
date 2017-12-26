@@ -21,7 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -46,6 +51,7 @@ public class MonitorTaskController {
                                          @YXRequestParam(required = false, errmsg = "服务端根据任务名称模糊搜索发生错误(pageSize不能为空)") Integer pageSize) {
         logger.info("/searchTaskByTaskName param:taskName:{},pageNum:{},pageSize:{}", taskName, pageNum, pageSize);
         List<MonitorTask> monitorTasksList = monitorTaskService.selectByTaskName(taskName, pageNum, pageSize);
+
         //分页信息
         return Response.ok(new PageInfo(monitorTasksList));
     }
@@ -55,6 +61,7 @@ public class MonitorTaskController {
     public Response getTaskByTaskName(@YXRequestParam(required = false, errmsg = "服务端根据任务名称查找发生错误(taskName不能为空)") String taskName) {
         logger.info("/getTaskByTaskName param:taskName:{}", taskName);
         MonitorTask monitorTask = monitorTaskService.selectOneByTaskName(taskName);
+
         //分页信息
         return Response.ok(monitorTask);
     }
