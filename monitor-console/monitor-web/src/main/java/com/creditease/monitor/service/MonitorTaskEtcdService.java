@@ -124,6 +124,7 @@ public class MonitorTaskEtcdService {
                         .put(ByteSequence.fromString(key),
                                 ByteSequence.fromString(str))
                         .get();
+                etcdClient.close();
                 return true;
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.error("upSert error monitorTask={},errorMsg",
