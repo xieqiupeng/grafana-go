@@ -47,7 +47,7 @@ public class AyncBizLogMessageHandle implements MessageHandler {
                         //日志收集时间
                         Date date = jsonObject.getDate("@timestamp");
                         //数据源名称
-                        String monitorName = jsonObject.getJSONObject("fields").getString("monitorName");
+                        String monitorName = jsonObject.getJSONObject("fields").getString("tag");
                         //服务器hostName
                         String hostName = jsonObject.getJSONObject("beat").getString("hostname");
                         //业务数据
