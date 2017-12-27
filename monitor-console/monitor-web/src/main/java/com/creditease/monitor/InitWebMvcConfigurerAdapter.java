@@ -7,6 +7,7 @@ import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.SessionExMapper;
 import com.creditease.monitor.response.ResponseCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
@@ -22,6 +23,9 @@ public class InitWebMvcConfigurerAdapter extends YXWebMvcConfigurerAdapter {
 
     @Autowired
     private SessionExMapper sessionExMapper;
+
+    @Value("${grafana_session_time}")
+    private int grafanaSessionTime;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -49,7 +53,7 @@ public class InitWebMvcConfigurerAdapter extends YXWebMvcConfigurerAdapter {
                 if(expiry == null){
                     return false;
                 }
-                if(System.currentTimeMillis()/1000 >= expiry){
+                if(System.currentTimeMillis()/1000 >= expiry+grafanaSessionTime){
                     return false;
                 }
                 return true;
