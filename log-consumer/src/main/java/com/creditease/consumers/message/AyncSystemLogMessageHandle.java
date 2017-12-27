@@ -20,6 +20,14 @@ import java.util.concurrent.TimeUnit;
 public class AyncSystemLogMessageHandle implements MessageHandler{
 
     private static final Logger logger = LoggerFactory.getLogger(AyncSystemLogMessageHandle.class);
+    /**浮点类型*/
+    private static final String type_float = "_float";
+    /**字符串类型*/
+    private static final String type_string = "_string";
+    /**double类型*/
+    private static final String type_double = "_double";
+    /**long类型*/
+    private static final String type_long = "_long";
 
     private InfluxdbManager manager;
     //这里异步处理消息 最多只能同时多少批次的消息
@@ -134,8 +142,37 @@ public class AyncSystemLogMessageHandle implements MessageHandler{
                         fields = new HashMap<>();
                         po.setFields(fields);
                     }
-                    logger.info("key={},value={}",newKey,value);
-                    fields.put(newKey,value);
+                    if(newKey.endsWith(type_float)){
+                        try {
+                            newKey = newKey.substring(0,newKey.length() - type_float.length());
+                            fields.put(newKey,Float.parseFloat(value.toString()));
+                        }catch (Exception e){
+                            logger.info("conver float error,key={},value{},errormsg={}",newKey,value,e.getMessage());
+                        }
+                    }else if(newKey.endsWith(type_long)){
+                        try {
+                            newKey = newKey.substring(0,newKey.length() - type_long.length());
+                            fields.put(newKey,Long.parseLong(value.toString()));
+                        }catch (Exception e){
+                            logger.info("conver long error,key={},value{},errormsg={}",newKey,value,e.getMessage());
+                        }
+                    }else if(newKey.endsWith(type_double)){
+                        try {
+                            newKey = newKey.substring(0,newKey.length() - type_double.length());
+                            fields.put(newKey,Double.parseDouble(value.toString()));
+                        }catch (Exception e){
+                            logger.info("conver float error,key={},value{},errormsg={}",newKey,value,e.getMessage());
+                        }
+                    }else if(newKey.endsWith(type_string)){
+                        try {
+                            newKey = newKey.substring(0,newKey.length() - type_string.length());
+                            fields.put(newKey,String.valueOf(value));
+                        }catch (Exception e){
+                            logger.info("conver String error,key={},value{},errormsg={}",newKey,value,e.getMessage());
+                        }
+                    }else {
+                        fields.put(newKey,value);
+                    }
                 }
             }
         }

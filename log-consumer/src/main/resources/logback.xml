@@ -5,6 +5,7 @@
         <target>System.out</target>
         <layout class="ch.qos.logback.classic.PatternLayout" >
             <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}  -%msg%n </Pattern>
+            <charset>UTF-8</charset>
         </layout>
     </appender>
     <!--ERROR日志文件输出-->
@@ -17,6 +18,7 @@
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout" >
             <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</Pattern>
+            <charset>UTF-8</charset>
         </layout>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
@@ -30,6 +32,7 @@
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.home}/rocketmq-consumers-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <charset>UTF-8</charset>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout" >
