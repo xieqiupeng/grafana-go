@@ -39,10 +39,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mousio</groupId>
-            <artifactId>etcd4j</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.mybatis.generator</groupId>
             <artifactId>mybatis-generator-core</artifactId>
@@ -73,12 +70,20 @@
             <artifactId>pagehelper</artifactId>
             <version>4.1.6</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.41</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mousio</groupId>-->
+            <!--<artifactId>etcd4j</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.coreos</groupId>
+            <artifactId>jetcd-core</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
     <build>

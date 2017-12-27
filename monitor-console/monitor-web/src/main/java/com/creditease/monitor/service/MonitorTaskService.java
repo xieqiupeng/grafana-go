@@ -36,17 +36,19 @@ public class MonitorTaskService {
     private MonitorTaskExMapper monitorTaskExMapper;
     @Autowired
     private MonitorTaskEtcdService monitorTaskEtcdService;
+
     /**
      * 根据任务名称模糊查找
+     *
      * @param taskName
      * @return
      */
-    public List selectByTaskName(String taskName,Integer pageNum,Integer pageSize){
+    public List selectByTaskName(String taskName, Integer pageNum, Integer pageSize) {
         //设置参数
-        if(taskName==null){
-            taskName="";
+        if (taskName == null) {
+            taskName = "";
         }
-        taskName="%"+taskName+"%";
+        taskName = "%" + taskName + "%";
         //设置分页
         PageHelper.startPage(pageNum, pageSize);
         //执行查询
@@ -57,20 +59,21 @@ public class MonitorTaskService {
 
     /**
      * 启动/暂停
+     *
      * @param monitorTask
      * @return
      */
-    @Transactional
-    public boolean startOrPauseTask(MonitorTask monitorTask){
-        if(monitorTask != null){
+    @Transactional(rollbackFor = {})
+    public boolean startOrPauseTask(MonitorTask monitorTask) {
+        if (monitorTask != null) {
             //查询当前监控任务
             boolean isStart;
             //启动/暂停状态发生切换
-            if(MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()){
+            if (MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()) {
                 isStart = true;
-            }else if(MonitorTaskConstant.MonitorTaskStatus.PAUSE == monitorTask.getStatus()){
+            } else if (MonitorTaskConstant.MonitorTaskStatus.PAUSE == monitorTask.getStatus()) {
                 isStart = false;
-            }else{
+            } else {
                 return false;
             }
 
@@ -79,18 +82,18 @@ public class MonitorTaskService {
             newStatus.setStatus(monitorTask.getStatus());
             newStatus.setUpdateTime(new Date());
             int count = monitorTaskExMapper.updateByPrimaryKeySelective(newStatus);
-            if(count > 0){
-                if(isStart){
-                    logger.info("同步ETCD数据源成功 monitorTask={}",JSON.toJSONString(monitorTask));
+            if (count > 0) {
+                if (isStart) {
+                    logger.info("同步ETCD数据源成功 monitorTask={}", JSON.toJSONString(monitorTask));
                     boolean ok = monitorTaskEtcdService.upSert(monitorTask);
-                    if(!ok){
-                        throw new MonitorTaskException(ResponseCode.START_TASK_ERROR,StringUtils.EMPTY);
+                    if (!ok) {
+                        throw new MonitorTaskException(ResponseCode.START_TASK_ERROR, StringUtils.EMPTY);
                     }
-                }else{
-                    logger.info("删除ETCD数据源成功 monitorTaskName={}",monitorTask.getTaskName());
+                } else {
+                    logger.info("删除ETCD数据源成功 monitorTaskName={}", monitorTask.getTaskName());
                     boolean ok = monitorTaskEtcdService.delete(monitorTask.getTaskName());
-                    if(!ok){
-                        throw new MonitorTaskException(ResponseCode.PAUSE_TASK_ERROR,StringUtils.EMPTY);
+                    if (!ok) {
+                        throw new MonitorTaskException(ResponseCode.PAUSE_TASK_ERROR, StringUtils.EMPTY);
                     }
                 }
                 return true;
@@ -101,51 +104,55 @@ public class MonitorTaskService {
 
     /**
      * 删除Task
+     *
      * @param taskId
      * @return
      */
     public boolean deleteTask(int taskId) {
-            //删除当前监控任务
+        //删除当前监控任务
         monitorTaskExMapper.deleteByPrimaryKey(taskId);
         return true;
     }
 
     /**
      * 数据清洗
+     *
      * @param monitorDates
      * @param dataCleanRuleEntity
      * @return
      */
-    public List<CutExampleVo> dataClean(List<String> monitorDates,DataCleanRuleEntity dataCleanRuleEntity){
+    public List<CutExampleVo> dataClean(List<String> monitorDates, DataCleanRuleEntity dataCleanRuleEntity) {
         List<CutExampleVo> vos = new ArrayList<>();
-        if(monitorDates != null && !monitorDates.isEmpty() && dataCleanRuleEntity != null){
+        if (monitorDates != null && !monitorDates.isEmpty() && dataCleanRuleEntity != null) {
             IDataCleanRule dataCleanRule = DataCleanUtil.getDataCleanRule(dataCleanRuleEntity);
-            monitorDates.forEach(monitorDate->{
-                if(StringUtils.isNotBlank(monitorDate)){
+            monitorDates.forEach(monitorDate -> {
+                if (StringUtils.isNotBlank(monitorDate)) {
                     vos.addAll(dataCleanRule.clean(monitorDate));
                 }
             });
         }
         return vos;
     }
-    public boolean isExists(String taskName){
-         return  selectOneByTaskName(taskName) == null ? false : true;
+
+    public boolean isExists(String taskName) {
+        return selectOneByTaskName(taskName) == null ? false : true;
     }
 
-    public boolean isExists(int taskId){
-        return  selectOneByTaskId(taskId) == null ? false : true;
+    public boolean isExists(int taskId) {
+        return selectOneByTaskId(taskId) == null ? false : true;
     }
 
-    public MonitorTask selectOneByTaskName(String taskName){
+    public MonitorTask selectOneByTaskName(String taskName) {
         return monitorTaskExMapper.selectOneByTaskName(taskName);
     }
 
-    public MonitorTask selectOneByTaskId(int taskId){
+    public MonitorTask selectOneByTaskId(int taskId) {
         return monitorTaskExMapper.selectByPrimaryKey(taskId);
     }
 
     /**
      * 添加任务
+     *
      * @param taskName
      * @param cutTemplate
      * @param dataSourceLog
@@ -159,7 +166,7 @@ public class MonitorTaskService {
                            String dataSourceLog,
                            String dataSourceServerIp,
                            byte isMonitorTomcatServer,
-                           String tomcatServerHost){
+                           String tomcatServerHost) {
         MonitorTask monitorTask = new MonitorTask();
         Date now = new Date();
         monitorTask.setCreateTime(now);
@@ -169,10 +176,10 @@ public class MonitorTaskService {
         monitorTask.setDataSourceLog(dataSourceLog);
         monitorTask.setDataSourceServerIp(dataSourceServerIp);
         monitorTask.setStatus(MonitorTaskConstant.MonitorTaskStatus.PAUSE);
-        if(MonitorTaskConstant.MonitorTomcatServer.YES == isMonitorTomcatServer){
+        if (MonitorTaskConstant.MonitorTomcatServer.YES == isMonitorTomcatServer) {
             monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.YES);
             monitorTask.setTomcatServerHost(tomcatServerHost);
-        }else{
+        } else {
             monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.NO);
         }
         monitorTaskExMapper.insertSelective(monitorTask);
@@ -181,6 +188,7 @@ public class MonitorTaskService {
 
     /**
      * 修改task
+     *
      * @param cutTemplate
      * @param dataSourceLog
      * @param dataSourceServerIp
@@ -188,13 +196,13 @@ public class MonitorTaskService {
      * @param tomcatServerHost
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = {})
     public boolean editTask(int taskId,
-                           String cutTemplate,
-                           String dataSourceLog,
-                           String dataSourceServerIp,
-                           byte isMonitorTomcatServer,
-                           String tomcatServerHost){
+                            String cutTemplate,
+                            String dataSourceLog,
+                            String dataSourceServerIp,
+                            byte isMonitorTomcatServer,
+                            String tomcatServerHost) {
         MonitorTask monitorTask = new MonitorTask();
         Date now = new Date();
         monitorTask.setId(taskId);
@@ -202,14 +210,14 @@ public class MonitorTaskService {
         monitorTask.setCutTemplate(cutTemplate);
         monitorTask.setDataSourceLog(dataSourceLog);
         monitorTask.setDataSourceServerIp(dataSourceServerIp);
-        if(MonitorTaskConstant.MonitorTomcatServer.YES == isMonitorTomcatServer){
+        if (MonitorTaskConstant.MonitorTomcatServer.YES == isMonitorTomcatServer) {
             monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.YES);
             monitorTask.setTomcatServerHost(tomcatServerHost);
-        }else{
+        } else {
             monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.NO);
         }
-        int count =  monitorTaskExMapper.updateByPrimaryKeySelective(monitorTask);
-        if(count > 0){
+        int count = monitorTaskExMapper.updateByPrimaryKeySelective(monitorTask);
+        if (count > 0) {
             return true;
         }
         return false;
