@@ -42,7 +42,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
     monitorManageController($scope, $http) {
         //查询参数
-        $scope.searchTaskName = "";
+        $scope.taskName='';
         //列表内容
         $scope.taskArray = [];
         //分页参数
@@ -165,8 +165,10 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         }
         //搜索功能
         $scope.searchFunction = function (serverHost) {
+            $scope.taskName=document.getElementById('taskName');
+            $scope.taskName=$scope.taskName.value;
             $scope.taskArray = [];
-            var param = 'taskName=' + $scope.searchTaskName + "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
+            var param = 'taskName=' + $scope.taskName+ "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
             $http({
                 url: serverHost + 'monitorTask/searchTaskByTaskName' + "?" + param,
                 withCredentials: true,
@@ -400,6 +402,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             //是否为tomcat服务器
             var isMonitorTomcatServer=$scope.formData.isMonitorTomcatServer;
             var tomcatServerHost='';
+            console.log('isMonitorTomcatServer:'+isMonitorTomcatServer);
             if(isMonitorTomcatServer==true){
                 tomcatServerHost=$scope.formData.tomcatServerHost;
                 if(tomcatServerHost==null||tomcatServerHost.trim()==''){
@@ -409,6 +412,8 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             }else{
                 //不是tomcat服务器，就清空tomcatServerHost
                 $scope.formData.tomcatServerHost='';
+                tomcatServerHost='';
+                alert('haha');
             }
             isMonitorTomcatServer=(isMonitorTomcatServer==true?isMonitorTomcatServer=0:isMonitorTomcatServer=1);
 
