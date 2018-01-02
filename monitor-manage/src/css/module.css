@@ -4,3 +4,6 @@
 .ui-dialog-titlebar-close{
     display: none;
 }
+.active {
+    background-color: orange;
+}

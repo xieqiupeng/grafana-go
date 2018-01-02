@@ -113,6 +113,21 @@ public class CommonTextDataCleanRule implements IDataCleanRule {
     }
 
     private static List<CutExampleVo> converter(List<String> list,List<DataCleanRuleEntity.DataMapping> resultColumns){
+
+        //如果结果列为空，则需要后台自动生成默认结果列
+        if(resultColumns==null||resultColumns.isEmpty()){
+            resultColumns=new ArrayList<>();
+            for(int i=0;i<list.size();i++){
+                DataCleanRuleEntity.DataMapping resultColumn=new DataCleanRuleEntity.DataMapping();
+                resultColumn.setColumnSeq(i);
+                resultColumn.setColumnName("列名"+i);
+                resultColumn.setTagOrValue(0);
+                resultColumn.setColumnType("string");
+                resultColumn.setFormat("");
+                resultColumns.add(resultColumn);
+            }
+        }
+
         List<CutExampleVo> dataCleanEntities = new ArrayList<>();
         if(list != null && !list.isEmpty()){
             if(resultColumns != null && !resultColumns.isEmpty()){
@@ -132,7 +147,10 @@ public class CommonTextDataCleanRule implements IDataCleanRule {
                                 CutExampleVo entity = new CutExampleVo();
                                 entity.setColumnName(columnName);
                                 entity.setColumnExampleValue(DataCleanUtil.getValueByType(list.get(i),mapping.getColumnType(),mapping.getFormat()));
-                                entity.setColumnFormat(mapping.getColumnType());
+                                entity.setColumnSeq(mapping.getColumnSeq());
+                                entity.setColumnFormat(mapping.getFormat());
+                                entity.setColumnType(mapping.getColumnType());
+                                entity.setTagOrValue(mapping.getTagOrValue());
                                 dataCleanEntities.add(entity);
                             }
 
