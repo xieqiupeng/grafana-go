@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "Monitor Manage",
-  "id": "monitor-manage-panel",
+  "name": "Monitor Manage DataSource",
+  "id": "monitor-manage-datasource-panel",
 
   "info": {
     "description": "Monitor Manage for Grafana",
@@ -27,7 +27,7 @@
       { "name": "Write Data",      "path": "img/screenshot-write.png"   }
     ],
     "version": "0.0.5",
-    "updated": "2018-01-02"
+    "updated": "2018-01-03"
   },
 
   "dependencies": {
