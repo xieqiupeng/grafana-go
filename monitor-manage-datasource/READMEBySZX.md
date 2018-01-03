@@ -14,7 +14,7 @@ usual command
 
 
 目录
-/var/lib/grafana/plugins/monitor-manage
+/var/lib/grafana/plugins/monitor-manage-datasource
 重启命令
 service grafana-server restart
 
