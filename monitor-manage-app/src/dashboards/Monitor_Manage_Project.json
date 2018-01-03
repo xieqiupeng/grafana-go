@@ -6,7 +6,7 @@
     "hideControls": false, 
     "id": null, 
     "links": [], 
-    "originalTitle": "创建项目",
+    "originalTitle": "项目管理",
     "refresh": false, 
     "rows": [
         {
@@ -48,12 +48,12 @@
                     "span": 12,
                     "stack": false, 
                     "steppedLine": false, 
-                    "title": "创建项目",
-                    "type": "monitor-manage-panel"
+                    "title": "项目管理",
+                    "type": "monitor-manage-project-panel"
                 }
             ],
             "showTitle": false,
-            "title": "创建项目"
+            "title": "项目管理"
         }
     ], 
     "schemaVersion": 12, 
@@ -62,9 +62,9 @@
     "tags": [
         "宜信",
         "监控",
-        "创建项目"
+        "项目管理"
     ], 
     "timezone": "browser",
-    "title": "创建项目",
+    "title": "项目管理",
     "version": 0
 }
