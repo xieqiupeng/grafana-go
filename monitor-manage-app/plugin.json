@@ -1,0 +1,39 @@
+{
+  "type": "app",
+  "name": "监控配置",
+  "id": "monitor-config-app",
+
+  "css": {
+    "dark":  "css/dark.css",
+    "light":  "css/light.css"
+  },
+
+  "info": {
+    "description": "Project Configuration app for Grafana",
+    "author": {
+      "name": "Credit Ease",
+      "url": "https://percona.com"
+    },
+    "keywords": ["percona", "mysql"],
+    "logos": {
+      "small": "src/img/monitor.png",
+      "large": "src/img/monitor.png"
+    },
+    "links": [
+      {"name": "Percona", "url": "https://percona.com"},
+      {"name": "GitHub", "url": "https://github.com/percona/grafana-app"}
+    ],
+    "version": "1.0.0",
+    "updated": "2016-05-25"
+  },
+
+  "includes": [
+    {"type": "dashboard", "name": "创建项目", "path": "dashboards/Create_Project.json", "addToNav": true,"defaultNav": true},
+    {"type": "dashboard", "name": "创建数据源", "path": "dashboards/Create_Data_Source.json", "addToNav": true}
+  ],
+
+  "dependencies": {
+    "grafanaVersion": "3.x.x",
+    "plugins": []
+  }
+}
