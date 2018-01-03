@@ -26,8 +26,8 @@
       { "name": "Options",         "path": "img/screenshot-options.png" },
       { "name": "Write Data",      "path": "img/screenshot-write.png"   }
     ],
-    "version": "%VERSION%",
-    "updated": "%TODAY%"
+    "version": "0.0.5",
+    "updated": "2018-01-02"
   },
 
   "dependencies": {
