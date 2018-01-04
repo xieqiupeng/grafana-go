@@ -1,0 +1,16 @@
+#================================ Etcd config ==================================
+etcd:
+  config:
+    endpoints: ["10.100.139.150:2379","10.100.139.152:2379","10.100.139.153:2379"]
+    dialtimeout: 5
+    username: test
+    password: 123456
+
+  configpath: /prospectorconfig/
+
+
+modules:
+  - name: /Users/creditease/source/monitor/beats/src/filebeat/filebeat
+    conf: /Users/creditease/source/monitor/beats/src/filebeat/filebeat.yml
+  - name: /Users/creditease/source/monitor/beats/src/metricbeat/metricbeat
+    conf: /Users/creditease/source/monitor/beats/src/metricbeat/metricbeat.yml
