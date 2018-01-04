@@ -1,6 +1,7 @@
 package module
 
 import (
+	"libbeat/logp"
 	"sync"
 
 	"libbeat/beat"
@@ -20,7 +21,9 @@ func PublishChannels(client beat.Client, cs ...<-chan beat.Event) {
 	// output publishes values from c until c is closed, then calls wg.Done.
 	output := func(c <-chan beat.Event) {
 		defer wg.Done()
+
 		for event := range c {
+			logp.Debug("bingo", "%v", event.Meta.StringToPrint())
 			client.Publish(event)
 		}
 	}

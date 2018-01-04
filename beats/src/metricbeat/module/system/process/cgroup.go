@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"libbeat/common"
+
 	"github.com/elastic/gosigar/cgroup"
 )
 
@@ -18,10 +19,10 @@ func cgroupStatsToMap(stats *cgroup.Stats) common.MapStr {
 
 	// id and path are only available when all subsystems share a common path.
 	if stats.ID != "" {
-		cgroup["id"] = stats.ID
+		cgroup["id_string"] = stats.ID
 	}
 	if stats.Path != "" {
-		cgroup["path"] = stats.Path
+		cgroup["path_string"] = stats.Path
 	}
 
 	if cpu := cgroupCPUToMapStr(stats.CPU); cpu != nil {
@@ -48,30 +49,30 @@ func cgroupCPUToMapStr(cpu *cgroup.CPUSubsystem) common.MapStr {
 	}
 
 	return common.MapStr{
-		"id":   cpu.ID,
-		"path": cpu.Path,
+		"id_string":   cpu.ID,
+		"path_string": cpu.Path,
 		"cfs": common.MapStr{
 			"period": common.MapStr{
-				"us": cpu.CFS.PeriodMicros,
+				"us_long": cpu.CFS.PeriodMicros,
 			},
 			"quota": common.MapStr{
-				"us": cpu.CFS.QuotaMicros,
+				"us_long": cpu.CFS.QuotaMicros,
 			},
-			"shares": cpu.CFS.Shares,
+			"shares_long": cpu.CFS.Shares,
 		},
 		"rt": common.MapStr{
 			"period": common.MapStr{
-				"us": cpu.RT.PeriodMicros,
+				"us_long": cpu.RT.PeriodMicros,
 			},
 			"runtime": common.MapStr{
-				"us": cpu.RT.RuntimeMicros,
+				"us_long": cpu.RT.RuntimeMicros,
 			},
 		},
 		"stats": common.MapStr{
-			"periods": cpu.Stats.Periods,
+			"periods_long": cpu.Stats.Periods,
 			"throttled": common.MapStr{
-				"periods": cpu.Stats.ThrottledPeriods,
-				"ns":      cpu.Stats.ThrottledTimeNanos,
+				"periods_long": cpu.Stats.ThrottledPeriods,
+				"ns_long":      cpu.Stats.ThrottledTimeNanos,
 			},
 		},
 	}
@@ -91,18 +92,18 @@ func cgroupCPUAccountingToMapStr(cpuacct *cgroup.CPUAccountingSubsystem) common.
 	}
 
 	return common.MapStr{
-		"id":   cpuacct.ID,
-		"path": cpuacct.Path,
+		"id_string":   cpuacct.ID,
+		"path_string": cpuacct.Path,
 		"total": common.MapStr{
-			"ns": cpuacct.TotalNanos,
+			"ns_long": cpuacct.TotalNanos,
 		},
-		"percpu": perCPUUsage,
+		"percpu_long": perCPUUsage,
 		"stats": common.MapStr{
 			"system": common.MapStr{
-				"ns": cpuacct.Stats.SystemNanos,
+				"ns_long": cpuacct.Stats.SystemNanos,
 			},
 			"user": common.MapStr{
-				"ns": cpuacct.Stats.UserNanos,
+				"ns_long": cpuacct.Stats.UserNanos,
 			},
 		},
 	}
@@ -117,22 +118,22 @@ func cgroupMemoryToMapStr(memory *cgroup.MemorySubsystem) common.MapStr {
 
 	addMemData := func(key string, m common.MapStr, data cgroup.MemoryData) {
 		m[key] = common.MapStr{
-			"failures": memory.Mem.FailCount,
+			"failures_long": memory.Mem.FailCount,
 			"limit": common.MapStr{
-				"bytes": memory.Mem.Limit,
+				"bytes_long": memory.Mem.Limit,
 			},
 			"usage": common.MapStr{
-				"bytes": memory.Mem.Usage,
+				"bytes_long": memory.Mem.Usage,
 				"max": common.MapStr{
-					"bytes": memory.Mem.MaxUsage,
+					"bytes_long": memory.Mem.MaxUsage,
 				},
 			},
 		}
 	}
 
 	memMap := common.MapStr{
-		"id":   memory.ID,
-		"path": memory.Path,
+		"id_string":   memory.ID,
+		"path_string": memory.Path,
 	}
 	addMemData("mem", memMap, memory.Mem)
 	addMemData("memsw", memMap, memory.MemSwap)
@@ -140,44 +141,44 @@ func cgroupMemoryToMapStr(memory *cgroup.MemorySubsystem) common.MapStr {
 	addMemData("kmem_tcp", memMap, memory.KernelTCP)
 	memMap["stats"] = common.MapStr{
 		"active_anon": common.MapStr{
-			"bytes": memory.Stats.ActiveAnon,
+			"bytes_long": memory.Stats.ActiveAnon,
 		},
 		"active_file": common.MapStr{
-			"bytes": memory.Stats.ActiveFile,
+			"bytes_long": memory.Stats.ActiveFile,
 		},
 		"cache": common.MapStr{
-			"bytes": memory.Stats.Cache,
+			"bytes_long": memory.Stats.Cache,
 		},
 		"hierarchical_memory_limit": common.MapStr{
-			"bytes": memory.Stats.HierarchicalMemoryLimit,
+			"bytes_long": memory.Stats.HierarchicalMemoryLimit,
 		},
 		"hierarchical_memsw_limit": common.MapStr{
-			"bytes": memory.Stats.HierarchicalMemswLimit,
+			"bytes_long": memory.Stats.HierarchicalMemswLimit,
 		},
 		"inactive_anon": common.MapStr{
-			"bytes": memory.Stats.InactiveAnon,
+			"bytes_long": memory.Stats.InactiveAnon,
 		},
 		"inactive_file": common.MapStr{
-			"bytes": memory.Stats.InactiveFile,
+			"bytes_long": memory.Stats.InactiveFile,
 		},
 		"mapped_file": common.MapStr{
-			"bytes": memory.Stats.MappedFile,
+			"bytes_long": memory.Stats.MappedFile,
 		},
-		"page_faults":       memory.Stats.PageFaults,
-		"major_page_faults": memory.Stats.MajorPageFaults,
-		"pages_in":          memory.Stats.PagesIn,
-		"pages_out":         memory.Stats.PagesOut,
+		"page_faults_long":       memory.Stats.PageFaults,
+		"major_page_faults_long": memory.Stats.MajorPageFaults,
+		"pages_in_long":          memory.Stats.PagesIn,
+		"pages_out_long":         memory.Stats.PagesOut,
 		"rss": common.MapStr{
-			"bytes": memory.Stats.RSS,
+			"bytes_long": memory.Stats.RSS,
 		},
 		"rss_huge": common.MapStr{
-			"bytes": memory.Stats.RSSHuge,
+			"bytes_long": memory.Stats.RSSHuge,
 		},
 		"swap": common.MapStr{
-			"bytes": memory.Stats.Swap,
+			"bytes_long": memory.Stats.Swap,
 		},
 		"unevictable": common.MapStr{
-			"bytes": memory.Stats.Unevictable,
+			"bytes_long": memory.Stats.Unevictable,
 		},
 	}
 
@@ -192,11 +193,11 @@ func cgroupBlockIOToMapStr(blockIO *cgroup.BlockIOSubsystem) common.MapStr {
 	}
 
 	return common.MapStr{
-		"id":   blockIO.ID,
-		"path": blockIO.Path,
+		"id_string":   blockIO.ID,
+		"path_string": blockIO.Path,
 		"total": common.MapStr{
-			"bytes": blockIO.Throttle.TotalBytes,
-			"ios":   blockIO.Throttle.TotalIOs,
+			"bytes_long": blockIO.Throttle.TotalBytes,
+			"ios_long":   blockIO.Throttle.TotalIOs,
 		},
 	}
 }

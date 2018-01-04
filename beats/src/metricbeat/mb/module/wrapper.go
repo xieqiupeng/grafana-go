@@ -134,7 +134,6 @@ func (mw *Wrapper) MetricSets() []*metricSetWrapper {
 func (msw *metricSetWrapper) run(done <-chan struct{}, out chan<- beat.Event) {
 	defer logp.Recover(fmt.Sprintf("recovered from panic while fetching "+
 		"'%s/%s' for host '%s'", msw.module.Name(), msw.Name(), msw.Host()))
-
 	// Start each metricset randomly over a period of MaxDelayPeriod.
 	if msw.module.maxStartDelay > 0 {
 		delay := time.Duration(rand.Int63n(int64(msw.module.maxStartDelay)))
@@ -145,7 +144,6 @@ func (msw *metricSetWrapper) run(done <-chan struct{}, out chan<- beat.Event) {
 		case <-time.After(delay):
 		}
 	}
-
 	debugf("Starting %s", msw)
 	defer debugf("Stopped %s", msw)
 
@@ -179,12 +177,15 @@ func (msw *metricSetWrapper) startPeriodicFetching(reporter reporter) {
 	t := time.NewTicker(msw.Module().Config().Period)
 	defer t.Stop()
 	for {
+		logp.Debug("bingo", "for start ...")
 		select {
 		case <-reporter.Done():
+			logp.Debug("bingo", "reporter done!:%s", msw.Name())
 			return
 		case <-t.C:
 			msw.fetch(reporter)
 		}
+		logp.Debug("bingo", "for end ...")
 	}
 }
 
@@ -192,6 +193,7 @@ func (msw *metricSetWrapper) startPeriodicFetching(reporter reporter) {
 // the result using the publisher client. This method will recover from panics
 // and log a stack track if one occurs.
 func (msw *metricSetWrapper) fetch(reporter reporter) {
+
 	switch fetcher := msw.MetricSet.(type) {
 	case mb.EventFetcher:
 		msw.singleEventFetch(fetcher, reporter)
@@ -207,7 +209,9 @@ func (msw *metricSetWrapper) fetch(reporter reporter) {
 func (msw *metricSetWrapper) singleEventFetch(fetcher mb.EventFetcher, reporter reporter) {
 	reporter.StartFetchTimer()
 	event, err := fetcher.Fetch()
-	reporter.ErrorWith(err, event)
+	logp.Debug("bingo", "fetcher return :%v,%v", err == nil, event.String())
+	rs := reporter.ErrorWith(err, event)
+	logp.Debug("bingo", "reporter return :", rs)
 }
 
 func (msw *metricSetWrapper) multiEventFetch(fetcher mb.EventsFetcher, reporter reporter) {
@@ -331,10 +335,13 @@ func (r *eventReporter) ErrorWith(err error, meta common.MapStr) bool {
 // other utility functions
 
 func writeEvent(done <-chan struct{}, out chan<- beat.Event, event beat.Event) bool {
+	logp.Debug("bingo", "writeEvent ...")
 	select {
 	case <-done:
+		logp.Debug("bingo", "writeEvent done ...")
 		return false
 	case out <- event:
+		logp.Debug("bingo", "writeEvent normal ...")
 		return true
 	}
 }

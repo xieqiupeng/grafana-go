@@ -3,6 +3,7 @@ package memqueue
 import (
 	"libbeat/beat"
 	"libbeat/common/atomic"
+	"libbeat/logp"
 	"libbeat/publisher"
 	"libbeat/publisher/queue"
 )
@@ -117,10 +118,13 @@ func (st *openState) Close() {
 }
 
 func (st *openState) publish(req pushRequest) bool {
+	logp.Debug("bingo", "publish producer start ...")
 	select {
 	case st.events <- req:
+		logp.Debug("bingo", "publish producer 1 end ...")
 		return true
 	case <-st.done:
+		logp.Debug("bingo", "publish producer 2 end ...")
 		st.events = nil
 		return false
 	}

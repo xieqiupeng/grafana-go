@@ -46,19 +46,19 @@ func (m *MetricSet) Fetch() ([]common.MapStr, error) {
 	for _, counters := range stats {
 
 		event := common.MapStr{
-			"name": counters.Name,
+			"name_string": counters.Name,
 			"read": common.MapStr{
-				"count": counters.ReadCount,
-				"time":  counters.ReadTime,
-				"bytes": counters.ReadBytes,
+				"count_long": counters.ReadCount,
+				"time_long":  counters.ReadTime,
+				"bytes_long": counters.ReadBytes,
 			},
 			"write": common.MapStr{
-				"count": counters.WriteCount,
-				"time":  counters.WriteTime,
-				"bytes": counters.WriteBytes,
+				"count_long": counters.WriteCount,
+				"time_long":  counters.WriteTime,
+				"bytes_long": counters.WriteBytes,
 			},
 			"io": common.MapStr{
-				"time": counters.IoTime,
+				"time_long": counters.IoTime,
 			},
 		}
 
@@ -67,38 +67,38 @@ func (m *MetricSet) Fetch() ([]common.MapStr, error) {
 			event["iostat"] = common.MapStr{
 				"read": common.MapStr{
 					"request": common.MapStr{
-						"merges_per_sec": extraMetrics.ReadRequestMergeCountPerSec,
-						"per_sec":        extraMetrics.ReadRequestCountPerSec,
+						"merges_per_sec_float": extraMetrics.ReadRequestMergeCountPerSec,
+						"per_sec_float":        extraMetrics.ReadRequestCountPerSec,
 					},
 					"per_sec": common.MapStr{
-						"bytes": extraMetrics.ReadBytesPerSec,
+						"bytes_float": extraMetrics.ReadBytesPerSec,
 					},
 				},
 				"write": common.MapStr{
 					"request": common.MapStr{
-						"merges_per_sec": extraMetrics.WriteRequestMergeCountPerSec,
-						"per_sec":        extraMetrics.WriteRequestCountPerSec,
+						"merges_per_sec_float": extraMetrics.WriteRequestMergeCountPerSec,
+						"per_sec_float":        extraMetrics.WriteRequestCountPerSec,
 					},
 					"per_sec": common.MapStr{
-						"bytes": extraMetrics.WriteBytesPerSec,
+						"bytes_float": extraMetrics.WriteBytesPerSec,
 					},
 				},
 				"queue": common.MapStr{
-					"avg_size": extraMetrics.AvgQueueSize,
+					"avg_size_float": extraMetrics.AvgQueueSize,
 				},
 				"request": common.MapStr{
-					"avg_size": extraMetrics.AvgRequestSize,
+					"avg_size_float": extraMetrics.AvgRequestSize,
 				},
-				"await":        extraMetrics.AvgAwaitTime,
-				"service_time": extraMetrics.AvgServiceTime,
-				"busy":         extraMetrics.BusyPct,
+				"await_float":        extraMetrics.AvgAwaitTime,
+				"service_time_float": extraMetrics.AvgServiceTime,
+				"busy_float":         extraMetrics.BusyPct,
 			}
 		}
 
 		events = append(events, event)
 
 		if counters.SerialNumber != "" {
-			event["serial_number"] = counters.SerialNumber
+			event["serial_number_string"] = counters.SerialNumber
 		}
 	}
 

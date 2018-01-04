@@ -32,6 +32,23 @@ type ProspectorConfig struct {
 	TailFiles bool              `json:"tail_files"`
 	Fields    map[string]string `json:"fields"`
 	Key       string            `json:"key"`
+	Hosts     []string          `json:"hosts"`
+}
+
+type TypeParams struct {
+	Type  int      `json:"type"`
+	Param []string `json:"param"`
+}
+
+type ServiceConfig struct {
+	Host             string       `json:"host"`
+	ServerTypeParams []TypeParams `json:"serverTypeParams"`
+}
+
+type EtcdConfig struct {
+	Path     []string        `json:"path"`
+	Services []ServiceConfig `json:"services"`
+	Type     string          `json:"type"`
 }
 
 type EtcdClient struct {
@@ -58,17 +75,24 @@ func GetLocalHostIp() (ip string, err error) {
 	return ip, nil
 }
 
-func Convert2Strings(s []interface{}) (t []string) {
+func Convert2Strings(s []ServiceConfig) (t []string, args map[string]map[int][]string) {
+	args = make(map[string]map[int][]string)
 	for _, v := range s {
-		t = append(t, v.(string))
+		t = append(t, v.Host)
+		prama := make(map[int][]string)
+		for _, p := range v.ServerTypeParams {
+			prama[p.Type] = p.Param
+		}
+		args[v.Host] = prama
 	}
-	return t
+	return t, args
 }
 
 func NewEtcdClient(etcdConfig clientv3.Config, configPath string) (etcdClient *EtcdClient) {
 
 	cli, err := clientv3.New(etcdConfig)
 	if err != nil {
+		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
 	etcdClient = &EtcdClient{
@@ -119,28 +143,30 @@ func (c *EtcdClient) GetAllConfig() (config []*common.Config, error *error) {
 	for _, ev := range rsp.Kvs {
 		fmt.Printf("%s : %s\n", ev.Key, ev.Value)
 		if ev.Value != nil {
-			var v map[string]interface{}
+			v := &EtcdConfig{}
 			e := json.Unmarshal(ev.Value, &v)
 			if e != nil {
 				log.Fatalln(e)
-				break
+				continue
 			}
-			ipAddress := Convert2Strings(v["ipAddress"].([]interface{}))
+			ipAddress, args := Convert2Strings(v.Services)
 			if !strings.Contains(strings.Join(ipAddress, "^"), ip) {
 				//跳过不适用本机的规则
 				continue
 			}
 			items := strings.Split(string(ev.Key), "/")
 			f := items[len(items)-1]
+			h, _ := args[ip][1]
 			cfg := &ProspectorConfig{
 				T:         "log",
 				Enabled:   true,
-				Paths:     Convert2Strings(v["path"].([]interface{})),
+				Paths:     v.Path,
 				TailFiles: true,
 				Fields: map[string]string{
 					"tag": f,
 				},
-				Key: string(ev.Key),
+				Key:   string(ev.Key),
+				Hosts: h,
 			}
 			cf, e := common.NewConfigFrom(cfg)
 			if e == nil {
@@ -177,13 +203,13 @@ func (c *EtcdClient) WatchDog(ch chan *clientv3.Event) {
 				}
 			case mvccpb.PUT:
 				if ev.Kv.Value != nil {
-					var v map[string]interface{}
+					v := &EtcdConfig{}
 					e := json.Unmarshal(ev.Kv.Value, &v)
 					if e != nil {
 						log.Fatalln(e)
 						continue
 					}
-					ipAddress := Convert2Strings(v["ipAddress"].([]interface{}))
+					ipAddress, _ := Convert2Strings(v.Services)
 					// 针对修改配置将制定host删除
 					if _, ok := c.keys[string(ev.Kv.Key)]; ok && !strings.Contains(strings.Join(ipAddress, "^"), ip) {
 						e := &clientv3.Event{

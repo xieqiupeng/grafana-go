@@ -118,7 +118,6 @@ func Init(name string, start time.Time, config *Logging) error {
 	} else {
 		toFiles = true
 	}
-
 	// toStderr disables logging to syslog/files
 	if *toStderr {
 		toSyslog = false
@@ -131,7 +130,6 @@ func Init(name string, start time.Time, config *Logging) error {
 	if len(debugSelectors) > 0 {
 		config.Selectors = debugSelectors
 	}
-
 	if toFiles {
 		if config.Files == nil {
 			config.Files = &FileRotator{

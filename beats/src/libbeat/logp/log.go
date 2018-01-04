@@ -215,6 +215,5 @@ func SetToFile(toFile bool, rotator *FileRotator) error {
 	}
 
 	_log.toFile = toFile
-
 	return nil
 }

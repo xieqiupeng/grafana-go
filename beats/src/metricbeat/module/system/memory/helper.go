@@ -5,6 +5,7 @@ package memory
 import (
 	"libbeat/common"
 	"metricbeat/module/system"
+
 	sigar "github.com/elastic/gosigar"
 )
 
@@ -53,22 +54,22 @@ func GetSwap() (*SwapStat, error) {
 
 func GetMemoryEvent(memStat *MemStat) common.MapStr {
 	return common.MapStr{
-		"total":         memStat.Total,
-		"used":          memStat.Used,
-		"free":          memStat.Free,
-		"actual_used":   memStat.ActualUsed,
-		"actual_free":   memStat.ActualFree,
-		"used_p":        memStat.UsedPercent,
-		"actual_used_p": memStat.ActualUsedPercent,
+		"total_long":           memStat.Total,
+		"used_long":            memStat.Used,
+		"free_long":            memStat.Free,
+		"actual_used_long":     memStat.ActualUsed,
+		"actual_free_long":     memStat.ActualFree,
+		"used_p_double":        memStat.UsedPercent,
+		"actual_used_p_double": memStat.ActualUsedPercent,
 	}
 }
 
 func GetSwapEvent(swapStat *SwapStat) common.MapStr {
 	return common.MapStr{
-		"total":  swapStat.Total,
-		"used":   swapStat.Used,
-		"free":   swapStat.Free,
-		"used_p": swapStat.UsedPercent,
+		"total_long":    swapStat.Total,
+		"used_long":     swapStat.Used,
+		"free_long":     swapStat.Free,
+		"used_p_double": swapStat.UsedPercent,
 	}
 }
 

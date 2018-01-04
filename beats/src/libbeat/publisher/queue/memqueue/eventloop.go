@@ -112,11 +112,11 @@ func (l *directEventLoop) run() {
 }
 
 func (l *directEventLoop) handleInsert(req *pushRequest) {
-	// log := l.broker.logger
-	// log.Debugf("push event: %v\t%v\t%p\n", req.event, req.seq, req.state)
+	log := l.broker.logger
+	log.Debugf("push event: %v\t%v\t%p\n", req.event, req.seq, req.state)
 
 	if avail, ok := l.insert(req); ok && avail == 0 {
-		// log.Debugf("buffer: all regions full")
+		log.Debugf("buffer: all regions full")
 
 		// no more space to accept new events -> unset events queue for time being
 		l.events = nil
@@ -147,8 +147,8 @@ func (l *directEventLoop) insert(req *pushRequest) (int, bool) {
 }
 
 func (l *directEventLoop) handleCancel(req *producerCancelRequest) {
-	// log := l.broker.logger
-	// log.Debug("handle cancel request")
+	log := l.broker.logger
+	log.Debug("handle cancel request")
 
 	var (
 		removed int
@@ -172,8 +172,8 @@ func (l *directEventLoop) handleCancel(req *producerCancelRequest) {
 }
 
 func (l *directEventLoop) handleConsumer(req *getRequest) {
-	// log := l.broker.logger
-	// log.Debugf("try reserve %v events", req.sz)
+	log := l.broker.logger
+	log.Debugf("try reserve %v events", req.sz)
 
 	start, buf := l.buf.reserve(req.sz)
 	count := len(buf)
@@ -181,7 +181,7 @@ func (l *directEventLoop) handleConsumer(req *getRequest) {
 		panic("empty batch returned")
 	}
 
-	// log.Debug("newACKChan: ", b.ackSeq, count)
+	//log.Debug("newACKChan: ", b.ackSeq, count)
 	ackCH := newACKChan(l.ackSeq, start, count, l.buf.buf.clients)
 	l.ackSeq++
 
@@ -286,7 +286,6 @@ func newBufferingEventLoop(b *Broker, size int, minEvents int, flushTimeout time
 	if !l.timer.Stop() {
 		<-l.timer.C
 	}
-
 	return l
 }
 

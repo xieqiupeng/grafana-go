@@ -126,6 +126,7 @@ func (c *eventConsumer) loop(consumer queue.Consumer) {
 	)
 
 	handleSignal := func(sig consumerSignal) {
+		logp.Debug("bingo", "handleSignal start ...")
 		switch sig.tag {
 		case sigConsumerCheck:
 
@@ -138,17 +139,21 @@ func (c *eventConsumer) loop(consumer queue.Consumer) {
 
 		paused = c.paused()
 		if !paused && c.out != nil && batch != nil {
+			logp.Debug("bingo", "handleSignal start 1  ...")
 			out = c.out.workQueue
 		} else {
+			logp.Debug("bingo", "handleSignal start 2 ...")
 			out = nil
 		}
 	}
 
 	for {
+		logp.Debug("bingo", "batch for ....")
 		if !paused && c.out != nil && consumer != nil && batch == nil {
 			out = c.out.workQueue
 			queueBatch, err := consumer.Get(c.out.batchSize)
 			if err != nil {
+				logp.Debug("bingo", " get batch err:%v", err.Error())
 				out = nil
 				consumer = nil
 				continue
@@ -160,6 +165,9 @@ func (c *eventConsumer) loop(consumer queue.Consumer) {
 				out = nil
 			}
 		}
+		if batch != nil {
+			logp.Debug("bingo", "batch size:%v", len(batch.events))
+		}
 
 		select {
 		case sig := <-c.sig:
@@ -167,7 +175,7 @@ func (c *eventConsumer) loop(consumer queue.Consumer) {
 			continue
 		default:
 		}
-
+		logp.Debug("bingo", "batch ....")
 		select {
 		case <-c.done:
 			log.Debug("stop pipeline event consumer")
@@ -175,6 +183,7 @@ func (c *eventConsumer) loop(consumer queue.Consumer) {
 		case sig := <-c.sig:
 			handleSignal(sig)
 		case out <- batch:
+			logp.Debug("bingo", "send batch ....")
 			batch = nil
 		}
 	}

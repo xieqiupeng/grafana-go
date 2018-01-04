@@ -10,6 +10,7 @@ import (
 	"metricbeat/mb"
 	"metricbeat/mb/parse"
 	"metricbeat/module/system/process"
+
 	sigar "github.com/elastic/gosigar"
 )
 
@@ -82,16 +83,16 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 	}
 
 	event := common.MapStr{
-		"total":    len(pids),
-		"sleeping": summary.sleeping,
-		"running":  summary.running,
-		"idle":     summary.idle,
-		"stopped":  summary.stopped,
-		"zombie":   summary.zombie,
-		"unknown":  summary.unknown,
+		"total_long":    len(pids),
+		"sleeping_long": summary.sleeping,
+		"running_long":  summary.running,
+		"idle_long":     summary.idle,
+		"stopped_long":  summary.stopped,
+		"zombie_long":   summary.zombie,
+		"unknown_long":  summary.unknown,
 	}
 	// change the name space to use . instead of _
-	event[mb.NamespaceKey] = "process.summary"
+	event[mb.NamespaceKey+"_string"] = "process.summary"
 
 	return event, nil
 }

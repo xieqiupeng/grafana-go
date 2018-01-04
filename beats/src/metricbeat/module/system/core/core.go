@@ -53,31 +53,31 @@ func (m *MetricSet) Fetch(report mb.Reporter) {
 	}
 
 	for id, sample := range samples {
-		event := common.MapStr{"id": id}
+		event := common.MapStr{"id_long": id}
 
 		for _, metric := range m.config.Metrics {
 			switch strings.ToLower(metric) {
 			case percentages:
 				// Use NormalizedPercentages here because per core metrics range on [0, 100%].
 				pct := sample.Percentages()
-				event.Put("user.pct", pct.User)
-				event.Put("system.pct", pct.System)
-				event.Put("idle.pct", pct.Idle)
-				event.Put("iowait.pct", pct.IOWait)
-				event.Put("irq.pct", pct.IRQ)
-				event.Put("nice.pct", pct.Nice)
-				event.Put("softirq.pct", pct.SoftIRQ)
-				event.Put("steal.pct", pct.Steal)
+				event.Put("user.pct_double", pct.User)
+				event.Put("system.pct_double", pct.System)
+				event.Put("idle.pct_double", pct.Idle)
+				event.Put("iowait.pct_double", pct.IOWait)
+				event.Put("irq.pct_double", pct.IRQ)
+				event.Put("nice.pct_double", pct.Nice)
+				event.Put("softirq.pct_double", pct.SoftIRQ)
+				event.Put("steal.pct_double", pct.Steal)
 			case ticks:
 				ticks := sample.Ticks()
-				event.Put("user.ticks", ticks.User)
-				event.Put("system.ticks", ticks.System)
-				event.Put("idle.ticks", ticks.Idle)
-				event.Put("iowait.ticks", ticks.IOWait)
-				event.Put("irq.ticks", ticks.IRQ)
-				event.Put("nice.ticks", ticks.Nice)
-				event.Put("softirq.ticks", ticks.SoftIRQ)
-				event.Put("steal.ticks", ticks.Steal)
+				event.Put("user.ticks_long", ticks.User)
+				event.Put("system.ticks_long", ticks.System)
+				event.Put("idle.ticks_long", ticks.Idle)
+				event.Put("iowait.ticks_long", ticks.IOWait)
+				event.Put("irq.ticks_long", ticks.IRQ)
+				event.Put("nice.ticks_long", ticks.Nice)
+				event.Put("softirq.ticks_long", ticks.SoftIRQ)
+				event.Put("steal.ticks_long", ticks.Steal)
 			}
 		}
 
