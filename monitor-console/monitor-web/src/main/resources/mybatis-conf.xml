@@ -12,7 +12,7 @@
 		<setting name="defaultExecutorType" value="SIMPLE" />
 		<setting name="defaultStatementTimeout" value="10" />
 		<!-- 本地测试时打开 输出SQL日志信息 -->
-		<!--<setting name="logImpl" value="STDOUT_LOGGING" /> -->
+		<!--<setting name="logImpl" value="STDOUT_LOGGING" />-->
 	</settings>
 
 	<!-- 配置分页插件 -->

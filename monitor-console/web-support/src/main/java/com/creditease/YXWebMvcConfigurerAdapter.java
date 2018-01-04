@@ -25,7 +25,7 @@ public abstract class YXWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter 
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AccessInterceptor());
+//        registry.addInterceptor(new AccessInterceptor());
     }
 
     public YXWebMvcConfigurerAdapter() {

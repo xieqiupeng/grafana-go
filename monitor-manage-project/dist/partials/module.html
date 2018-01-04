@@ -1,0 +1,252 @@
+<div align="center" ng-controller="ctrl.monitorManageController">
+    <div class="tabbed-view tabbed-view--panel-edit">
+        <div class="tabbed-view-header">
+            <h2 class="tabbed-view-title">
+                监控管理
+            </h2>
+            <ul class="gf-tabs">
+                <li class="gf-tabs-item" >
+                    <a class="gf-tabs-link" ng-click="confirmChangeTab(ctrl.panel.serverHost)" ng-class="{active: data.current == 1}">
+                        查询
+                    </a>
+                </li>
+                <li class="gf-tabs-item" >
+                    <a class="gf-tabs-link" ng-if="data.current == 2" ng-class="{active: data.current == 2}">
+                        编辑
+                    </a>
+                    <a class="gf-tabs-link" ng-if="data.current == 3" ng-class="{active: data.current == 3}">
+                        新增
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="tabbed-view-body">
+            <div ng-if="data.current == 1">
+                <div class="editor-row">
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="text" class="gf-form-input width-25"  placeholder=" 根据任务名称模糊查找" id="taskName" ng-model='taskName'></input>
+
+                            </td>
+                            <td style="width: 60px">
+                                <a  ng-click="searchFunction(ctrl.panel.serverHost)">
+                                    <i class="fa fa-search-plus" aria-hidden="true"></i>搜索
+                                </a>
+                            </td>
+                            <td >
+                                <a  ng-click="showAddMonitorTaskTab()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>新增
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+
+                    <label hidden id="serverHost">{{ctrl.panel.serverHost}}</label>
+
+                </div>
+                <table border="2" width="100%" align="center">
+                    <tr >
+                        <td align="center">序号</td>
+                        <td align="center">任务Id</td>
+                        <td align="center">任务名称</td>
+                        <td align="center">状态</td>
+                        <td align="center">数据源</td>
+                        <td align="center">tomcat服务器</td>
+                        <td align="center">创建时间</td>
+                        <td align="center">更新时间</td>
+                        <td align="center" colspan="3">操作</td>
+                    </tr>
+                    <tr ng-repeat="task in taskArray">
+                        <td>{{$index+1}}</td>
+                        <td>{{task.id}}</td>
+                        <td>{{task.taskName}}</td>
+                        <td>{{task.status}}</td>
+                        <td>
+                            <table>
+                                <tr><td>数据源Ip:</td></tr>
+                                <tr><td ng-bind-html="task.dataSourceServerIp"></td></tr>
+                                <tr><td>文件位置:</td></tr>
+                                <tr><td ng-bind-html="task.dataSourceLog"></td></tr>
+                            </table>
+                        </td>
+                        <td ng-bind-html="task.tomcatServerHost"></td>
+                        <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td  align="center">
+                            <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFunction(ctrl.panel.serverHost,task.taskName,1)"/>
+                            <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFunction(ctrl.panel.serverHost,task.taskName,0)"/>
+                        </td>
+                        <td  align="center"><input type="button" value="编辑" class="btn btn-primary"  ng-click="showEditMonitorTaskTab(ctrl.panel.serverHost,task.taskName)" /></td>
+
+                        <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(ctrl.panel.serverHost,task.taskName)"/></td>
+                    </tr>
+                </table>
+                <br/>
+                共{{total}}条&nbsp;&nbsp;
+                第{{pageNum}}/{{pages}}页
+                <input id="lastpage" class="btn btn-primary" type="button" ng-disabled="!hasPreviousPage" ng-click="lastPageFunction(ctrl.panel.serverHost)" value="上一页">
+                <input id="nextpage" class="btn btn-primary" type="button" ng-disabled="!hasNextPage" ng-click="nextPageFunction(ctrl.panel.serverHost)" value="下一页">
+                每页显示:
+                <select ng-model="pageSize" ng-init="pageSize='5'" ng-change="selectChangePageSize()"  size="1" style="width: auto">
+                    <option value="5">5
+                    <option value="10">10
+                    <option value="15">15
+                </select>条
+            </div>
+            <div ng-if="data.current == 2||data.current == 3">
+               <panel-editor-tab-monitor-manage-panel0>
+                   <form role="form" name="myForm" ng-submit="submitForm(myForm.$valid)" class="form-horizontal" novalidate>
+                    <div class="editor-row">
+                        <div class="section gf-form-group">
+                            <h5 class="section-heading">基本属性</h5>
+                            <div class="gf-form">
+                                <span class="gf-form-label width-7">任务名称</span>
+                                <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
+                                       ng-disabled="data.current == 2"  ng-model="formData.taskName" type="text" placeholder="请填写任务名称,不能含有中文">
+                            </div>
+                            <div class="gf-form">
+                                <span class="gf-form-label width-7">数据源Ip:</span>
+                                <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
+                                       ng-model="formData.dataSourceServerIp" type="text" placeholder="请填写数据源ip,多个用英文逗号分隔" >
+                            </div>
+                            <div class="gf-form">
+                                <span class="gf-form-label width-9">数据源文件位置:</span>
+                                <input class="gf-form-input width-23 ng-pristine ng-untouched ng-valid ng-not-empty"
+                                       ng-model="formData.dataSourceLog" type="text" placeholder="请填写数据源文件位置" >
+                            </div>
+                            <div class="gf-form">
+                                <gf-form-switch class="gf-form max-width-30" label="是否为tomcat服务器" label-class="width-12" checked="formData.isMonitorTomcatServer" switch-class="max-width-6" on-change="changeIsMonitorTomcatServer()">
+                                    <div class="gf-form-switch max-width-6" >
+                                        <input id="check-166" type="checkbox" class="ng-untouched ng-valid ng-dirty ng-valid-parse ng-empty">
+                                    </div>
+                                </gf-form-switch>
+                            </div>
+                            <div class="gf-form" ng-if="formData.isMonitorTomcatServer==true">
+                                <span class="gf-form-label width-7">服务器地址</span>
+                                <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
+                                       ng-model="formData.tomcatServerHost" type="text" placeholder="请输入服务器地址(ip和port),多个用英文逗号分隔" >
+                            </div>
+                            <div class="gf-form">
+                                <span class="gf-form-label width-8">切分模板</span>
+                                <select class="gf-form-input ng-pristine ng-untouched ng-valid ng-empty"
+                                        ng-model="formData.template">
+                                    <option value="0" selected="selected">普通切分模板</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="section gf-form-group">
+                            <h5 class="section-heading">分隔符属性</h5>
+                            <div class="gf-form">
+                                <gf-form-switch class="gf-form max-width-30" label="分隔符为正则" label-class="width-12" checked="formData.isRegex" switch-class="max-width-6" on-change="changeIsRegex()">
+
+                                    <div class="gf-form-switch max-width-6" >
+                                    <input id="check-167" type="checkbox"  class="ng-untouched ng-valid ng-dirty ng-valid-parse ng-empty">
+                                </div>
+                                </gf-form-switch>
+                            </div>
+                            <div class="gf-form">
+                                <gf-form-switch class="gf-form max-width-30" label="分隔符有序" label-class="width-12" checked="formData.isOrder" switch-class="max-width-6" on-change="changeIsOrder()">
+                                    <div class="gf-form-switch max-width-6" >
+                                        <input id="check-168" type="checkbox"  class="ng-untouched ng-valid ng-dirty ng-valid-parse ng-empty">
+                                    </div>
+                                </gf-form-switch>
+                            </div>
+
+                            <div class="gf-form">
+                                <table>
+                                    <tr><td style="float:right"><input type="button" value="新增分隔符" ng-click="addSeparatorKey(null)" /></td></tr>
+                                    <tr>
+                                        <td>
+                                            <table border="2"  >
+                                                <tr>
+                                                    <th>分隔符</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                                <tr ng-repeat="separatorKeyObject in formData.separatorKeys" ng-model="separatorKeyObject.separatorKeyIndex">
+                                                    <td><input type="text" ng-model="separatorKeyObject.separatorKey"/></td>
+                                                    <td><input type="button" value="删除" ng-click="removeSeparatorKey(separatorKeyObject.separatorKeyIndex)"></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="editor-row">
+                        <h5 class="section-heading">结果属性</h5>
+                        <div class="gf-form gf-form--v-stretch">
+                            <span class="gf-form-label width-8">数据源样例：</span>
+                            <textarea class="gf-form-input width-31 ng-pristine ng-untouched ng-valid ng-empty"
+                                      rows="1" ng-model="formData.dataSourceLogSample"
+                                      placeholder="请输入一行完整的数据源内容，然后点击解析执行"></textarea>
+                            <button class="btn btn-inverse width-8" ng-click="dataClean(ctrl.panel.serverHost)">解析执行
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-row">
+                       <div class="section gf-form-group">
+                           <table>
+                               <tr><td style="float:right"><input type="button" value="新增结果列" ng-click="addResultColumn(null)" /></td></tr>
+                               <tr>
+                                   <td>
+                                       <table border="2" id="resultColumnTable23">
+                                           <tr>
+                                               <th>解析结果</th>
+                                               <th>列索引(从0起始)</th>
+                                               <th>列名称</th>
+                                               <th>列类型</th>
+                                               <th>格式化(可为空)</th>
+                                               <th>标签还是值</th>
+                                               <th>操作</th>
+                                           </tr>
+                                           <tr ng-repeat="resultColumnObject in formData.resultColumns" ng-model="resultColumnObject.resultColumnIndex">
+                                               <td>{{resultColumnObject.columnExampleValue}}</td>
+                                               <td><input type="text" ng-model="resultColumnObject.columnSeq" class="width-8"/></td>
+                                               <td><input type="text" ng-model="resultColumnObject.columnName" class="width-8"/></td>
+                                               <td>
+                                                   <select size="1" class="width-8" ng-model="resultColumnObject.columnType">
+                                                       <option value="string" selected>string</option>
+                                                       <option value="boolean">boolean</option>
+                                                       <option value="long">long</option>
+                                                       <option value="double">double</option>
+                                                       <option value="date">date</option>
+                                                   </select>
+                                               </td>
+                                               <td><input type="text" ng-model="resultColumnObject.format"/></td>
+                                               <td>
+                                                   <select size="1" class="width-8" ng-model="resultColumnObject.tagOrValue" >
+                                                       <option value="0" selected>tag</option>
+                                                       <option value="1">field</option>
+                                                   </select>
+                                               </td>
+                                               <td><input type="button" value="删除" ng-click="removeColumnResult(resultColumnObject.resultColumnIndex)"></input></td>
+                                           </tr>
+
+                                       </table>
+                                   </td>
+                               </tr>
+                           </table>
+                       </div>
+                   </div>
+                    <div class="editor-row">
+                       <div class="section gf-form-group">
+                           <button class="btn btn-inverse" ng-click="saveOrUpdate(ctrl.panel.serverHost)">保存
+                           </button>
+                           <button class="btn btn-inverse" ng-click="confirmChangeTab(ctrl.panel.serverHost)">返回
+                           </button>
+                       </div>
+                    </div>
+                   </form>
+               </panel-editor-tab-monitor-manage-panel0>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

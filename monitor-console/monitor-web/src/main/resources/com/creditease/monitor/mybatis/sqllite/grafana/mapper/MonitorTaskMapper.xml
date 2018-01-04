@@ -29,7 +29,7 @@
   </delete>
   <insert id="insert" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ROWID()
+      SELECT LAST_INSERT_ID()
     </selectKey>
     insert into monitor_task (task_name, status, cut_template, 
       data_source_server_ip, data_source_log, is_monitor_tomcat_server, 
@@ -42,7 +42,7 @@
   </insert>
   <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ROWID()
+      SELECT LAST_INSERT_ID()
     </selectKey>
     insert into monitor_task
     <trim prefix="(" suffix=")" suffixOverrides="," >

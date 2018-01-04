@@ -1,0 +1,70 @@
+{
+    "annotations": {
+        "list": []
+    }, 
+    "editable": true, 
+    "hideControls": false, 
+    "id": null, 
+    "links": [], 
+    "originalTitle": "项目管理",
+    "refresh": false, 
+    "rows": [
+        {
+            "collapse": false, 
+            "editable": true, 
+            "height": "250px", 
+            "panels": [
+                {
+                    "aliasColors": {}, 
+                    "bars": false, 
+                    "editable": true,
+                    "error": false, 
+                    "fill": 2,
+                    "grid": {
+                        "threshold1": null, 
+                        "threshold1Color": "rgba(216, 200, 27, 0.27)", 
+                        "threshold2": null, 
+                        "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                    }, 
+                    "id": "monitor-manage-panel",
+                    "legend": {
+                        "avg": false, 
+                        "current": false, 
+                        "max": false, 
+                        "min": false, 
+                        "show": true, 
+                        "total": false, 
+                        "values": false
+                    }, 
+                    "lines": true, 
+                    "linewidth": 2, 
+                    "links": [], 
+                    "nullPointMode": "null", 
+                    "percentage": false, 
+                    "pointradius": 5, 
+                    "points": false, 
+                    "renderer": "flot", 
+                    "seriesOverrides": [], 
+                    "span": 12,
+                    "stack": false, 
+                    "steppedLine": false, 
+                    "title": "项目管理",
+                    "type": "monitor-manage-project-panel"
+                }
+            ],
+            "showTitle": false,
+            "title": "项目管理"
+        }
+    ], 
+    "schemaVersion": 12, 
+    "sharedCrosshair": true, 
+    "style": "dark", 
+    "tags": [
+        "宜信",
+        "监控",
+        "项目管理"
+    ], 
+    "timezone": "browser",
+    "title": "项目管理",
+    "version": 0
+}

@@ -16,4 +16,6 @@ public interface MonitorTaskExMapper extends MonitorTaskMapper {
 
     List<MonitorTask> selectByTaskName(String taskName);
 
+    MonitorTask selectOneByTaskName(String taskName);
+
 }
