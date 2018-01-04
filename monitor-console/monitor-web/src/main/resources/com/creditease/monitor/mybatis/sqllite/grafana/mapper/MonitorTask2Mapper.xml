@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask2" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
-
-
     <result column="task_name" property="taskName" jdbcType="VARCHAR" />
     <result column="data_source_log" property="dataSourceLog" jdbcType="VARCHAR" />
     <result column="project_machine_id" property="projectMachineId" jdbcType="VARCHAR" />
