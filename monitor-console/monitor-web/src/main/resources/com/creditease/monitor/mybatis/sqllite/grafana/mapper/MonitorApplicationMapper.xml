@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.creditease.monitor.mybatis.sqllite.grafana.mapper.MonitorApplicationMapper">
+  <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="machine_id" jdbcType="INTEGER" property="machineId" />
+
+
+    <result column="application_name" jdbcType="VARCHAR" property="applicationName" />
+    <result column="application_type" jdbcType="TINYINT" property="applicationType" />
+    <result column="application_detail_param" jdbcType="VARCHAR" property="applicationDetailParam" />
+    <result column="application_desc" jdbcType="VARCHAR" property="applicationDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, machine_id, application_name, application_type, application_detail_param, application_desc, 
+    status, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from monitor_application
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from monitor_application
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into monitor_application (machine_id, application_name, application_type, 
+      application_detail_param, application_desc, 
+      status, create_time, update_time
+      )
+    values (#{machineId,jdbcType=INTEGER}, #{applicationName,jdbcType=VARCHAR}, #{applicationType,jdbcType=TINYINT}, 
+      #{applicationDetailParam,jdbcType=VARCHAR}, #{applicationDesc,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into monitor_application
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="machineId != null">
+        machine_id,
+      </if>
+      <if test="applicationName != null">
+        application_name,
+      </if>
+      <if test="applicationType != null">
+        application_type,
+      </if>
+      <if test="applicationDetailParam != null">
+        application_detail_param,
+      </if>
+      <if test="applicationDesc != null">
+        application_desc,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="machineId != null">
+        #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="applicationName != null">
+        #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        #{applicationType,jdbcType=TINYINT},
+      </if>
+      <if test="applicationDetailParam != null">
+        #{applicationDetailParam,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationDesc != null">
+        #{applicationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    update monitor_application
+    <set>
+      <if test="machineId != null">
+        machine_id = #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="applicationName != null">
+        application_name = #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        application_type = #{applicationType,jdbcType=TINYINT},
+      </if>
+      <if test="applicationDetailParam != null">
+        application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationDesc != null">
+        application_desc = #{applicationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    update monitor_application
+    set machine_id = #{machineId,jdbcType=INTEGER},
+      application_name = #{applicationName,jdbcType=VARCHAR},
+      application_type = #{applicationType,jdbcType=TINYINT},
+      application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},
+      application_desc = #{applicationDesc,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="machine_id" jdbcType="INTEGER" property="machineId" />
+    <result column="application_name" jdbcType="VARCHAR" property="applicationName" />
+    <result column="application_type" jdbcType="TINYINT" property="applicationType" />
+    <result column="application_detail_param" jdbcType="VARCHAR" property="applicationDetailParam" />
+    <result column="application_desc" jdbcType="VARCHAR" property="applicationDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, machine_id, application_name, application_type, application_detail_param, application_desc, 
+    status, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from monitor_application
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from monitor_application
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into monitor_application (machine_id, application_name, application_type, 
+      application_detail_param, application_desc, 
+      status, create_time, update_time
+      )
+    values (#{machineId,jdbcType=INTEGER}, #{applicationName,jdbcType=VARCHAR}, #{applicationType,jdbcType=TINYINT}, 
+      #{applicationDetailParam,jdbcType=VARCHAR}, #{applicationDesc,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into monitor_application
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="machineId != null">
+        machine_id,
+      </if>
+      <if test="applicationName != null">
+        application_name,
+      </if>
+      <if test="applicationType != null">
+        application_type,
+      </if>
+      <if test="applicationDetailParam != null">
+        application_detail_param,
+      </if>
+      <if test="applicationDesc != null">
+        application_desc,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="machineId != null">
+        #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="applicationName != null">
+        #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        #{applicationType,jdbcType=TINYINT},
+      </if>
+      <if test="applicationDetailParam != null">
+        #{applicationDetailParam,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationDesc != null">
+        #{applicationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    update monitor_application
+    <set>
+      <if test="machineId != null">
+        machine_id = #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="applicationName != null">
+        application_name = #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        application_type = #{applicationType,jdbcType=TINYINT},
+      </if>
+      <if test="applicationDetailParam != null">
+        application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationDesc != null">
+        application_desc = #{applicationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    update monitor_application
+    set machine_id = #{machineId,jdbcType=INTEGER},
+      application_name = #{applicationName,jdbcType=VARCHAR},
+      application_type = #{applicationType,jdbcType=TINYINT},
+      application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},
+      application_desc = #{applicationDesc,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="machine_id" jdbcType="INTEGER" property="machineId" />
+    <result column="application_name" jdbcType="VARCHAR" property="applicationName" />
+    <result column="application_type" jdbcType="TINYINT" property="applicationType" />
+    <result column="application_detail_param" jdbcType="VARCHAR" property="applicationDetailParam" />
+    <result column="application_desc" jdbcType="VARCHAR" property="applicationDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, machine_id, application_name, application_type, application_detail_param, application_desc, 
+    status, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from monitor_application
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from monitor_application
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into monitor_application (machine_id, application_name, application_type, 
+      application_detail_param, application_desc, 
+      status, create_time, update_time
+      )
+    values (#{machineId,jdbcType=INTEGER}, #{applicationName,jdbcType=VARCHAR}, #{applicationType,jdbcType=TINYINT}, 
+      #{applicationDetailParam,jdbcType=VARCHAR}, #{applicationDesc,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into monitor_application
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="machineId != null">
+        machine_id,
+      </if>
+      <if test="applicationName != null">
+        application_name,
+      </if>
+      <if test="applicationType != null">
+        application_type,
+      </if>
+      <if test="applicationDetailParam != null">
+        application_detail_param,
+      </if>
+      <if test="applicationDesc != null">
+        application_desc,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="machineId != null">
+        #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="applicationName != null">
+        #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        #{applicationType,jdbcType=TINYINT},
+      </if>
+      <if test="applicationDetailParam != null">
+        #{applicationDetailParam,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationDesc != null">
+        #{applicationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    update monitor_application
+    <set>
+      <if test="machineId != null">
+        machine_id = #{machineId,jdbcType=INTEGER},
+      </if>
+      <if test="applicationName != null">
+        application_name = #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        application_type = #{applicationType,jdbcType=TINYINT},
+      </if>
+      <if test="applicationDetailParam != null">
+        application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationDesc != null">
+        application_desc = #{applicationDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication">
+    update monitor_application
+    set machine_id = #{machineId,jdbcType=INTEGER},
+      application_name = #{applicationName,jdbcType=VARCHAR},
+      application_type = #{applicationType,jdbcType=TINYINT},
+      application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},
+      application_desc = #{applicationDesc,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
