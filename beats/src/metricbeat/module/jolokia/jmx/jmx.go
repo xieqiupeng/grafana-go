@@ -102,6 +102,5 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 
 	// Set dynamic namespace.
 	event[mb.NamespaceKey] = m.namespace
-
 	return event, nil
 }

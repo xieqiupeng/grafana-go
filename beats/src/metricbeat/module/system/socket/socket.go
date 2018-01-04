@@ -15,6 +15,7 @@ import (
 	"metricbeat/mb"
 	"metricbeat/mb/parse"
 	"metricbeat/module/system"
+
 	"github.com/elastic/gosigar/sys/linux"
 
 	"github.com/pkg/errors"
@@ -245,48 +246,48 @@ func newConnection(diag *linux.InetDiagMsg) *connection {
 
 func (c *connection) ToMapStr() common.MapStr {
 	evt := common.MapStr{
-		"family": c.Family.String(),
+		"family_string": c.Family.String(),
 		"local": common.MapStr{
-			"ip":   c.LocalIP.String(),
-			"port": c.LocalPort,
+			"ip_string": c.LocalIP.String(),
+			"port_long": c.LocalPort,
 		},
 		"user": common.MapStr{
-			"id": c.UID,
+			"id_long": c.UID,
 		},
-		"direction": c.Direction.String(),
+		"direction_string": c.Direction.String(),
 	}
 
 	if c.Username != "" {
-		evt.Put("user.name", c.Username)
+		evt.Put("user.name_string", c.Username)
 	}
 
 	if c.ProcessError != nil {
-		evt.Put("process.error", c.ProcessError.Error())
+		evt.Put("process.error_string", c.ProcessError.Error())
 	} else {
-		process := common.MapStr{"pid": c.PID}
+		process := common.MapStr{"pid_long": c.PID}
 		evt["process"] = process
 
 		if c.PID > 0 {
-			addOptionalString(process, "exe", c.Exe)
-			addOptionalString(process, "command", c.Command)
-			addOptionalString(process, "cmdline", c.CmdLine)
+			addOptionalString(process, "exe_string", c.Exe)
+			addOptionalString(process, "command_string", c.Command)
+			addOptionalString(process, "cmdline_string", c.CmdLine)
 		} else if c.PID == 0 {
-			process["command"] = "kernel"
+			process["command_string"] = "kernel"
 		}
 	}
 
 	if c.RemotePort != 0 {
 		remote := common.MapStr{
-			"ip":   c.RemoteIP.String(),
-			"port": c.RemotePort,
+			"ip_string": c.RemoteIP.String(),
+			"port_long": c.RemotePort,
 		}
 		evt["remote"] = remote
 
 		if c.DestHostError != nil {
-			remote["host_error"] = c.DestHostError.Error()
+			remote["host_error_string"] = c.DestHostError.Error()
 		} else {
-			addOptionalString(remote, "host", c.DestHost)
-			addOptionalString(remote, "etld_plus_one", c.DestHostETLDPlusOne)
+			addOptionalString(remote, "host_string", c.DestHost)
+			addOptionalString(remote, "etld_plus_one_string", c.DestHostETLDPlusOne)
 		}
 	}
 

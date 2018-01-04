@@ -1,6 +1,7 @@
 package module
 
 import (
+	"libbeat/logp"
 	"sync"
 
 	"libbeat/beat"
@@ -51,6 +52,7 @@ func (mr *runner) Start() {
 }
 
 func (mr *runner) Stop() {
+	logp.Info("runner stop ....:%s", mr.mod.Name())
 	mr.stopOnce.Do(func() {
 		close(mr.done)
 		mr.client.Close()

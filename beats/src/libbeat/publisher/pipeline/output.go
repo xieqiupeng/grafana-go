@@ -86,8 +86,9 @@ func (w *netClientWorker) run() {
 				}
 				return
 			}
-
+			logp.Debug("bingo", " recieve batch & publish start ....")
 			err := w.client.Publish(batch)
+			logp.Debug("bingo", " recieve batch & publish end ....")
 			if err != nil {
 				logp.Err("Failed to publish events: %v", err)
 				// on error return to connect loop

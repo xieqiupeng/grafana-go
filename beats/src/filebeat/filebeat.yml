@@ -223,7 +223,7 @@ filebeat.etcd:
     username: test
     password: 123456
 
-  configpath: /prospectorconfig/
+  configpath: /monitor/
 
 # Sets log level. The default log level is info.
 # Available log levels are: critical, error, warning, info, debug
@@ -245,9 +245,9 @@ output.rocket:
   namesrv: 10.100.139.149:9876;10.100.139.150:9876
   # The Kafka topic used for produced events. The setting can be a format string
   # using any event field. To set the topic from document type use `%{[type]}`.
-  topic: TopicTest1
+  topic: BzlogTopic
 
-  producergroup:  ProducerGroupName
+  producergroup:  BzGroup
 
   clientip: 10.10.180.66
 
@@ -373,3 +373,12 @@ output.rocket:
   # Configure what types of renegotiation are supported. Valid options are
   # never, once, and freely. Default is never.
   #ssl.renegotiation: never
+logging.level: debug
+#logging.selectors: [*]
+logging.metrics.enabled: true
+logging.metrics.period: 30s
+logging.to_files: true
+logging.files:
+  path: ./logs/
+  name: filebeat.log
+  permissions: 0700

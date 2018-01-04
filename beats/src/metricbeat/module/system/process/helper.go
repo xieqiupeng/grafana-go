@@ -17,6 +17,7 @@ import (
 	"libbeat/logp"
 	"metricbeat/module/system"
 	"metricbeat/module/system/memory"
+
 	sigar "github.com/elastic/gosigar"
 )
 
@@ -224,56 +225,56 @@ func getProcState(b byte) string {
 
 func (procStats *ProcStats) getProcessEvent(process *Process) common.MapStr {
 	proc := common.MapStr{
-		"pid":      process.Pid,
-		"ppid":     process.Ppid,
-		"pgid":     process.Pgid,
-		"name":     process.Name,
-		"state":    process.State,
-		"username": process.Username,
+		"pid_long":        process.Pid,
+		"ppid_long":       process.Ppid,
+		"pgid_long":       process.Pgid,
+		"name_string":     process.Name,
+		"state_string":    process.State,
+		"username_string": process.Username,
 		"memory": common.MapStr{
-			"size": process.Mem.Size,
+			"size_long": process.Mem.Size,
 			"rss": common.MapStr{
-				"bytes": process.Mem.Resident,
-				"pct":   GetProcMemPercentage(process, 0 /* read total mem usage */),
+				"bytes_long": process.Mem.Resident,
+				"pct_double": GetProcMemPercentage(process, 0 /* read total mem usage */),
 			},
-			"share": process.Mem.Share,
+			"share_long": process.Mem.Share,
 		},
 	}
 
 	if process.CmdLine != "" {
-		proc["cmdline"] = process.CmdLine
+		proc["cmdline_string"] = process.CmdLine
 	}
 
 	if process.Cwd != "" {
-		proc["cwd"] = process.Cwd
+		proc["cwd_string"] = process.Cwd
 	}
 
 	if len(process.Env) > 0 {
-		proc["env"] = process.Env
+		proc["env_string"] = process.Env
 	}
 
 	proc["cpu"] = common.MapStr{
 		"total": common.MapStr{
-			"pct": process.cpuTotalPct,
+			"pct_double": process.cpuTotalPct,
 			"norm": common.MapStr{
-				"pct": process.cpuTotalPctNorm,
+				"pct_double": process.cpuTotalPctNorm,
 			},
 		},
-		"start_time": unixTimeMsToTime(process.Cpu.StartTime),
+		"start_time_string": unixTimeMsToTime(process.Cpu.StartTime),
 	}
 
 	if procStats.CpuTicks {
-		proc.Put("cpu.user.ticks", process.Cpu.User)
-		proc.Put("cpu.system.ticks", process.Cpu.Sys)
-		proc.Put("cpu.total.ticks", process.Cpu.Total)
+		proc.Put("cpu.user.ticks_long", process.Cpu.User)
+		proc.Put("cpu.system.ticks_long", process.Cpu.Sys)
+		proc.Put("cpu.total.ticks_long", process.Cpu.Total)
 	}
 
 	if process.FD != (sigar.ProcFDUsage{}) {
 		proc["fd"] = common.MapStr{
-			"open": process.FD.Open,
+			"open_long": process.FD.Open,
 			"limit": common.MapStr{
-				"soft": process.FD.SoftLimit,
-				"hard": process.FD.HardLimit,
+				"soft_long": process.FD.SoftLimit,
+				"hard_long": process.FD.HardLimit,
 			},
 		}
 	}
@@ -371,7 +372,6 @@ func (procStats *ProcStats) GetProcStats() ([]common.MapStr, error) {
 			logp.Debug("metricbeat", "Skip process pid=%d: %v", pid, err)
 			continue
 		}
-
 
 		if procStats.MatchProcess(process.Name) {
 

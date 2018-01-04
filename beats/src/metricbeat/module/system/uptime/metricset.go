@@ -8,6 +8,7 @@ import (
 	"libbeat/common"
 	"metricbeat/mb"
 	"metricbeat/mb/parse"
+
 	sigar "github.com/elastic/gosigar"
 )
 
@@ -36,7 +37,7 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 
 	return common.MapStr{
 		"duration": common.MapStr{
-			"ms": int64(uptime.Length * 1000),
+			"ms_long": int64(uptime.Length * 1000),
 		},
 	}, nil
 }

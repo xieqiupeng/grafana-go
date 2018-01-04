@@ -79,11 +79,11 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 
 	return common.MapStr{
 		"total_size": common.MapStr{
-			"free":  totalSizeFree,
-			"used":  totalSizeUsed,
-			"total": totalSize,
+			"free_long":  totalSizeFree,
+			"used_long":  totalSizeUsed,
+			"total_long": totalSize,
 		},
-		"count":       len(dict),
-		"total_files": totalFiles,
+		"count_long":       len(dict),
+		"total_files_long": totalFiles,
 	}, nil
 }

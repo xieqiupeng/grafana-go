@@ -83,18 +83,18 @@ func (m *MetricSet) Fetch() ([]common.MapStr, error) {
 
 func ioCountersToMapStr(counters net.IOCountersStat) common.MapStr {
 	return common.MapStr{
-		"name": counters.Name,
+		"name_string": counters.Name,
 		"in": common.MapStr{
-			"errors":  counters.Errin,
-			"dropped": counters.Dropin,
-			"bytes":   counters.BytesRecv,
-			"packets": counters.PacketsRecv,
+			"errors_long":  counters.Errin,
+			"dropped_long": counters.Dropin,
+			"bytes_long":   counters.BytesRecv,
+			"packets_long": counters.PacketsRecv,
 		},
 		"out": common.MapStr{
-			"errors":  counters.Errout,
-			"dropped": counters.Dropout,
-			"packets": counters.PacketsSent,
-			"bytes":   counters.BytesSent,
+			"errors_long":  counters.Errout,
+			"dropped_long": counters.Dropout,
+			"packets_long": counters.PacketsSent,
+			"bytes_long":   counters.BytesSent,
 		},
 	}
 }

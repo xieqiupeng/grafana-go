@@ -125,8 +125,15 @@ func (c *client) Publish(batch publisher.Batch) error {
 			msg.ref.done()
 			return nil
 		}
+		logp.Debug("bingo", "start sendasync ...")
+		error := c.producer.SendAsync(&msg.msg, sendCallback)
+		logp.Debug("bingo", "end sendasync ...")
+		if error != nil {
+			logp.Err("sendAsync:%s", error)
+		} else {
+			logp.Info("sendAsync success!")
+		}
 
-		c.producer.SendAsync(&msg.msg, sendCallback)
 		//
 		//if sendResult, err := c.producer.Send(&msg.msg); err != nil {
 		//	logp.Err("Sync send fail!") // 如果不是如预期的那么就报错

@@ -15,7 +15,7 @@ func CreateEtcdClientConfig() (etcdConfig clientv3.Config, configPath string) {
 		Endpoints:   []string{"10.100.139.150:2379", "10.100.139.151:2379", "10.100.139.153:2379"},
 		DialTimeout: 5 * time.Second,
 	}
-	configPath = "/prospectorconfig"
+	configPath = "/monitor/"
 
 	return
 }
@@ -42,7 +42,7 @@ func TestPutEtcd(t *testing.T) {
 
 	//c.Put("/prospectorconfig/b", "{\"ipAddress\": [\"10.100.139.150\",\"10.100.139.151\"],\"path\": [\"/app/testLog.log\"],\"type\": \"log\"}")
 
-	c.Put("/prospectorconfig/c", "{\"ipAddress\": [\"10.10.180.66\",\"10.100.139.151\"],\"path\": [\"/Users/creditease/bingo/test.log\"],\"type\": \"log\"}")
+	c.Put("/monitor/default", "{\"path\": [\"/app/software/apache-tomcat-9.0.1/logs/localhost_access_log.*\"],\"services\": [{\"host\": \"10.100.139.153\",\"serverTypeParams\": [{\"param\": [\"10.100.139.153:8080\"],\"type\": 1}]},{\"host\": \"10.10.180.66\",\"serverTypeParams\": [{\"param\": [\"127.0.0.1:8888\"],\"type\": 1}]}],\"type\": \"log\"}")
 
 	//c.Delete("/prospectorconfig/a")
 
@@ -50,7 +50,7 @@ func TestPutEtcd(t *testing.T) {
 
 	//c.Delete("/prospectorconfig/c")
 
-	//c.GetAllConfig()
+	c.GetAllConfig()
 }
 
 func TestNewEtcdClient(t *testing.T) {
@@ -76,7 +76,7 @@ func TestNewEtcdClient(t *testing.T) {
 	fmt.Println("--------------")
 	cfg, path := CreateEtcdClientConfig()
 	c := NewEtcdClient(cfg, path)
-	c.Put("prospectorconfig", string(d))
+	//c.Put("prospectorconfig", string(d))
 	conf, _ := c.GetAllConfig()
 
 	fmt.Println(len(conf))
@@ -109,4 +109,8 @@ func TestEtcdConfig(t *testing.T) {
 
 	json.Unmarshal(d, &rs)
 	fmt.Println(len(rs))
+}
+
+func TestGoChannels(t *testing.T) {
+
 }

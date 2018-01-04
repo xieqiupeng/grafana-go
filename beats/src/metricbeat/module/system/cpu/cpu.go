@@ -51,42 +51,42 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 		return nil, errors.Wrap(err, "failed to fetch CPU times")
 	}
 
-	event := common.MapStr{"cores": system.NumCPU}
+	event := common.MapStr{"cores_long": system.NumCPU}
 
 	for _, metric := range m.config.Metrics {
 		switch strings.ToLower(metric) {
 		case percentages:
 			pct := sample.Percentages()
-			event.Put("user.pct", pct.User)
-			event.Put("system.pct", pct.System)
-			event.Put("idle.pct", pct.Idle)
-			event.Put("iowait.pct", pct.IOWait)
-			event.Put("irq.pct", pct.IRQ)
-			event.Put("nice.pct", pct.Nice)
-			event.Put("softirq.pct", pct.SoftIRQ)
-			event.Put("steal.pct", pct.Steal)
-			event.Put("total.pct", pct.Total)
+			event.Put("user.pct_double", pct.User)
+			event.Put("system.pct_double", pct.System)
+			event.Put("idle.pct_double", pct.Idle)
+			event.Put("iowait.pct_double", pct.IOWait)
+			event.Put("irq.pct_double", pct.IRQ)
+			event.Put("nice.pct_double", pct.Nice)
+			event.Put("softirq.pct_double", pct.SoftIRQ)
+			event.Put("steal.pct_double", pct.Steal)
+			event.Put("total.pct_double", pct.Total)
 		case normalizedPercentages:
 			normalizedPct := sample.NormalizedPercentages()
-			event.Put("user.norm.pct", normalizedPct.User)
-			event.Put("system.norm.pct", normalizedPct.System)
-			event.Put("idle.norm.pct", normalizedPct.Idle)
-			event.Put("iowait.norm.pct", normalizedPct.IOWait)
-			event.Put("irq.norm.pct", normalizedPct.IRQ)
-			event.Put("nice.norm.pct", normalizedPct.Nice)
-			event.Put("softirq.norm.pct", normalizedPct.SoftIRQ)
-			event.Put("steal.norm.pct", normalizedPct.Steal)
-			event.Put("total.norm.pct", normalizedPct.Total)
+			event.Put("user.norm.pct_double", normalizedPct.User)
+			event.Put("system.norm.pct_double", normalizedPct.System)
+			event.Put("idle.norm.pct_double", normalizedPct.Idle)
+			event.Put("iowait.norm.pct_double", normalizedPct.IOWait)
+			event.Put("irq.norm.pct_double", normalizedPct.IRQ)
+			event.Put("nice.norm.pct_double", normalizedPct.Nice)
+			event.Put("softirq.norm.pct_double", normalizedPct.SoftIRQ)
+			event.Put("steal.norm.pct_double", normalizedPct.Steal)
+			event.Put("total.norm.pct_double", normalizedPct.Total)
 		case ticks:
 			ticks := sample.Ticks()
-			event.Put("user.ticks", ticks.User)
-			event.Put("system.ticks", ticks.System)
-			event.Put("idle.ticks", ticks.Idle)
-			event.Put("iowait.ticks", ticks.IOWait)
-			event.Put("irq.ticks", ticks.IRQ)
-			event.Put("nice.ticks", ticks.Nice)
-			event.Put("softirq.ticks", ticks.SoftIRQ)
-			event.Put("steal.ticks", ticks.Steal)
+			event.Put("user.ticks_long", ticks.User)
+			event.Put("system.ticks_long", ticks.System)
+			event.Put("idle.ticks_long", ticks.Idle)
+			event.Put("iowait.ticks_long", ticks.IOWait)
+			event.Put("irq.ticks_long", ticks.IRQ)
+			event.Put("nice.ticks_long", ticks.Nice)
+			event.Put("softirq.ticks_long", ticks.SoftIRQ)
+			event.Put("steal.ticks_long", ticks.Steal)
 		}
 	}
 

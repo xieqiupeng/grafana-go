@@ -24,22 +24,22 @@
 metricbeat.modules:
 
 #------------------------------- System Module -------------------------------
-#- module: system
-#  metricsets:
-#    - cpu             # CPU usage
-    #- filesystem      # File system usage for each mountpoint
+- module: system
+  metricsets:
+    - cpu             # CPU usage
+   # - filesystem      # File system usage for each mountpoint
     #- fsstat          # File system summary metrics
-#    - load            # CPU load averages
-#    - memory          # Memory usage
+    #- load            # CPU load averages
+    #- memory          # Memory usage
     #- network         # Network IO
-#    - process         # Per process metrics
+    #- process         # Per process metrics
     #- process_summary # Process summary
     #- uptime          # System Uptime
     #- core           # Per CPU core usage
     #- diskio         # Disk IO
     #- socket         # Sockets and connection info (linux only)
-#  enabled: true
-#  period: 10s
+  #enabled: true
+  #period: 10s
 #  processes: ["idea.*"]
 
   # Configure the metric types that are included by these metricsets.
@@ -195,6 +195,17 @@ metricbeat.modules:
 # `output.elasticsearch.password` settings. The format is `<user>:<pass>`.
 #cloud.auth:
 
+#================================ Etcd config ==================================
+metricbeat.etcd:
+  config:
+    endpoints: ["10.100.139.150:2379","10.100.139.152:2379","10.100.139.153:2379"]
+    dialtimeout: 5
+    username: test
+    password: 123456
+
+  configpath: /prospectorconfig/
+
+
 #================================ Outputs =====================================
 
 output.rocket:
@@ -244,12 +255,12 @@ output.rocket:
   #ssl.key: "/etc/pki/client/cert.key"
 
 #================================ Logging =====================================
-logging.level: info
-logging.metrics.enabled: true
-logging.metrics.period: 30s
+logging.level: debug
 logging.to_files: true
+logging.to_syslog: false
 logging.files:
-  path: /app/software/beats/logs
-  name: metricbeat.log
-  permissions: 0600
+  path: /Users/creditease/bingo
+  name: mybeat.log
+  keepfiles: 7
+  permissions: 0644
 

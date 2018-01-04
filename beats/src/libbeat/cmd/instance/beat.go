@@ -407,7 +407,6 @@ func (b *Beat) configure() error {
 	if err != nil {
 		return fmt.Errorf("error unpacking config data: %v", err)
 	}
-
 	b.Beat.Config = &b.Config.BeatConfig
 
 	err = cfgwarn.CheckRemoved5xSettings(cfg, "queue_size", "bulk_queue_size")

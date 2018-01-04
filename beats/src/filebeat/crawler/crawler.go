@@ -170,7 +170,7 @@ func (c *Crawler) ReloadProspector(ch chan *clientv3.Event, r *registrar.Registr
 					prospector := c.prospectors[pid]
 					prospector.Stop()
 				}
-				var v map[string]interface{}
+				v := &etcd.EtcdConfig{}
 				e := json.Unmarshal(ev.Kv.Value, &v)
 				if e == nil {
 					items := strings.Split(string(ev.Kv.Key), "/")
@@ -178,7 +178,7 @@ func (c *Crawler) ReloadProspector(ch chan *clientv3.Event, r *registrar.Registr
 					cfg := &etcd.ProspectorConfig{
 						T:         "log",
 						Enabled:   true,
-						Paths:     etcd.Convert2Strings(v["path"].([]interface{})),
+						Paths:     v.Path,
 						TailFiles: true,
 						Fields: map[string]string{
 							"tag": f,

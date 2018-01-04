@@ -2,6 +2,7 @@ package memqueue
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
 	"libbeat/common/atomic"
@@ -48,14 +49,16 @@ func newConsumer(b *Broker) *consumer {
 
 func (c *consumer) Get(sz int) (queue.Batch, error) {
 	// log := c.broker.logger
-
+	fmt.Println("bingo consumer get batch start ...")
 	if c.closed.Load() {
+		fmt.Println("bingo consumer get batch end close ...")
 		return nil, io.EOF
 	}
 
 	select {
 	case c.broker.requests <- getRequest{sz: sz, resp: c.resp}:
 	case <-c.done:
+		fmt.Println("bingo consumer get batch end done ...")
 		return nil, io.EOF
 	}
 
@@ -67,7 +70,7 @@ func (c *consumer) Get(sz int) (queue.Batch, error) {
 
 	// log.Debugf("create batch: seq=%v, start=%v, len=%v", ack.seq, ack.start, len(resp.buf))
 	// log.Debug("consumer: total events get = ", c.stats.totalGet)
-
+	fmt.Println("bingo consumer get batch end normal ...")
 	return &batch{
 		consumer: c,
 		events:   resp.buf,
