@@ -3,6 +3,8 @@ package com.creditease.monitor.response;
 import com.creditease.response.ResultMessage;
 
 public class ResponseCode {
+
+    /********************************数据源*******************************/
     @ResultMessage("数据源名称已经存在")
     public static final int DATA_SOURCE_HAS_EXISTS = 10001;
 
@@ -35,5 +37,32 @@ public class ResponseCode {
 
     @ResultMessage("无效端口:{0}")
     public static final int INVALID_PORT = 10011;
+
+    /********************************项目*******************************/
+    @ResultMessage("项目名称已经存在")
+    public static final int PROJECT_NAME_HAS_EXISTS = 20001;
+
+    @ResultMessage("某机器正在引用此项目导致无法操作")
+    public static final int PROJECT_IS_REFERRED_BY_MACHINE_LIST = 20002;
+
+    @ResultMessage("此项目不存在")
+    public static final int PROJECT_NOT_EXISTS = 20003;
+
+    /********************************机器*******************************/
+    @ResultMessage("机器名称已经存在")
+    public static final int MACHINE_NAME_HAS_EXISTS = 30001;
+
+    @ResultMessage("某应用正在引用此机器导致无法操作")
+    public static final int MACHINE_IS_REFERRED_BY_APPLICATION = 30002;
+
+    @ResultMessage("此项目不存在")
+    public static final int MACHINE_NOT_EXISTS = 30003;
+
+    /********************************应用*******************************/
+    @ResultMessage("应用名称已经存在")
+    public static final int APPLICATION_NAME_HAS_EXISTS = 40001;
+
+    @ResultMessage("此应用不存在")
+    public static final int APPLICATION_NOT_EXISTS = 40002;
 
 }
