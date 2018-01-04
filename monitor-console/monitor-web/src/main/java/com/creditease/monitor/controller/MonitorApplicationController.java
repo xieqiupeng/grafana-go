@@ -69,7 +69,7 @@ public class MonitorApplicationController {
                 monitorApplication.getApplicationName(),
                 monitorApplication.getApplicationType(),
                 monitorApplication.getApplicationDetailParam(),
-                monitorApplication.getDesc());
+                monitorApplication.getApplicationDesc());
 //        Response response = paramVerification(monitorApplication);
 //        if (response != null) {
 //            return response;
@@ -82,7 +82,7 @@ public class MonitorApplicationController {
         boolean ok = monitorApplicationService.addApplication(monitorApplication.getApplicationName(),
                 monitorApplication.getApplicationType(),
                 monitorApplication.getApplicationDetailParam(),
-                monitorApplication.getDesc());
+                monitorApplication.getApplicationDesc());
         logger.info("addApplication end applicationName={},result={}", monitorApplication.getApplicationName(), ok);
         return Response.ok(ok);
     }
@@ -176,7 +176,7 @@ public class MonitorApplicationController {
                 monitorApplication.getApplicationName(),
                 monitorApplication.getApplicationType(),
                 monitorApplication.getApplicationDetailParam(),
-                monitorApplication.getDesc());
+                monitorApplication.getApplicationDesc());
 //        Response response = paramVerification(monitorApplication);
 //        if (response != null) {
 //            return response;
@@ -186,7 +186,7 @@ public class MonitorApplicationController {
             return Response.fail(ResponseCode.APPLICATION_NOT_EXISTS);
         }
 
-        boolean ok = monitorApplicationService.editApplication(monitorApplication.getId(),  monitorApplication.getApplicationType(), monitorApplication.getApplicationDetailParam(), monitorApplication.getDesc());
+        boolean ok = monitorApplicationService.editApplication(monitorApplication.getId(),  monitorApplication.getApplicationType(), monitorApplication.getApplicationDetailParam(), monitorApplication.getApplicationDesc());
         logger.info("editApplication end applicationId={},result={}", monitorApplication.getId(), ok);
         return Response.ok(ok);
     }

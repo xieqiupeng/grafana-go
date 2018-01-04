@@ -89,7 +89,7 @@ public class MonitorMachineService {
         monitorMachine.setMachineName(machineName);
         monitorMachine.setMachineIp(machineIp);
         monitorMachine.setOperateSystemType(operateSystemType);
-        monitorMachine.setDesc(desc);
+        monitorMachine.setMachineDesc(desc);
         monitorMachine.setCreateTime(now);
         monitorMachine.setUpdateTime(now);
         monitorMachineExMapper.insertSelective(monitorMachine);
@@ -117,7 +117,7 @@ public class MonitorMachineService {
         monitorMachine.setMachineName(machineName);
         monitorMachine.setMachineIp(machineIp);
         monitorMachine.setOperateSystemType(operateSystemType);
-        monitorMachine.setDesc(desc);
+        monitorMachine.setMachineDesc(desc);
         monitorMachine.setUpdateTime(now);
 
         int count = monitorMachineExMapper.updateByPrimaryKeySelective(monitorMachine);
