@@ -28,8 +28,8 @@
   },
 
   "includes": [
-    {"type": "dashboard", "name": "创建项目", "path": "dashboards/Create_Project.json", "addToNav": true,"defaultNav": true},
-    {"type": "dashboard", "name": "创建数据源", "path": "dashboards/Create_Data_Source.json", "addToNav": true}
+    {"type": "dashboard", "name": "创建项目", "path": "dashboards/Monitor_Manage_Project.json", "addToNav": true,"defaultNav": true},
+    {"type": "dashboard", "name": "创建数据源", "path": "dashboards/Monitor_Manage_DataSource.json", "addToNav": true}
   ],
 
   "dependencies": {
