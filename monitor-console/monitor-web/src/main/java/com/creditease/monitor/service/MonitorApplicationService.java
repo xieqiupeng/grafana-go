@@ -80,7 +80,7 @@ public class MonitorApplicationService {
         monitorApplication.setApplicationName(applicationName);
         monitorApplication.setApplicationType(applicationType);
         monitorApplication.setApplicationDetailParam(applicationDetailParam);
-        monitorApplication.setDesc(desc);
+        monitorApplication.setApplicationDesc(desc);
         Date now = new Date();
         monitorApplication.setCreateTime(now);
         monitorApplication.setUpdateTime(now);
@@ -107,7 +107,7 @@ public class MonitorApplicationService {
         Date now = new Date();
         monitorApplication.setId(id);
         monitorApplication.setApplicationType(applicationType);
-        monitorApplication.setDesc(desc);
+        monitorApplication.setApplicationDesc(desc);
         monitorApplication.setApplicationDetailParam(applicationDetailParam);
         monitorApplication.setUpdateTime(now);
         int count = monitorApplicationExMapper.updateByPrimaryKeySelective(monitorApplication);

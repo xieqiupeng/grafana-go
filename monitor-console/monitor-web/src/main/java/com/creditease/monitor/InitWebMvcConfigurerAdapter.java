@@ -30,35 +30,35 @@ public class InitWebMvcConfigurerAdapter extends YXWebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AccessInterceptor());
-        registry.addInterceptor(new SecurityInterceptor(new SecurityInterceptor.SecurityVerify() {
-            @Override
-            public boolean pass(HttpServletRequest request) {
-                //String token = request.getHeader("grafana_sess");
-                String token="";
-                Cookie[] cookies = request.getCookies();
-                if(null==cookies){
-                    return false;
-                }
-                for(int i=0;i<cookies.length;i++){
-                    if("grafana_sess".equals(cookies[i].getName())){
-                        token=cookies[i].getValue();
-                        break;
-                    }
-                }
-
-                if(StringUtils.isBlank(token)){
-                    return false;
-                }
-                Integer expiry = sessionExMapper.selectExpiryByKey(token);
-                if(expiry == null){
-                    return false;
-                }
-                if(System.currentTimeMillis()/1000 >= expiry+grafanaSessionTime){
-                    return false;
-                }
-                return true;
-            }
-        })).addPathPatterns("/**");
+//        registry.addInterceptor(new SecurityInterceptor(new SecurityInterceptor.SecurityVerify() {
+//            @Override
+//            public boolean pass(HttpServletRequest request) {
+//                //String token = request.getHeader("grafana_sess");
+//                String token="";
+//                Cookie[] cookies = request.getCookies();
+//                if(null==cookies){
+//                    return false;
+//                }
+//                for(int i=0;i<cookies.length;i++){
+//                    if("grafana_sess".equals(cookies[i].getName())){
+//                        token=cookies[i].getValue();
+//                        break;
+//                    }
+//                }
+//
+//                if(StringUtils.isBlank(token)){
+//                    return false;
+//                }
+//                Integer expiry = sessionExMapper.selectExpiryByKey(token);
+//                if(expiry == null){
+//                    return false;
+//                }
+//                if(System.currentTimeMillis()/1000 >= expiry+grafanaSessionTime){
+//                    return false;
+//                }
+//                return true;
+//            }
+//        })).addPathPatterns("/**");
         super.addInterceptors(registry);
     }
 }

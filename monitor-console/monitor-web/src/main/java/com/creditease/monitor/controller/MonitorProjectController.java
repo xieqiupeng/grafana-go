@@ -72,7 +72,7 @@ public class MonitorProjectController {
     public Response addProject(@RequestBody  MonitorProject monitorProject) {
         logger.info("addProject start projectName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
                 monitorProject.getProjectName(),
-                monitorProject.getDesc()
+                monitorProject.getProjectDesc()
                 );
 
         Response response = paramVerification(monitorProject);
@@ -85,7 +85,7 @@ public class MonitorProjectController {
             return Response.fail(ResponseCode.PROJECT_NAME_HAS_EXISTS);
         }
         boolean ok = monitorProjectService.addProject(monitorProject.getProjectName(),
-                monitorProject.getDesc());
+                monitorProject.getProjectDesc());
         logger.info("addProject end projectName={},result={}", monitorProject.getProjectName(), ok);
         return Response.ok(ok);
     }
@@ -112,7 +112,7 @@ public class MonitorProjectController {
     public Response editProject(@RequestBody MonitorProject monitorProject) {
         logger.info("editProject start projectName={},desc={}",
                 monitorProject.getProjectName(),
-                monitorProject.getDesc());
+                monitorProject.getProjectDesc());
         Response response = paramVerification(monitorProject);
         if (response != null) {
             return response;
@@ -124,8 +124,21 @@ public class MonitorProjectController {
             logger.info("editProject fail,some machine id={} is referring project id={} ", monitorProject.getId());
             return Response.fail(ResponseCode.PROJECT_IS_REFERRED_BY_MACHINE_LIST);
         }
-        boolean ok = monitorProjectService.editProject(monitorProject.getId(),monitorProject.getDesc());
+        boolean ok = monitorProjectService.editProject(monitorProject.getId(),monitorProject.getProjectDesc());
         logger.info("editProject end id={},result={}", monitorProject.getId(), ok);
         return Response.ok(ok);
     }
+
+
+
+    //通过id查找
+    @RequestMapping("/getProjectByProjectId")
+    public Response getProjectByProjectId(@YXRequestParam(required = true, errmsg = "服务端根据项目名称查找发生错误(taskName不能为空)") Integer id) {
+        logger.info("/getProjectByProjectId id:{}", id);
+        MonitorProject monitorProject = monitorProjectService.selectOneByProjectId(id);
+        return Response.ok(monitorProject);
+    }
+
+
+
 }

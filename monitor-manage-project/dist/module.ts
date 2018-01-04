@@ -42,9 +42,9 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
     monitorManageController($scope, $http) {
         //查询参数
-        $scope.taskName='';
+        $scope.projectName='';
         //列表内容
-        $scope.taskArray = [];
+        $scope.projectArray = [];
         //分页参数
         $scope.total = 0; //总条数
         $scope.pages = 0; //总页面
@@ -54,7 +54,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.hasNextPage = false;//有后一页
 
         $scope.data = {
-            current: 1 // 1代表查询，2代表编辑,3代表新增
+            current: 1 // 1代表查询，2代表编辑,3代表新建
         };
         $scope.actions = {
              setCurrent: function (param) {
@@ -63,114 +63,19 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         };
         $scope.formData={
             /************基本属性***********/
-            taskName:'',
-            dataSourceServerIp:'',
-            dataSourceLog:'',
-            isMonitorTomcatServer:false, //0-是tomcat服务器,1-不是tomcat服务器
-            tomcatServerHost:'',
-            template:"0",
-            /************分隔符属性***********/
-            isRegex:false,//是否正则
-            isOrder:false,//是否有序
-            separatorKeys:[],//分隔符数组
-            separatorKeyIndex:0,//分隔符索引值
-            /************结果属性***********/
-            resultColumns:[],//结果列数组
-            resultColumnIndex:0,//结果列索引值
-            dataSourceLogSample:''
+            id:null,
+            projectName:'',
+            desc:''
         };
 
-        //切换是否选择为tomcat服务器
-        $scope.changeIsMonitorTomcatServer=function () {
-            if($scope.formData.isMonitorTomcatServer=="false"){
-                $scope.formData.isMonitorTomcatServer="true";
-            }else if($scope.formData.isMonitorTomcatServer=="true"){
-                $scope.formData.isMonitorTomcatServer="false";
-            }
-        }
-
-        //切换是否正则
-        $scope.changeIsRegex=function () {
-            if($scope.formData.isRegex=="false"){
-                $scope.formData.isRegex="true";
-            }else if($scope.formData.isRegex=="true"){
-                $scope.formData.isRegex="false";
-            }
-        }
-
-        //切换是否有序
-        $scope.changeIsOrder=function () {
-            if($scope.formData.isOrder=="false"){
-                $scope.formData.isOrder="true";
-            }else if($scope.formData.isOrder=="true"){
-                $scope.formData.isOrder="false";
-            }
-        }
-
-
-        //新增分隔符
-        $scope.addSeparatorKey=function (separatorKeyObject) {
-            if(separatorKeyObject==null){
-                //添加空对象
-                separatorKeyObject={separatorKeyIndex:'',separatorKey:''};
-                separatorKeyObject.separatorKey="";
-            }
-            separatorKeyObject.separatorKeyIndex='separatorKeyIndex'+$scope.formData.separatorKeyIndex;
-            $scope.formData.separatorKeyIndex++;
-            $scope.formData.separatorKeys.push(separatorKeyObject);
-        }
-
-
-        //新增结果列
-        $scope.addResultColumn=function (resultColumnObject) {
-            if(resultColumnObject==null){
-                //添加默认对象
-                resultColumnObject={resultColumnIndex:'',columnExampleValue:'',columnSeq:'',columnName:'',columnType:'',format:'',tagOrValue:''};
-
-                var biggestColumnSeq=-1;
-                for(var i=0;i<$scope.formData.resultColumns.length;i++){
-                    if(biggestColumnSeq<$scope.formData.resultColumns[i].columnSeq){
-                        biggestColumnSeq=$scope.formData.resultColumns[i].columnSeq;
-                    }
-                }
-                resultColumnObject.columnSeq=biggestColumnSeq+1;
-                resultColumnObject.columnName="列名"+(biggestColumnSeq+1);
-                resultColumnObject.columnType="string";
-                resultColumnObject.format="";
-                resultColumnObject.tagOrValue="0";
-            }
-            resultColumnObject.resultColumnIndex='resultColumnIndex'+$scope.formData.resultColumnIndex;
-            $scope.formData.resultColumnIndex++;
-            $scope.formData.resultColumns.push(resultColumnObject);
-        }
-        //删除结果列
-        $scope.removeColumnResult=function(resultColumnIndex){
-            var newResultColumns=new Array();
-            for(var i=0;i<$scope.formData.resultColumns.length;i++){
-                if($scope.formData.resultColumns[i].resultColumnIndex!=resultColumnIndex){
-                    newResultColumns.push($scope.formData.resultColumns[i]);
-                }
-            }
-            $scope.formData.resultColumns=newResultColumns;
-        }
-        //删除分隔符
-        $scope.removeSeparatorKey=function(separatorKeyIndex){
-            var newSeparatorKeys=new Array();
-            for(var i=0;i<$scope.formData.separatorKeys.length;i++){
-                if($scope.formData.separatorKeys[i].separatorKeyIndex!=separatorKeyIndex){
-                    newSeparatorKeys.push($scope.formData.separatorKeys[i]);
-                }
-            }
-            $scope.formData.separatorKeys=newSeparatorKeys;
-        }
         //搜索功能
         $scope.searchFunction = function (serverHost) {
-            $scope.taskName=document.getElementById('taskName');
-            $scope.taskName=$scope.taskName.value;
-            $scope.taskArray = [];
-            var param = 'taskName=' + $scope.taskName+ "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
+            $scope.projectName=document.getElementById('projectName');
+            $scope.projectName=$scope.projectName.value;
+            $scope.projectArray = [];
+            var param = 'projectName=' + $scope.projectName+ "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
             $http({
-                url: serverHost + 'monitorTask/searchTaskByTaskName' + "?" + param,
+                url: serverHost + 'monitorProject/searchProjectByProjectName' + "?" + param,
                 withCredentials: true,
                 method: 'GET'
             }).then((rsp) => {
@@ -178,38 +83,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 if (rsp.data.resultCode == 0) {
                     console.log("invoke searchFunction ok:", rsp.data.data);
                     //设置列表内容
-
-                    for (var i = 0; i < rsp.data.data.list.length; i++) {
-                        //处理状态
-                        if (0 == rsp.data.data.list[i].status) {
-                            rsp.data.data.list[i].status = '启动';
-                        } else if (1 == rsp.data.data.list[i].status) {
-                            rsp.data.data.list[i].status = '暂停';
-                        }
-                        //处理tomcat服务器
-                        var tomcatServerHostStr = "";
-                        if (rsp.data.data.list[i].tomcatServerHost != null && "" != rsp.data.data.list[i].tomcatServerHost) {
-                            var tomcatServerHostArray = rsp.data.data.list[i].tomcatServerHost.split(",");
-
-                            for (var j = 0; j < tomcatServerHostArray.length; j++) {
-                                tomcatServerHostStr = tomcatServerHostStr + tomcatServerHostArray[j] + "<br/>";
-                            }
-                        }
-                        rsp.data.data.list[i].tomcatServerHost = tomcatServerHostStr;
-
-
-                        //处理数据源服务器ip
-                        var dataSourceServerIpStr = "";
-                        if (rsp.data.data.list[i].dataSourceServerIp != null && "" != rsp.data.data.list[i].dataSourceServerIp) {
-                            var dataSourceServerIpArray = rsp.data.data.list[i].dataSourceServerIp.split(",");
-
-                            for (var j = 0; j < dataSourceServerIpArray.length; j++) {
-                                dataSourceServerIpStr = dataSourceServerIpStr + dataSourceServerIpArray[j] + "<br/>";
-                            }
-                        }
-                        rsp.data.data.list[i].dataSourceServerIp = dataSourceServerIpStr;
-                    }
-                    $scope.taskArray = rsp.data.data.list;
+                    $scope.projectArray = rsp.data.data.list;
                     //设置分页内容
                     $scope.pageNum = rsp.data.data.pageNum; //当前页面
                     $scope.total = rsp.data.data.total;//总条数
@@ -226,141 +100,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             });
         };
 
-        //启动/暂停
-        $scope.startOrPauseTaskFunction = function (serverHost, taskName, status) {
-            var param = 'taskName=' + taskName + '&status=' + status;
-            $http({
-                url: serverHost + 'monitorTask/startOrPauseTask' + "?" + param,
-                withCredentials: true,
-                method: 'GET'
-            }).then((rsp) => {
-                console.log("invoke startOrPauseTask ok:", rsp.data.resultCode, rsp.data.resultMsg);
-                if (rsp.data.resultCode == 0) {
-                    //重新拉取监控任务
-                    $scope.searchFunction(serverHost);
-                } else {
-                    alert('启动/暂停失败！具体原因：' + rsp.data.resultMsg + "。");
-                }
-            }, err => {
-                console.log("invoke startOrPauseTask err:", err);
-                alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
-            });
-        };
-
-        //数据清洗
-        $scope.dataClean=function (serverHost){
-
-            //任务名称
-            var taskName=$scope.formData.taskName;
-            if(taskName==null||taskName.trim()==''){
-                alert('请填写任务名称!');
-                return ;
-            }
-            if($scope.checkContainChineseCharacter(taskName)){
-                alert('任务名称不能含有中文!');
-                return ;
-            }
-            //数据源Ip
-            var dataSourceServerIp=$scope.formData.dataSourceServerIp;
-            if(dataSourceServerIp==null||dataSourceServerIp.trim()==''){
-                alert('请填写数据源Ip!');
-                return ;
-            }
-            //数据源文件位置
-            var dataSourceLog=$scope.formData.dataSourceLog;
-            if(dataSourceLog==null||dataSourceLog.trim()==''){
-                alert('请填写数据源文件位置!');
-                return ;
-            }
-            //是否为tomcat服务器
-            var isMonitorTomcatServer=$scope.formData.isMonitorTomcatServer;
-            var tomcatServerHost='';
-            if(isMonitorTomcatServer==true){
-                tomcatServerHost=$scope.formData.tomcatServerHost;
-                if(tomcatServerHost==null||tomcatServerHost.trim()==''){
-                    alert('请填写tomcat服务器地址!');
-                    return ;
-                }
-            }else{
-                //不是tomcat服务器，就清空tomcatServerHost
-                $scope.formData.tomcatServerHost='';
-            }
-            isMonitorTomcatServer=(isMonitorTomcatServer==true?isMonitorTomcatServer=0:isMonitorTomcatServer=1);
-            //切割模板类型
-            var template=$scope.formData.template;
-            //是否为正则
-            var isRegex=$scope.formData.isRegex;
-            //是否为有序
-            var isOrder=$scope.formData.isOrder;
-            //请填写分隔符
-            var separatorKeys=$scope.formData.separatorKeys;
-            // for(var i=0;i<separatorKeys.length;i++){
-            //     if(separatorKeys[i]==null||""==separatorKeys[i].trim()){
-            //         alert("分隔符内容不能为空");
-            //         return ;
-            //     }
-            // }
-
-            //请填写结果列
-            var resultColumns=$scope.formData.resultColumns;
-
-            for(var i=0;i<resultColumns.length;i++){
-                if(resultColumns[i].columnSeq==null||resultColumns[i].columnName==null||""==resultColumns[i].columnName.trim()){
-                    alert("结果列内容不能为空");
-                    return ;
-                }
-            }
-            //删除多余的字段--结果列
-            for(var i=0;i<resultColumns.length;i++){
-                delete resultColumns[i].resultColumnIndex;
-            }
-            //获得切割模板对象
-            var cutTemplateObject=$scope.getCutTemplateObject(template,isOrder,isRegex,separatorKeys,resultColumns);
-            //传输数据
-            cutTemplateObject=JSON.stringify(cutTemplateObject);
-
-
-            $http({
-                url: serverHost + "monitorTask/dataClean",
-                data:"data="+$scope.formData.dataSourceLogSample+"&dataCleanRule="+cutTemplateObject,
-                headers:{'Content-Type': 'application/x-www-form-urlencoded'},
-                withCredentials: true,
-                method: 'POST'
-            }).then((rsp) => {
-                if (rsp.data.resultCode == 0) {
-                    //结果列数组
-                    $scope.formData.resultColumns=[];
-                    //结果列索引值
-                    $scope.formData.resultColumnIndex=0;
-
-                    for(var i=0;i< rsp.data.data.length;i++){
-                        rsp.data.data[i].tagOrValue=rsp.data.data[i].tagOrValue.toString();
-                        $scope.addResultColumn(rsp.data.data[i]);
-                    }
-                } else {
-                    alert('解析失败!具体原因：' + rsp.data.resultMsg);
-                }
-            }, err => {
-                console.log("invoke searchFunction err:", err);
-                alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
-            });
-
-
-
-        }
-
-
-
-        //校验任务名称是否含有中文
-        $scope.checkContainChineseCharacter=function(taskName){
-            for(var i = 0;i < taskName.length; i++)
-            {
-                if(taskName.charCodeAt(i) > 255) //如果是汉字
-                    return true
-            }
-            return false;
-        }
-
+        
         //切换tab时,提示确定退出
         $scope.confirmChangeTab=function(serverHost){
             if($scope.data.current!=1){
@@ -375,91 +115,18 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.saveOrUpdate=function(serverHost){
 
 
-            //任务名称
-            var taskName=$scope.formData.taskName;
-            if(taskName==null||taskName.trim()==''){
-                alert('请填写任务名称!');
+            //项目名称
+            var projectName=$scope.formData.projectName;
+            if(projectName==null||projectName.trim()==''){
+                alert('请填写项目名称!');
                 return ;
             }
-            if($scope.checkContainChineseCharacter(taskName)){
-                alert('任务名称不能含有中文!');
-                return ;
-            }
-
-            //数据源Ip
-            var dataSourceServerIp=$scope.formData.dataSourceServerIp;
-            if(dataSourceServerIp==null||dataSourceServerIp.trim()==''){
-                alert('请填写数据源Ip!');
-                return ;
-            }
-            //数据源文件位置
-            var dataSourceLog=$scope.formData.dataSourceLog;
-            if(dataSourceLog==null||dataSourceLog.trim()==''){
-                alert('请填写数据源文件位置!');
-                return ;
-            }
-
-            //是否为tomcat服务器
-            var isMonitorTomcatServer=$scope.formData.isMonitorTomcatServer;
-            var tomcatServerHost='';
-            console.log('isMonitorTomcatServer:'+isMonitorTomcatServer);
-            if(isMonitorTomcatServer==true){
-                tomcatServerHost=$scope.formData.tomcatServerHost;
-                if(tomcatServerHost==null||tomcatServerHost.trim()==''){
-                    alert('请填写tomcat服务器地址!');
-                    return ;
-                }
-            }else{
-                //不是tomcat服务器，就清空tomcatServerHost
-                $scope.formData.tomcatServerHost='';
-                tomcatServerHost='';
-                alert('haha');
-            }
-            isMonitorTomcatServer=(isMonitorTomcatServer==true?isMonitorTomcatServer=0:isMonitorTomcatServer=1);
-
-            //切割模板类型
-            var template=$scope.formData.template;
-            //是否为正则
-            var isRegex=$scope.formData.isRegex;
-            console.log('isRegex '+$scope.formData.isRegex);
-            //是否为有序
-            var isOrder=$scope.formData.isOrder;
-            console.log('isOrder '+$scope.formData.isOrder);
-            //请填写分隔符
-            var separatorKeys=$scope.formData.separatorKeys;
-            // for(var i=0;i<separatorKeys.length;i++){
-            //     if(separatorKeys[i]==null||""==separatorKeys[i].trim()){
-            //         alert("分隔符内容不能为空");
-            //         return ;
-            //     }
-            // }
-
-            //请填写结果列
-            var resultColumns=$scope.formData.resultColumns;
-
-            for(var i=0;i<resultColumns.length;i++){
-                if(resultColumns[i].columnSeq==null||resultColumns[i].columnName==null||""==resultColumns[i].columnName.trim()){
-                    alert("结果列内容不能为空");
-                    return ;
-                }
-            }
-
-
-
-            //删除多余的字段--结果列
-            for(var i=0;i<resultColumns.length;i++){
-                delete resultColumns[i].resultColumnIndex;
-            }
-
-
-            //获得切割模板对象
-            var cutTemplateObject=$scope.getCutTemplateObject(template,isOrder,isRegex,separatorKeys,resultColumns);
 
             var saveOrUpdateContextPath='';
             if($scope.data.current==2){
-                saveOrUpdateContextPath='monitorTask/editTask';
+                saveOrUpdateContextPath='monitorProject/editProject';
             }else if($scope.data.current==3){
-                saveOrUpdateContextPath='monitorTask/addTask';
+                saveOrUpdateContextPath='monitorProject/addProject';
             }
 
             $http({
@@ -467,19 +134,16 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 withCredentials: true,
                 method: 'POST',
                 data:{
-                    taskName:taskName,
-                    dataSourceServerIp:dataSourceServerIp,
-                    dataSourceLog:dataSourceLog,
-                    isMonitorTomcatServer:isMonitorTomcatServer,
-                    tomcatServerHost:tomcatServerHost,
-                    cutTemplate:cutTemplateObject
+                    id:$scope.formData.id,
+                    projectName:projectName,
+                    desc:$scope.formData.desc
                 }
             }).then((rsp) => {
                 console.log("invoke "+saveOrUpdateContextPath+" ok:", rsp.data.resultCode, rsp.data.resultMsg);
 
                 if (rsp.data.resultCode == 0) {
                     alert('保存成功！');
-                    //重新拉取监控任务
+                    //重新拉取监控项目
                     $scope.searchFunction(serverHost);
                     //跳转到查询tab
                     $scope.actions.setCurrent(1);
@@ -493,172 +157,79 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             });
         }
 
-
-        $scope.getCutTemplateObject=function(template,isOrder,isRegex,separatorKeys,resultColumns) {
-            //拼接切割模板
-            var cutTemplate={template:'',separator:{},resultColumns:''};
-            cutTemplate.template=template;
-            var separatorObject={isOrder:false,isRegex:false,separatorKeys:{}};
-            separatorObject.isOrder=isOrder;
-            separatorObject.isRegex=isRegex;
-
-            var separatorKeysArray=new Array();
-            for(var i=0;i<separatorKeys.length;i++){
-                separatorKeysArray.push(separatorKeys[i].separatorKey);
-            }
-            separatorObject.separatorKeys=separatorKeysArray;
-            cutTemplate.separator=separatorObject;
-
-            //删除多余的字段--结果列
-            for(var i=0;i<resultColumns.length;i++){
-                delete resultColumns[i].resultColumnIndex;
-            }
-            cutTemplate.resultColumns=resultColumns;
-
-
-            return cutTemplate;
-        }
-
-
         //清空新建or编辑Tab页面
-        $scope.clearNewOrEditMonitorTaskTab=function(){
+        $scope.clearNewOrEditMonitorProjectTab=function(){
 
             /********************************基本属性************************************/
-            //任务名称
-            $scope.formData.taskName="";
-            //数据源Ip
-            $scope.formData.dataSourceServerIp="";
-            //数据源文件位置
-            $scope.formData.dataSourceLog="";
-            //是否为tomcat服务器 =1非tomcat
-            $scope.formData.isMonitorTomcatServer=false;
-            //tomcat服务器地址列表
-            $scope.formData.tomcatServerHost="";
-            //设置切割模板类型 切割模板类型-默认普通文本类型
-            $scope.formData.template="0";
-
-
-            /********************************分隔符属性************************************/
-            //是否为正则
-            $scope.formData.isRegex=false;
-            //是否为有序
-            $scope.formData.isOrder=false;
-            //分隔符数组
-            $scope.formData.separatorKeys=[];
-            //分隔符索引值
-            $scope.formData.separatorKeyIndex=0;
-
-            /********************************结果属性************************************/
-            //结果列数组
-            $scope.formData.resultColumns=[];
-            //结果列索引值
-            $scope.formData.resultColumnIndex=0;
-            //数据源样例
-            $scope.formData.dataSourceLogSample='';
-
+            //项目id
+            $scope.formData.id=null;
+            //项目名称
+            $scope.formData.projectName="";
+            //描述
+            $scope.formData.desc="";
         }
 
-        $scope.showAddMonitorTaskTab=function () {
-            //清空新增Tab页面
-            $scope.clearNewOrEditMonitorTaskTab();
-            //跳转到新增页面
+        $scope.showAddMonitorProjectTab=function () {
+            //清空新建Tab页面
+            $scope.clearNewOrEditMonitorProjectTab();
+            //跳转到新建页面
             $scope.actions.setCurrent(3);
         }
 
-        $scope.showEditMonitorTaskTab=function (serverHost,taskName) {
+        $scope.showEditMonitorProjectTab=function (serverHost,id) {
             //清空编辑Tab页面
-            $scope.clearNewOrEditMonitorTaskTab();
-            var param = 'taskName=' + taskName;
+            $scope.clearNewOrEditMonitorProjectTab();
+            var param = 'id=' + id;
             $http({
-                url: serverHost + 'monitorTask/getTaskByTaskName' + "?" + param,
+                url: serverHost + 'monitorProject/getProjectByProjectId' + "?" + param,
                 withCredentials: true,
                 method: 'GET'
             }).then((rsp) => {
-                console.log("invoke getTaskByTaskName ok:", rsp.data.resultCode, rsp.data.resultMsg,rsp.data.data);
+                console.log("invoke getProjectByProjectId ok:", rsp.data.resultCode, rsp.data.resultMsg,rsp.data.data);
 
                 if (rsp.data.resultCode == 0) {
 
                     /********************************基本属性************************************/
-                    rsp.data.data.cutTemplate=JSON.parse(rsp.data.data.cutTemplate);
-                    //任务名称
-                    $scope.formData.taskName=rsp.data.data.taskName;
+                    //项目id
+                    $scope.formData.id=rsp.data.data.id;
+                    //项目名称
+                    $scope.formData.projectName=rsp.data.data.projectName;
                     //数据源Ip
-                    $scope.formData.dataSourceServerIp=rsp.data.data.dataSourceServerIp;
-                    //数据源文件位置
-                    $scope.formData.dataSourceLog=rsp.data.data.dataSourceLog;
-                    //是否为tomcat服务器 =1非tomcat
-                    $scope.formData.isMonitorTomcatServer=(rsp.data.data.isMonitorTomcatServer==1?false:true);
-                    //tomcat服务器地址列表
-                    $scope.formData.tomcatServerHost=rsp.data.data.tomcatServerHost;
-                    //设置切割模板类型
-                    $scope.formData.template=rsp.data.data.cutTemplate.template;
-
-                    /********************************分隔符属性************************************/
-                    //是否为正则
-                    $scope.formData.isRegex=rsp.data.data.cutTemplate.separator.isRegex;
-                    //是否为有序
-                    $scope.formData.isOrder=rsp.data.data.cutTemplate.separator.isOrder;
-                    //分隔符数组
-                    var separatorKeys=rsp.data.data.cutTemplate.separator.separatorKeys;
-                    //新增分隔符
-                    for(var i=0;i<separatorKeys.length;i++){
-                        var separatorKeyObject={separatorKeyIndex:'',separatorKey:''};
-                        separatorKeyObject.separatorKey=separatorKeys[i];
-                        $scope.addSeparatorKey(separatorKeyObject);
-                    }
-                    for(var i=0;i<$scope.formData.separatorKeys.length;i++){
-                        console.log($scope.formData.separatorKeys[i]);
-                    }
-
-
-                    /********************************结果列属性************************************/
-                    //结果列数组
-                    var resultColumns=rsp.data.data.cutTemplate.resultColumns;
-                    //新增结果列
-                    for(var i=0;i<resultColumns.length;i++){
-                        var resultColumnObject={resultColumnIndex:'',columnSeq:'',columnName:'',columnType:'',format:'',tagOrValue:''};
-                        resultColumnObject.columnSeq=resultColumns[i].columnSeq;
-                        resultColumnObject.columnName=resultColumns[i].columnName;
-                        resultColumnObject.columnType=resultColumns[i].columnType;
-                        resultColumnObject.format=resultColumns[i].format;
-                        resultColumnObject.tagOrValue=resultColumns[i].tagOrValue.toString();
-                        $scope.addResultColumn(resultColumnObject);
-                    }
+                    $scope.formData.desc=rsp.data.data.desc;
                     //跳转到编辑页面
                     $scope.actions.setCurrent(2);
                 } else {
-                    alert('获取任务记录失败！具体原因：' + rsp.data.resultMsg + "。");
+                    alert('获取项目记录失败！具体原因：' + rsp.data.resultMsg + "。");
                 }
             }, err => {
-                console.log("invoke getTaskByTaskName err:", err);
+                console.log("invoke getProjectByProjectName err:", err);
                 alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
             });
         }
 
-
         //删除
-        $scope.deleteTaskFunction = function (serverHost, taskName) {
+        $scope.deleteProjectFunction = function (serverHost, projectName,id) {
 
-            if (!confirm("确定要删除" + taskName + "吗？")) {
+            if (!confirm("确定要删除" + projectName + "吗？")) {
                 return;
             }
 
-            var param = 'taskName=' + taskName;
+            var param = 'id=' + id;
             $http({
-                url: serverHost + 'monitorTask/deleteTask' + "?" + param,
+                url: serverHost + 'monitorProject/deleteProject' + "?" + param,
                 withCredentials: true,
                 method: 'GET'
             }).then((rsp) => {
-                console.log("invoke deleteTask ok:", rsp.data.resultCode, rsp.data.resultMsg);
+                console.log("invoke deleteProject ok:", rsp.data.resultCode, rsp.data.resultMsg);
                 if (rsp.data.resultCode == 0) {
-                    //重新拉取监控任务
+                    //重新拉取监控项目
                     $scope.searchFunction(serverHost);
                 } else {
                     alert('删除失败！具体原因：' + rsp.data.resultMsg + "。");
                 }
 
             }, err => {
-                console.log("invoke deleteTask err:", err);
+                console.log("invoke deleteProject err:", err);
                 alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
             });
         };
@@ -666,14 +237,14 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         //下一页
         $scope.nextPageFunction = function (serverHost) {
             $scope.pageNum += 1;
-            //重新拉取监控任务
+            //重新拉取监控项目
             $scope.searchFunction(serverHost);
         };
 
         //上一页
         $scope.lastPageFunction = function (serverHost) {
             $scope.pageNum -= 1;
-            //重新拉取监控任务
+            //重新拉取监控项目
             $scope.searchFunction(serverHost);
         };
     }

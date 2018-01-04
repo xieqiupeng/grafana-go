@@ -75,7 +75,7 @@ public class MonitorProjectService {
                            String desc) {
         MonitorProject monitorProject = new MonitorProject();
         monitorProject.setProjectName(projectName);
-        monitorProject.setDesc(desc);
+        monitorProject.setProjectDesc(desc);
         Date now = new Date();
         monitorProject.setCreateTime(now);
         monitorProject.setUpdateTime(now);
@@ -98,7 +98,7 @@ public class MonitorProjectService {
         MonitorProject monitorProject = new MonitorProject();
         Date now = new Date();
         monitorProject.setId(id);
-        monitorProject.setDesc(projectDesc);
+        monitorProject.setProjectDesc(projectDesc);
         monitorProject.setUpdateTime(now);
         int count = monitorProjectExMapper.updateByPrimaryKeySelective(monitorProject);
         if (count > 0) {

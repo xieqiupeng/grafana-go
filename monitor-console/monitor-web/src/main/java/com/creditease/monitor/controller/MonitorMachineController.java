@@ -88,7 +88,7 @@ public class MonitorMachineController {
                 monitorMachine.getMachineIp(),
                 monitorMachine.getOperateSystemType(),
                 monitorMachine.getProjectId(),
-                monitorMachine.getDesc());
+                monitorMachine.getMachineDesc());
 //        Response response = paramVerification(monitorMachine);
 //        if (response != null) {
 //            return response;
@@ -101,7 +101,7 @@ public class MonitorMachineController {
         boolean ok = monitorMachineService.addMachine(monitorMachine.getMachineName(),
                 monitorMachine.getMachineIp(),
                 monitorMachine.getOperateSystemType(),
-                monitorMachine.getDesc());
+                monitorMachine.getMachineDesc());
         logger.info("addMachine end machineName={},result={}", monitorMachine.getMachineName(), ok);
         return Response.ok(ok);
     }
@@ -196,7 +196,7 @@ public class MonitorMachineController {
                 monitorMachine.getMachineIp(),
                 monitorMachine.getOperateSystemType(),
                 monitorMachine.getProjectId(),
-                monitorMachine.getDesc());
+                monitorMachine.getMachineDesc());
 //        Response response = paramVerification(monitorMachine);
 //        if (response != null) {
 //            return response;
@@ -210,7 +210,7 @@ public class MonitorMachineController {
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_APPLICATION);
         }
 
-        boolean ok = monitorMachineService.editMachine(monitorMachine.getId(), monitorMachine.getMachineName(), monitorMachine.getMachineIp(), monitorMachine.getOperateSystemType(), monitorMachine.getDesc());
+        boolean ok = monitorMachineService.editMachine(monitorMachine.getId(), monitorMachine.getMachineName(), monitorMachine.getMachineIp(), monitorMachine.getOperateSystemType(), monitorMachine.getMachineDesc());
         logger.info("editMachine end machineId={},result={}", monitorMachine.getId(), ok);
         return Response.ok(ok);
     }
