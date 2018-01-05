@@ -60,7 +60,7 @@
                         <td>{{$index+1}}</td>
                         <td>{{project.id}}</td>
                         <td>{{project.projectName}}</td>
-                        <td>{{project.desc}}</td>
+                        <td>{{project.projectDesc}}</td>
                         <td>{{project.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
                         <td>{{project.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
 
@@ -100,7 +100,7 @@
                             <div class="gf-form">
                                 <span class="gf-form-label width-7">项目描述:</span>
                                 <textarea class="gf-form-input width-31 ng-pristine ng-untouched ng-valid ng-empty"
-                                          rows="1" ng-model="formData.desc"
+                                          rows="1" ng-model="formData.projectDesc"
                                           placeholder="请填写项目的简要描述"></textarea>
                             </div>
                         </div>

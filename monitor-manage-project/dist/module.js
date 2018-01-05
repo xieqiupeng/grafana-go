@@ -68,7 +68,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         /************基本属性***********/
                         id: null,
                         projectName: '',
-                        desc: ''
+                        projectDesc: ''
                     };
                     //搜索功能
                     $scope.searchFunction = function (serverHost) {
@@ -132,7 +132,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                             data: {
                                 id: $scope.formData.id,
                                 projectName: projectName,
-                                desc: $scope.formData.desc
+                                projectDesc: $scope.formData.projectDesc
                             }
                         }).then(function (rsp) {
                             console.log("invoke " + saveOrUpdateContextPath + " ok:", rsp.data.resultCode, rsp.data.resultMsg);
@@ -159,7 +159,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         //项目名称
                         $scope.formData.projectName = "";
                         //描述
-                        $scope.formData.desc = "";
+                        $scope.formData.projectDesc = "";
                     };
                     $scope.showAddMonitorProjectTab = function () {
                         //清空新建Tab页面
@@ -184,7 +184,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 //项目名称
                                 $scope.formData.projectName = rsp.data.data.projectName;
                                 //数据源Ip
-                                $scope.formData.desc = rsp.data.data.desc;
+                                $scope.formData.projectDesc = rsp.data.data.projectDesc;
                                 //跳转到编辑页面
                                 $scope.actions.setCurrent(2);
                             }

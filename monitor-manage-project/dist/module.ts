@@ -65,7 +65,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             /************基本属性***********/
             id:null,
             projectName:'',
-            desc:''
+            projectDesc:''
         };
 
         //搜索功能
@@ -136,7 +136,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 data:{
                     id:$scope.formData.id,
                     projectName:projectName,
-                    desc:$scope.formData.desc
+                    projectDesc:$scope.formData.projectDesc
                 }
             }).then((rsp) => {
                 console.log("invoke "+saveOrUpdateContextPath+" ok:", rsp.data.resultCode, rsp.data.resultMsg);
@@ -166,7 +166,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             //项目名称
             $scope.formData.projectName="";
             //描述
-            $scope.formData.desc="";
+            $scope.formData.projectDesc="";
         }
 
         $scope.showAddMonitorProjectTab=function () {
@@ -195,7 +195,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                     //项目名称
                     $scope.formData.projectName=rsp.data.data.projectName;
                     //数据源Ip
-                    $scope.formData.desc=rsp.data.data.desc;
+                    $scope.formData.projectDesc=rsp.data.data.projectDesc;
                     //跳转到编辑页面
                     $scope.actions.setCurrent(2);
                 } else {
