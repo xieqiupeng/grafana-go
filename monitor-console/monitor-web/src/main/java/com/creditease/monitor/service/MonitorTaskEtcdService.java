@@ -124,7 +124,6 @@ public class MonitorTaskEtcdService {
                         .put(ByteSequence.fromString(key),
                                 ByteSequence.fromString(str))
                         .get();
-                etcdClient.close();
                 return true;
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.error("upSert error monitorTask={},errorMsg",
@@ -141,7 +140,6 @@ public class MonitorTaskEtcdService {
             etcdClient.getKVClient()
                     .delete(ByteSequence.fromString(key))
                     .get();
-            etcdClient.close();
         } catch (InterruptedException | ExecutionException e1) {
             LOGGER.info("delete key={} error,msg={}", key, e1.getMessage());
             return false;
@@ -159,7 +157,6 @@ public class MonitorTaskEtcdService {
                     .get(0)
                     .getValue()
                     .toStringUtf8();
-            etcdClient.close();
             if (StringUtils.isNotBlank(nodeValue)) {
                 return JSON.parseObject(nodeValue, MonitorNoteDataEntity.class);
             }
