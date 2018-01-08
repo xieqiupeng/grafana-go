@@ -16,6 +16,30 @@
     update_time
   </sql>
 
+  <select id="selectOneByMachineName" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM monitor_machine
+    WHERE machine_name = #{machineName}
+  </select>
+
+
+  <select id="selectByMachineNameAndProjectId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from monitor_machine
+    where machine_name like #{0} AND project_id=#{1}
+  </select>
+
+
+
+  <select id="selectByMachineName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from monitor_machine
+    where machine_name like #{machineName}
+  </select>
+
   <select id="selectOneByProjectId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
@@ -23,4 +47,7 @@
     WHERE project_id = #{projectId}
     limit 1
   </select>
+
+
+
 </mapper>

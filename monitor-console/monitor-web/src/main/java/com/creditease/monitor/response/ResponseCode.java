@@ -55,8 +55,11 @@ public class ResponseCode {
     @ResultMessage("某应用正在引用此机器导致无法操作")
     public static final int MACHINE_IS_REFERRED_BY_APPLICATION = 30002;
 
+    @ResultMessage("某任务正在引用此机器导致无法操作")
+    public static final int MACHINE_IS_REFERRED_BY_TASK = 30003
+            ;
     @ResultMessage("此项目不存在")
-    public static final int MACHINE_NOT_EXISTS = 30003;
+    public static final int MACHINE_NOT_EXISTS = 30004;
 
     /********************************应用*******************************/
     @ResultMessage("应用名称已经存在")

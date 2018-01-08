@@ -11,7 +11,7 @@ public class MonitorTask2 {
 
     private String dataSourceLog;
 
-    private String projectMachineId;
+    private String machineId;
 
     private Byte status;
 
@@ -53,12 +53,12 @@ public class MonitorTask2 {
         this.dataSourceLog = dataSourceLog == null ? null : dataSourceLog.trim();
     }
 
-    public String getProjectMachineId() {
-        return projectMachineId;
+    public String getMachineId() {
+        return machineId;
     }
 
-    public void setProjectMachineId(String projectMachineId) {
-        this.projectMachineId = projectMachineId == null ? null : projectMachineId.trim();
+    public void setMachineId(String machineId) {
+        this.machineId = machineId;
     }
 
     public Byte getStatus() {

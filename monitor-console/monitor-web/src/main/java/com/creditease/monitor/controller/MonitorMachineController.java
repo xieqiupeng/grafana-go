@@ -4,6 +4,7 @@ import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorMachine;
 import com.creditease.monitor.response.ResponseCode;
 import com.creditease.monitor.service.MonitorApplicationService;
 import com.creditease.monitor.service.MonitorMachineService;
+import com.creditease.monitor.service.MonitorTask2Service;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
 import com.github.pagehelper.PageInfo;
@@ -34,13 +35,17 @@ public class MonitorMachineController {
     @Autowired
     private MonitorApplicationService monitorApplicationService;
 
+    @Autowired
+    private MonitorTask2Service monitorTask2Service;
+
     //通过MachineName模糊搜索
     @RequestMapping("/searchMachineByMachineName")
     public Response searchMachineByMachineName(@YXRequestParam(required = false, errmsg = "服务端根据机器名称模糊搜索发生错误(machineName不能为空)") String machineName,
+                                               @YXRequestParam(required = false, errmsg = "服务端根据机器名称模糊搜索发生错误(projectId)") Integer projectId,
                                          @YXRequestParam(required = false, errmsg = "服务端根据机器名称模糊搜索发生错误(pageNum不能为空)") Integer pageNum,
                                          @YXRequestParam(required = false, errmsg = "服务端根据机器名称模糊搜索发生错误(pageSize不能为空)") Integer pageSize) {
         logger.info("/searchMachineByMachineName param:machineName:{},pageNum:{},pageSize:{}", machineName, pageNum, pageSize);
-        List<MonitorMachine> monitorMachinesList = monitorMachineService.selectByMachineName(machineName, pageNum, pageSize);
+        List<MonitorMachine> monitorMachinesList = monitorMachineService.selectByMachineNameAndProjectId(machineName,projectId, pageNum, pageSize);
 
         //分页信息
         return Response.ok(new PageInfo(monitorMachinesList));
@@ -69,6 +74,11 @@ public class MonitorMachineController {
         if (monitorApplicationService.referMachine(id)) {
             logger.info("deleteMachine failed,some application is referring machine id={}  ",id);
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_APPLICATION);
+        }
+
+        if(monitorTask2Service.referMachine(id)){
+            logger.info("deleteMachine failed,some monitorTask is referring machine id={}  ",id);
+            return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_TASK);
         }
         boolean ok = monitorMachineService.deleteMachine(monitorMachine.getId());
         return Response.ok(ok);
@@ -101,6 +111,7 @@ public class MonitorMachineController {
         boolean ok = monitorMachineService.addMachine(monitorMachine.getMachineName(),
                 monitorMachine.getMachineIp(),
                 monitorMachine.getOperateSystemType(),
+                monitorMachine.getProjectId(),
                 monitorMachine.getMachineDesc());
         logger.info("addMachine end machineName={},result={}", monitorMachine.getMachineName(), ok);
         return Response.ok(ok);
@@ -191,8 +202,10 @@ public class MonitorMachineController {
      */
     @RequestMapping("/editMachine")
     public Response editMachine(@RequestBody MonitorMachine monitorMachine) {
-        logger.info("editMachine start machineName={},machineIp={},operateSystemType={},projectId={},desc={}",
+        logger.info("editMachine start machineId={} machineName={},projectId={},machineIp={},operateSystemType={},projectId={},desc={}",
+                monitorMachine.getId(),
                 monitorMachine.getMachineName(),
+                monitorMachine.getProjectId(),
                 monitorMachine.getMachineIp(),
                 monitorMachine.getOperateSystemType(),
                 monitorMachine.getProjectId(),
@@ -209,9 +222,24 @@ public class MonitorMachineController {
             logger.info("editMachine failed,some application is referring machine id={}",monitorMachine.getId());
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_APPLICATION);
         }
+        if(monitorTask2Service.referMachine(monitorMachine.getId())){
+            logger.info("deleteMachine failed,some monitorTask is referring machine id={}  ",monitorMachine.getId());
+            return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_TASK);
+        }
 
-        boolean ok = monitorMachineService.editMachine(monitorMachine.getId(), monitorMachine.getMachineName(), monitorMachine.getMachineIp(), monitorMachine.getOperateSystemType(), monitorMachine.getMachineDesc());
+        boolean ok = monitorMachineService.editMachine(monitorMachine.getId(), monitorMachine.getMachineName(), monitorMachine.getMachineIp(), monitorMachine.getOperateSystemType(),monitorMachine.getProjectId(), monitorMachine.getMachineDesc());
         logger.info("editMachine end machineId={},result={}", monitorMachine.getId(), ok);
         return Response.ok(ok);
     }
+
+
+    //通过机器id查找
+    @RequestMapping("/getMachineByMachineId")
+    public Response getMachineByMachineId(@YXRequestParam(required = true, errmsg = "服务端根据机器Id查找发生错误(machineId不能为空)") Integer id) {
+        logger.info("/getMachineByMachineId id:{}", id);
+        MonitorMachine monitorMachine = monitorMachineService.selectOneByMachineId(id);
+        return Response.ok(monitorMachine);
+    }
+
+
 }

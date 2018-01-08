@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface MonitorMachineExMapper extends MonitorMachineMapper {
 
+    List<MonitorMachine> selectByMachineNameAndProjectId(String machineName,Integer projectId);
+
     List<MonitorMachine> selectByMachineName(String machineName);
 
     MonitorMachine selectOneByMachineName(String machineName);

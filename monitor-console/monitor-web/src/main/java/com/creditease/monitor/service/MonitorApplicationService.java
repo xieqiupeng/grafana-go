@@ -118,8 +118,13 @@ public class MonitorApplicationService {
     }
 
 
-    public boolean referMachine(int machineId) {
-        return true;
+    public boolean referMachine(Integer machineId) {
+
+        List<MonitorApplication> monitorApplicationList = monitorApplicationExMapper.selectOneByMachineId(machineId);
+        if(monitorApplicationList!=null&&monitorApplicationList.size()>0){
+            return true;
+        }
+        return false;
     }
 
     public MonitorApplication selectOneByApplicationName(String projectName) {

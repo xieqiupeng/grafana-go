@@ -27,12 +27,12 @@ public class MonitorMachineService {
 
 
     /**
-     * 根据任务名称模糊查找
+     * 根据机器名称模糊查找
      *
      * @param machineName
      * @return
      */
-    public List selectByMachineName(String machineName, Integer pageNum, Integer pageSize) {
+    public List selectByMachineName(String machineName,Integer pageNum, Integer pageSize) {
         //设置参数
         if (machineName == null) {
             machineName = "";
@@ -46,6 +46,31 @@ public class MonitorMachineService {
         return monitorMachinesList;
     }
 
+
+    /**
+     * 根据机器名称模糊查找
+     *
+     * @param machineName
+     * @return
+     */
+    public List selectByMachineNameAndProjectId(String machineName,Integer projectId, Integer pageNum, Integer pageSize) {
+        //设置参数
+        if (machineName == null) {
+            machineName = "";
+        }
+        machineName = "%" + machineName + "%";
+        //设置分页
+        PageHelper.startPage(pageNum, pageSize);
+        //执行查询
+        List<MonitorMachine> monitorMachinesList = monitorMachineExMapper.selectByMachineNameAndProjectId(machineName,projectId);
+
+        return monitorMachinesList;
+    }
+
+
+
+
+
     /**
      * 删除Machine
      *
@@ -53,7 +78,7 @@ public class MonitorMachineService {
      * @return
      */
     public boolean deleteMachine(int machineId) {
-        //删除当前监控任务
+        //删除当前监控机器
         monitorMachineExMapper.deleteByPrimaryKey(machineId);
         return true;
     }
@@ -90,12 +115,14 @@ public class MonitorMachineService {
     public boolean addMachine(String machineName,
                            String machineIp,
                            Byte operateSystemType,
+                           Integer  projectId,
                            String desc) {
         MonitorMachine monitorMachine = new MonitorMachine();
         Date now = new Date();
         monitorMachine.setMachineName(machineName);
         monitorMachine.setMachineIp(machineIp);
         monitorMachine.setOperateSystemType(operateSystemType);
+        monitorMachine.setProjectId(projectId);
         monitorMachine.setMachineDesc(desc);
         monitorMachine.setCreateTime(now);
         monitorMachine.setUpdateTime(now);
@@ -117,6 +144,7 @@ public class MonitorMachineService {
                                       String machineName,
                                       String machineIp,
                                       Byte operateSystemType,
+                                      Integer projectId,
                                       String desc) {
         MonitorMachine monitorMachine = new MonitorMachine();
         Date now = new Date();
@@ -124,6 +152,7 @@ public class MonitorMachineService {
         monitorMachine.setMachineName(machineName);
         monitorMachine.setMachineIp(machineIp);
         monitorMachine.setOperateSystemType(operateSystemType);
+        monitorMachine.setProjectId(projectId);
         monitorMachine.setMachineDesc(desc);
         monitorMachine.setUpdateTime(now);
 

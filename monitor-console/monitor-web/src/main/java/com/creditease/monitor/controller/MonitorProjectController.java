@@ -146,6 +146,12 @@ public class MonitorProjectController {
         return Response.ok(monitorProject);
     }
 
-
+    //搜索所有授权的项目
+    @RequestMapping("/searchAllAuthorizeProjects")
+    public Response searchAllAuthorizeProjects() {
+        logger.info("/searchAllAuthorizeProjects");
+        List<MonitorProject> monitorProjectsList = monitorProjectService.selectAllAuthorizeProjects();
+        return Response.ok(monitorProjectsList);
+    }
 
 }

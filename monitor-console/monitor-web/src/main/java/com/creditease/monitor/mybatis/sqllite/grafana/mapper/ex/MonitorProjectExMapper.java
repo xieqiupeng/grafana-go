@@ -15,8 +15,8 @@ import java.util.List;
  */
 public interface MonitorProjectExMapper extends MonitorProjectMapper {
 
+
+    List<MonitorProject> selectAllAuthorizeProjects();
     List<MonitorProject> selectByProjectName(String projectName);
-
     MonitorProject selectOneByProjectName(String projectName);
-
 }

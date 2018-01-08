@@ -48,6 +48,19 @@ public class MonitorProjectService {
 
 
     /**
+     * 搜索所有授权的项目
+     * @return
+     */
+    public List selectAllAuthorizeProjects() {
+
+        //执行查询
+        List<MonitorProject> monitorProjectsList = monitorProjectExMapper.selectAllAuthorizeProjects();
+
+        return monitorProjectsList;
+    }
+
+
+    /**
      * 删除Project
      *
      * @param projectId

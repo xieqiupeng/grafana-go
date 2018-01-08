@@ -24,7 +24,9 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));
+        this.searchAllAuthorizeProjects(panelDefaults.serverHost);
     }
+
 
     onPanelInitalized() {
 
@@ -39,10 +41,37 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         // console.log(object);
     }
 
+    allAuthorizeProject=[];
+    //搜索所有授权的项目
+    searchAllAuthorizeProjects = function (serverHost) {
+        this.allAuthorizeProject=[];
+        this.$http({
+            url: serverHost + 'monitorProject/searchAllAuthorizeProjects',
+            withCredentials: true,
+            method: 'GET'
+        }).then((rsp) => {
+            if (rsp.data.resultCode == 0) {
+                console.log("invoke searchAllAuthorizeProjects ok:", rsp.data.data);
+                //设置列表内容
+                this.allAuthorizeProject = rsp.data.data;
+                // if(rsp.data.data.length>0){
+                //
+                // }
+            } else {
+                alert('获取所有授权的项目失败!具体原因：' + rsp.data.resultMsg);
+            }
+        }, err => {
+            console.log("invoke searchAllAuthorizeProjects err:", err);
+            alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
+        });
+    };
+
 
     monitorManageController($scope, $http) {
         //查询参数
         $scope.machineName='';
+        //查询参数
+        $scope.projectId='';
         //列表内容
         $scope.machineArray = [];
         //分页参数
@@ -65,16 +94,31 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             /************基本属性***********/
             id:null,
             machineName:'',
+            operateSystemType:"0",
+            machineIp:'',
+            projectId:'',
             machineDesc:''
         };
 
+        $scope.selectChangeProject= function (serverHost) {
+            $scope.searchFunction(serverHost);
+        }
+
         //搜索功能
         $scope.searchFunction = function (serverHost) {
-            $scope.machineName=document.getElementById('machineName');
-            $scope.machineName=($scope.machineName==null? "":$scope.machineName.value);
+            // if($scope.machineName==''){
+                $scope.machineName=document.getElementById('machineName');
+                $scope.machineName=($scope.machineName==null? "":$scope.machineName.value);
+            // }
+            console.log("before projectId:"+$scope.projectId);
+            // if($scope.projectId==''){
+                $scope.projectId=document.getElementById('projectId');
+                $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
+            // }
+            console.log("after projectId:"+$scope.projectId);
 
             $scope.machineArray = [];
-            var param = 'machineName=' + $scope.machineName+ "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
+            var param = 'machineName=' + $scope.machineName+'&projectId=' + $scope.projectId+  "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
             $http({
                 url: serverHost + 'monitorMachine/searchMachineByMachineName' + "?" + param,
                 withCredentials: true,
@@ -83,15 +127,25 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
                 if (rsp.data.resultCode == 0) {
                     console.log("invoke searchFunction ok:", rsp.data.data);
+                    for(var i=0;i<rsp.data.data.list.length;i++){
+                        for(var j=0;j<this.ctrl.allAuthorizeProject.length;j++){
+                            if(rsp.data.data.list[i].projectId==this.ctrl.allAuthorizeProject[j].id){
+                                rsp.data.data.list[i].projectId=this.ctrl.allAuthorizeProject[j].projectName;
+                                break;
+                            }
+                        }
+                    }
+
                     //设置列表内容
                     $scope.machineArray = rsp.data.data.list;
+
+
                     //设置分页内容
                     $scope.pageNum = rsp.data.data.pageNum; //当前页面
                     $scope.total = rsp.data.data.total;//总条数
                     $scope.pages = rsp.data.data.pages; //总页面
                     $scope.hasPreviousPage = rsp.data.data.hasPreviousPage;//有前一页
                     $scope.hasNextPage = rsp.data.data.hasNextPage;//有后一页
-
                 } else {
                     alert('解析失败!具体原因：' + rsp.data.resultMsg);
                 }
@@ -116,10 +170,10 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.saveOrUpdate=function(serverHost){
 
 
-            //项目名称
+            //机器名称
             var machineName=$scope.formData.machineName;
             if(machineName==null||machineName.trim()==''){
-                alert('请填写项目名称!');
+                alert('请填写机器名称!');
                 return ;
             }
 
@@ -129,7 +183,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             }else if($scope.data.current==3){
                 saveOrUpdateContextPath='monitorMachine/addMachine';
             }
-            console.log($scope.formData.id+" "+machineName+" "+$scope.formData.machineDesc);
+
             $http({
                 url: serverHost + saveOrUpdateContextPath ,
                 withCredentials: true,
@@ -137,6 +191,9 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 data:{
                     id:$scope.formData.id,
                     machineName:machineName,
+                    projectId:$scope.formData.projectId,
+                    machineIp:$scope.formData.machineIp,
+                    operateSystemType:$scope.formData.operateSystemType,
                     machineDesc:$scope.formData.machineDesc
                 }
             }).then((rsp) => {
@@ -144,7 +201,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
                 if (rsp.data.resultCode == 0) {
                     alert('保存成功！');
-                    //重新拉取监控项目
+                    //重新拉取监控机器
                     $scope.searchFunction(serverHost);
                     //跳转到查询tab
                     $scope.actions.setCurrent(1);
@@ -162,12 +219,18 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.clearNewOrEditMonitorMachineTab=function(){
 
             /********************************基本属性************************************/
-            //项目id
+            //机器id
             $scope.formData.id=null;
-            //项目名称
+            //机器名称
             $scope.formData.machineName="";
             //描述
             $scope.formData.machineDesc="";
+            //机器Ip
+            $scope.formData.machineIp="";
+            //操作系统
+            $scope.formData.operateSystemType="0";
+            //所属项目
+            $scope.formData.projectId=this.ctrl.allAuthorizeProject[0].id.toString();
         }
 
         $scope.showAddMonitorMachineTab=function () {
@@ -191,16 +254,22 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 if (rsp.data.resultCode == 0) {
 
                     /********************************基本属性************************************/
-                    //项目id
+                    //机器id
                     $scope.formData.id=rsp.data.data.id;
-                    //项目名称
+                    //机器名称
                     $scope.formData.machineName=rsp.data.data.machineName;
                     //数据源Ip
                     $scope.formData.machineDesc=rsp.data.data.machineDesc;
+                    //所属项目
+                    $scope.formData.projectId=rsp.data.data.projectId.toString();
+
+                    //机器Ip
+                    $scope.formData.machineIp=rsp.data.data.machineIp;
+
                     //跳转到编辑页面
                     $scope.actions.setCurrent(2);
                 } else {
-                    alert('获取项目记录失败！具体原因：' + rsp.data.resultMsg + "。");
+                    alert('获取机器记录失败！具体原因：' + rsp.data.resultMsg + "。");
                 }
             }, err => {
                 console.log("invoke getMachineByMachineName err:", err);
@@ -223,7 +292,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             }).then((rsp) => {
                 console.log("invoke deleteMachine ok:", rsp.data.resultCode, rsp.data.resultMsg);
                 if (rsp.data.resultCode == 0) {
-                    //重新拉取监控项目
+                    //重新拉取监控机器
                     $scope.searchFunction(serverHost);
                 } else {
                     alert('删除失败！具体原因：' + rsp.data.resultMsg + "。");
@@ -238,14 +307,14 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         //下一页
         $scope.nextPageFunction = function (serverHost) {
             $scope.pageNum += 1;
-            //重新拉取监控项目
+            //重新拉取监控机器
             $scope.searchFunction(serverHost);
         };
 
         //上一页
         $scope.lastPageFunction = function (serverHost) {
             $scope.pageNum -= 1;
-            //重新拉取监控项目
+            //重新拉取监控机器
             $scope.searchFunction(serverHost);
         };
     }

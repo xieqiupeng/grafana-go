@@ -20,4 +20,6 @@ public interface MonitorTask2ExMapper extends MonitorTask2Mapper {
 
     MonitorTask2 selectOneByTaskName(String taskName);
 
+    List<MonitorTask2> selectOneByMachineId(Integer machineId);
+
 }
