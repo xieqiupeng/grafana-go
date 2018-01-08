@@ -18,4 +18,6 @@ public interface MonitorMachineExMapper extends MonitorMachineMapper {
 
     MonitorMachine selectOneByMachineName(String machineName);
 
+    List<MonitorMachine> selectOneByProjectId(Integer projectId);
+
 }

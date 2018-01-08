@@ -60,7 +60,14 @@ public class MonitorMachineService {
 
 
     public boolean referProject(int projectId) {
-        return true;
+
+        List<MonitorMachine> monitorMachinesList = monitorMachineExMapper.selectOneByProjectId(projectId);
+        if(monitorMachinesList!=null&&monitorMachinesList.size()>0){
+            return true;
+        }else {
+            return false;
+        }
+
     }
 
 
