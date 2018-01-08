@@ -300,7 +300,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             //         return ;
             //     }
             // }
-
+            console.log('separatorKeys '+JSON.stringify(separatorKeys));
             //请填写结果列
             var resultColumns=$scope.formData.resultColumns;
 
@@ -319,6 +319,8 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             //传输数据
             cutTemplateObject=JSON.stringify(cutTemplateObject);
 
+
+            console.log('separatorKeys '+cutTemplateObject);
 
             $http({
                 url: serverHost + "monitorTask/dataClean",
@@ -503,9 +505,12 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             separatorObject.isRegex=isRegex;
 
             var separatorKeysArray=new Array();
+            console.log('aa '+JSON.stringify(separatorKeys));
             for(var i=0;i<separatorKeys.length;i++){
+
                 separatorKeysArray.push(separatorKeys[i].separatorKey);
             }
+            console.log('bb '+JSON.stringify(separatorKeysArray));
             separatorObject.separatorKeys=separatorKeysArray;
             cutTemplate.separator=separatorObject;
 

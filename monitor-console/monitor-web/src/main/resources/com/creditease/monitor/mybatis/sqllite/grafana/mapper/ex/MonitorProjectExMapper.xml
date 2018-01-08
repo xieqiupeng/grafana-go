@@ -18,4 +18,12 @@
     from monitor_project
     where project_name like #{projectName}
   </select>
+
+  <select id="selectOneByProjectName" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM monitor_project
+    WHERE project_name = #{projectName}
+  </select>
+
 </mapper>

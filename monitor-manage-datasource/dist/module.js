@@ -292,6 +292,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         //         return ;
                         //     }
                         // }
+                        console.log('separatorKeys ' + JSON.stringify(separatorKeys));
                         //请填写结果列
                         var resultColumns = $scope.formData.resultColumns;
                         for (var i = 0; i < resultColumns.length; i++) {
@@ -308,6 +309,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         var cutTemplateObject = $scope.getCutTemplateObject(template, isOrder, isRegex, separatorKeys, resultColumns);
                         //传输数据
                         cutTemplateObject = JSON.stringify(cutTemplateObject);
+                        console.log('separatorKeys ' + cutTemplateObject);
                         $http({
                             url: serverHost + "monitorTask/dataClean",
                             data: "data=" + $scope.formData.dataSourceLogSample + "&dataCleanRule=" + cutTemplateObject,
@@ -467,9 +469,11 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         separatorObject.isOrder = isOrder;
                         separatorObject.isRegex = isRegex;
                         var separatorKeysArray = new Array();
+                        console.log('aa ' + JSON.stringify(separatorKeys));
                         for (var i = 0; i < separatorKeys.length; i++) {
                             separatorKeysArray.push(separatorKeys[i].separatorKey);
                         }
+                        console.log('bb ' + JSON.stringify(separatorKeysArray));
                         separatorObject.separatorKeys = separatorKeysArray;
                         cutTemplate.separator = separatorObject;
                         //删除多余的字段--结果列

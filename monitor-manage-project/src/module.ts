@@ -71,7 +71,8 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         //搜索功能
         $scope.searchFunction = function (serverHost) {
             $scope.projectName=document.getElementById('projectName');
-            $scope.projectName=$scope.projectName.value;
+            $scope.projectName=($scope.projectName==null? "":$scope.projectName.value);
+
             $scope.projectArray = [];
             var param = 'projectName=' + $scope.projectName+ "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
             $http({
@@ -128,7 +129,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             }else if($scope.data.current==3){
                 saveOrUpdateContextPath='monitorProject/addProject';
             }
-
+            console.log($scope.formData.id+" "+projectName+" "+$scope.formData.projectDesc);
             $http({
                 url: serverHost + saveOrUpdateContextPath ,
                 withCredentials: true,

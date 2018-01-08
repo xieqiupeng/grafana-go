@@ -110,18 +110,19 @@ public class MonitorProjectController {
      */
     @RequestMapping("/editProject")
     public Response editProject(@RequestBody MonitorProject monitorProject) {
-        logger.info("editProject start projectName={},desc={}",
+        logger.info("editProject start projectId={},projectName={},desc={}",
+                monitorProject.getId(),
                 monitorProject.getProjectName(),
                 monitorProject.getProjectDesc());
         Response response = paramVerification(monitorProject);
         if (response != null) {
             return response;
         }
-        if (null!=monitorProject.getId()) {
+        if (null==monitorProject.getId()) {
             return Response.fail(BaseResultCode.COMMON_HTTP_PARAM_RESOVE_OR_VALIDATE_ERROR, "项目Id不能为空");
         }
         if(true==monitorMachineService.referProject(monitorProject.getId())){
-            logger.info("editProject fail,some machine id={} is referring project id={} ", monitorProject.getId());
+            logger.info("editProject fail,some machine is referring project id={} ", monitorProject.getId());
             return Response.fail(ResponseCode.PROJECT_IS_REFERRED_BY_MACHINE_LIST);
         }
         boolean ok = monitorProjectService.editProject(monitorProject.getId(),monitorProject.getProjectDesc());
