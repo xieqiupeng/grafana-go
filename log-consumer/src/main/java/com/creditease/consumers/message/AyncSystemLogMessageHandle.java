@@ -28,6 +28,10 @@ public class AyncSystemLogMessageHandle implements MessageHandler{
     private static final String type_double = "_double";
     /**long类型*/
     private static final String type_long = "_long";
+    /**TAG标识*/
+    private static final String TAG="_tag";
+    /**FIELD标识*/
+    private static final String FIELD = "_field";
 
     private InfluxdbManager manager;
     //这里异步处理消息 最多只能同时多少批次的消息
@@ -72,6 +76,11 @@ public class AyncSystemLogMessageHandle implements MessageHandler{
         return true;
     }
 
+    /**
+     * 消息解析
+     * @param message
+     * @return
+     */
     private InfluxdbPo conver(String message){
         InfluxdbPo po = null;
         JSONObject jsonObject = JSONObject.parseObject(message);
@@ -127,6 +136,12 @@ public class AyncSystemLogMessageHandle implements MessageHandler{
         return po;
     }
 
+    /**
+     * 解析属性
+     * @param jsonObject
+     * @param po
+     * @param prefix
+     */
     private void putFields(JSONObject jsonObject,InfluxdbPo po,String prefix){
         if(jsonObject != null){
             Map<String, Object> map = jsonObject.getInnerMap();
@@ -142,36 +157,70 @@ public class AyncSystemLogMessageHandle implements MessageHandler{
                         fields = new HashMap<>();
                         po.setFields(fields);
                     }
+                    Map<String,String> tags = po.getTags();
+                    if(tags == null){
+                        tags = new HashMap<>();
+                        po.setTags(tags);
+                    }
+                    //查看是否是TAG
+                    boolean isTag = false;
+                    if(newKey.endsWith(TAG)){
+                        newKey = newKey.substring(0,newKey.length() - TAG.length());
+                        isTag = true;
+                    }else if(newKey.endsWith(FIELD)){
+                        newKey = newKey.substring(0,newKey.length() - FIELD.length());
+                    }
+                    //对类型进行判断
                     if(newKey.endsWith(type_float)){
                         try {
                             newKey = newKey.substring(0,newKey.length() - type_float.length());
-                            fields.put(newKey,Float.parseFloat(value.toString()));
+                            if(isTag){
+                                tags.put(newKey,value.toString());
+                            }else{
+                                fields.put(newKey,Float.parseFloat(value.toString()));
+                            }
                         }catch (Exception e){
                             logger.info("conver float error,key={},value{},errormsg={}",newKey,value,e.getMessage());
                         }
                     }else if(newKey.endsWith(type_long)){
                         try {
                             newKey = newKey.substring(0,newKey.length() - type_long.length());
-                            fields.put(newKey,Long.parseLong(value.toString()));
+                            if(isTag){
+                                tags.put(newKey,value.toString());
+                            }else{
+                                fields.put(newKey,Long.parseLong(value.toString()));
+                            }
                         }catch (Exception e){
                             logger.info("conver long error,key={},value{},errormsg={}",newKey,value,e.getMessage());
                         }
                     }else if(newKey.endsWith(type_double)){
                         try {
                             newKey = newKey.substring(0,newKey.length() - type_double.length());
-                            fields.put(newKey,Double.parseDouble(value.toString()));
+                            if(isTag){
+                                tags.put(newKey,value.toString());
+                            }else{
+                                fields.put(newKey,Double.parseDouble(value.toString()));
+                            }
                         }catch (Exception e){
                             logger.info("conver float error,key={},value{},errormsg={}",newKey,value,e.getMessage());
                         }
                     }else if(newKey.endsWith(type_string)){
                         try {
                             newKey = newKey.substring(0,newKey.length() - type_string.length());
-                            fields.put(newKey,String.valueOf(value));
+                            if(isTag){
+                                tags.put(newKey,value.toString());
+                            }else{
+                                fields.put(newKey,String.valueOf(value));
+                            }
                         }catch (Exception e){
                             logger.info("conver String error,key={},value{},errormsg={}",newKey,value,e.getMessage());
                         }
                     }else {
-                        fields.put(newKey,value);
+                        if(isTag){
+                            tags.put(newKey,value.toString());
+                        }else{
+                            fields.put(newKey,value);
+                        }
                     }
                 }
             }
