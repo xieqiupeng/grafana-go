@@ -41,7 +41,35 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         // console.log(object);
     }
 
+    allAuthorizeMachine=[];
     allAuthorizeProject=[];
+    //搜索所有授权的机器
+    searchAllAuthorizeMachines = function (serverHost,projectId) {
+        this.allAuthorizeMachine=[];
+        this.$http({
+            url: serverHost + 'monitorMachine/searchAllAuthorizeMachinesByProjectId?projectId='+projectId,
+            withCredentials: true,
+            method: 'GET'
+        }).then((rsp) => {
+            if (rsp.data.resultCode == 0) {
+                console.log("invoke searchAllAuthorizeMachines ok:", rsp.data.data);
+                //设置列表内容
+                this.allAuthorizeMachine = rsp.data.data;
+
+
+                // if(rsp.data.data.length>0){
+                //
+                // }
+            } else {
+                alert('获取所有授权的机器失败!具体原因：' + rsp.data.resultMsg);
+            }
+        }, err => {
+            console.log("invoke searchAllAuthorizeMachines err:", err);
+            alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
+        });
+    };
+
+
     //搜索所有授权的项目
     searchAllAuthorizeProjects = function (serverHost) {
         this.allAuthorizeProject=[];
@@ -67,13 +95,17 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
     };
 
 
+
+
     monitorManageController($scope, $http) {
         //查询参数
-        $scope.machineName='';
+        $scope.applicationName='';
+        //查询参数
+        $scope.machineId='';
         //查询参数
         $scope.projectId='';
         //列表内容
-        $scope.machineArray = [];
+        $scope.applicationArray = [];
         //分页参数
         $scope.total = 0; //总条数
         $scope.pages = 0; //总页面
@@ -93,53 +125,63 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.formData={
             /************基本属性***********/
             id:null,
-            machineName:'',
-            operateSystemType:"0",
-            machineIp:'',
+            applicationName:'',
+            applicationType:"0",
+            applicationDetailParam:'',
+            machineId:'',
             projectId:'',
-            machineDesc:''
+            applicationDesc:''
         };
 
-        $scope.selectChangeProject= function (serverHost) {
+        $scope.selectChangeProject=function (serverHost) {
+            $scope.projectId=document.getElementById('projectId');
+            $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
+            if($scope.projectId!=null&&$scope.projectId!=''){
+                this.ctrl.searchAllAuthorizeMachines(serverHost,$scope.projectId);
+            }else{
+                this.ctrl.allAuthorizeMachine=[];
+            }
+        }
+
+        $scope.selectChangeMachine= function (serverHost) {
             $scope.searchFunction(serverHost);
         }
 
+
+
+
+
         //搜索功能
         $scope.searchFunction = function (serverHost) {
-            // if($scope.machineName==''){
-                $scope.machineName=document.getElementById('machineName');
-                $scope.machineName=($scope.machineName==null? "":$scope.machineName.value);
-            // }
-            console.log("before projectId:"+$scope.projectId);
-            // if($scope.projectId==''){
-                $scope.projectId=document.getElementById('projectId');
-                $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
-            // }
-            console.log("after projectId:"+$scope.projectId);
+            $scope.applicationName=document.getElementById('applicationName');
+            $scope.applicationName=($scope.applicationName==null? "":$scope.applicationName.value);
 
-            $scope.machineArray = [];
-            var param = 'machineName=' + $scope.machineName+'&projectId=' + $scope.projectId+  "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
+            $scope.projectId=document.getElementById('projectId');
+            $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
+
+            $scope.machineId=document.getElementById('machineId');
+            $scope.machineId=($scope.machineId==null? "":$scope.machineId.value);
+
+            if($scope.projectId==null || $scope.projectId==''){
+                $scope.machineId='';
+                this.ctrl.allAuthorizeMachine=[];
+            }
+
+
+            $scope.applicationArray = [];
+            var param = 'applicationName=' + $scope.applicationName+'&machineId=' + $scope.machineId+ '&projectId=' + $scope.projectId+ "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
+
             $http({
-                url: serverHost + 'monitorMachine/searchMachineByMachineName' + "?" + param,
+                url: serverHost + 'monitorApplication/searchApplicationByApplicationName' + "?" + param,
                 withCredentials: true,
                 method: 'GET'
             }).then((rsp) => {
 
                 if (rsp.data.resultCode == 0) {
                     console.log("invoke searchFunction ok:", rsp.data.data);
-                    for(var i=0;i<rsp.data.data.list.length;i++){
-                        for(var j=0;j<this.ctrl.allAuthorizeProject.length;j++){
-                            if(rsp.data.data.list[i].projectId==this.ctrl.allAuthorizeProject[j].id){
-                                rsp.data.data.list[i].projectId=this.ctrl.allAuthorizeProject[j].projectName;
-                                break;
-                            }
-                        }
-                    }
 
                     //设置列表内容
-                    $scope.machineArray = rsp.data.data.list;
-
-
+                    $scope.applicationArray = rsp.data.data.list;
                     //设置分页内容
                     $scope.pageNum = rsp.data.data.pageNum; //当前页面
                     $scope.total = rsp.data.data.total;//总条数
@@ -155,6 +197,26 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             });
         };
 
+        //启动/暂停
+        $scope.startOrPauseApplicationFunction = function (serverHost, applicationId, status) {
+            var param = 'applicationId=' + applicationId + '&status=' + status;
+            $http({
+                url: serverHost + 'monitorApplication/startOrPauseApplication' + "?" + param,
+                withCredentials: true,
+                method: 'GET'
+            }).then((rsp) => {
+                console.log("invoke startOrPauseApplication ok:", rsp.data.resultCode, rsp.data.resultMsg);
+                if (rsp.data.resultCode == 0) {
+                    //重新拉取监控任务
+                    $scope.searchFunction(serverHost);
+                } else {
+                    alert('启动/暂停失败！具体原因：' + rsp.data.resultMsg + "。");
+                }
+            }, err => {
+                console.log("invoke startOrPauseApplication err:", err);
+                alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
+            });
+        };
         
         //切换tab时,提示确定退出
         $scope.confirmChangeTab=function(serverHost){
@@ -169,39 +231,39 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         //保存或者更新
         $scope.saveOrUpdate=function(serverHost){
 
-
-            //机器名称
-            var machineName=$scope.formData.machineName;
-            if(machineName==null||machineName.trim()==''){
-                alert('请填写机器名称!');
+            //应用名称
+            var applicationName=$scope.formData.applicationName;
+            if(applicationName==null||applicationName.trim()==''){
+                alert('请填写应用名称!');
                 return ;
             }
 
             var saveOrUpdateContextPath='';
             if($scope.data.current==2){
-                saveOrUpdateContextPath='monitorMachine/editMachine';
+                saveOrUpdateContextPath='monitorApplication/editApplication';
             }else if($scope.data.current==3){
-                saveOrUpdateContextPath='monitorMachine/addMachine';
+                saveOrUpdateContextPath='monitorApplication/addApplication';
             }
-
+            console.log('$scope.formData.machineId '+$scope.formData.machineId);
             $http({
                 url: serverHost + saveOrUpdateContextPath ,
                 withCredentials: true,
                 method: 'POST',
                 data:{
                     id:$scope.formData.id,
-                    machineName:machineName,
+                    applicationName:applicationName,
                     projectId:$scope.formData.projectId,
-                    machineIp:$scope.formData.machineIp,
-                    operateSystemType:$scope.formData.operateSystemType,
-                    machineDesc:$scope.formData.machineDesc
+                    machineId:$scope.formData.machineId,
+                    applicationDetailParam:$scope.formData.applicationDetailParam,
+                    applicationType:$scope.formData.applicationType,
+                    applicationDesc:$scope.formData.applicationDesc
                 }
             }).then((rsp) => {
                 console.log("invoke "+saveOrUpdateContextPath+" ok:", rsp.data.resultCode, rsp.data.resultMsg);
 
                 if (rsp.data.resultCode == 0) {
                     alert('保存成功！');
-                    //重新拉取监控机器
+                    //重新拉取监控应用
                     $scope.searchFunction(serverHost);
                     //跳转到查询tab
                     $scope.actions.setCurrent(1);
@@ -215,91 +277,138 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             });
         }
 
+        //搜索所有授权的机器
+        $scope.searchAllAuthorizeMachines = function (serverHost,projectId) {
+
+            $http({
+                url: serverHost + 'monitorMachine/searchAllAuthorizeMachinesByProjectId?projectId='+projectId,
+                withCredentials: true,
+                method: 'GET'
+            }).then((rsp) => {
+                if (rsp.data.resultCode == 0) {
+                    console.log("invoke searchAllAuthorizeMachines ok:", rsp.data.data);
+                    //设置列表内容
+                    this.ctrl.allAuthorizeMachine=[];
+                    this.ctrl.allAuthorizeMachine = rsp.data.data;
+                    if(this.ctrl.allAuthorizeMachine.length>0){
+                        $scope.formData.machineId=this.ctrl.allAuthorizeMachine[0].id.toString();
+                        console.log('$scope.formData.machineId '+$scope.formData.machineId);
+                    }
+
+                    // if(rsp.data.data.length>0){
+                    //
+                    // }
+                } else {
+                    alert('获取所有授权的机器失败!具体原因：' + rsp.data.resultMsg);
+                }
+            }, err => {
+                console.log("invoke searchAllAuthorizeMachines err:", err);
+                alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
+            });
+        };
+
+
+        $scope.selectChangeFormDataProject=function(serverHost){
+            // $scope.projectId=document.getElementById('projectId');
+            // $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
+            //console.log("serverHost:"+serverHost);
+            $scope.searchAllAuthorizeMachines(serverHost,$scope.formData.projectId);
+
+        }
         //清空新建or编辑Tab页面
-        $scope.clearNewOrEditMonitorMachineTab=function(){
+        $scope.clearNewOrEditMonitorApplicationTab=function(){
 
             /********************************基本属性************************************/
-            //机器id
+            //应用id
             $scope.formData.id=null;
-            //机器名称
-            $scope.formData.machineName="";
+            //应用名称
+            $scope.formData.applicationName="";
             //描述
-            $scope.formData.machineDesc="";
-            //机器Ip
-            $scope.formData.machineIp="";
-            //操作系统
-            $scope.formData.operateSystemType="0";
+            $scope.formData.applicationDesc="";
+            //应用端口
+            $scope.formData.applicationDetailParam="";
+            //应用类型
+            $scope.formData.applicationType="0";
+
             //所属项目
-            $scope.formData.projectId=this.ctrl.allAuthorizeProject[0].id.toString();
+            if(this.ctrl.allAuthorizeProject.length>0){
+                $scope.formData.projectId=this.ctrl.allAuthorizeProject[0].id.toString();
+            }
+
+            //所属机器
+            if(this.ctrl.allAuthorizeMachine.length>0){
+                $scope.formData.machineId=this.ctrl.allAuthorizeMachine[0].id.toString();
+            }
+
         }
 
-        $scope.showAddMonitorMachineTab=function () {
+        $scope.showAddMonitorApplicationTab=function () {
             //清空新建Tab页面
-            $scope.clearNewOrEditMonitorMachineTab();
+            $scope.clearNewOrEditMonitorApplicationTab();
             //跳转到新建页面
             $scope.actions.setCurrent(3);
         }
 
-        $scope.showEditMonitorMachineTab=function (serverHost,id) {
+        $scope.showEditMonitorApplicationTab=function (serverHost,id) {
             //清空编辑Tab页面
-            $scope.clearNewOrEditMonitorMachineTab();
+            $scope.clearNewOrEditMonitorApplicationTab();
             var param = 'id=' + id;
             $http({
-                url: serverHost + 'monitorMachine/getMachineByMachineId' + "?" + param,
+                url: serverHost + 'monitorApplication/getApplicationByApplicationId' + "?" + param,
                 withCredentials: true,
                 method: 'GET'
             }).then((rsp) => {
-                console.log("invoke getMachineByMachineId ok:", rsp.data.resultCode, rsp.data.resultMsg,rsp.data.data);
+                console.log("invoke getApplicationByApplicationId ok:", rsp.data.resultCode, rsp.data.resultMsg,rsp.data.data);
 
                 if (rsp.data.resultCode == 0) {
 
                     /********************************基本属性************************************/
-                    //机器id
+                    //应用id
                     $scope.formData.id=rsp.data.data.id;
-                    //机器名称
-                    $scope.formData.machineName=rsp.data.data.machineName;
-                    //数据源Ip
-                    $scope.formData.machineDesc=rsp.data.data.machineDesc;
-                    //所属项目
-                    $scope.formData.projectId=rsp.data.data.projectId.toString();
+                    //应用名称
+                    $scope.formData.applicationName=rsp.data.data.applicationName;
+                    //描述
+                    $scope.formData.applicationDesc=rsp.data.data.applicationDesc;
+                    //所属机器
+                    $scope.formData.machineId=rsp.data.data.machineId.toString();
 
-                    //机器Ip
-                    $scope.formData.machineIp=rsp.data.data.machineIp;
+                    //应用端口
+                    $scope.formData.applicationDetailParam=rsp.data.data.applicationDetailParam;
 
                     //跳转到编辑页面
                     $scope.actions.setCurrent(2);
                 } else {
-                    alert('获取机器记录失败！具体原因：' + rsp.data.resultMsg + "。");
+                    alert('获取应用记录失败！具体原因：' + rsp.data.resultMsg + "。");
                 }
             }, err => {
-                console.log("invoke getMachineByMachineName err:", err);
+                console.log("invoke getApplicationByApplicationName err:", err);
                 alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
             });
         }
 
         //删除
-        $scope.deleteMachineFunction = function (serverHost, machineName,id) {
+        $scope.deleteApplicationFunction = function (serverHost, applicationName,id) {
 
-            if (!confirm("确定要删除" + machineName + "吗？")) {
+            if (!confirm("确定要删除" + applicationName + "吗？")) {
                 return;
             }
 
             var param = 'id=' + id;
             $http({
-                url: serverHost + 'monitorMachine/deleteMachine' + "?" + param,
+                url: serverHost + 'monitorApplication/deleteApplication' + "?" + param,
                 withCredentials: true,
                 method: 'GET'
             }).then((rsp) => {
-                console.log("invoke deleteMachine ok:", rsp.data.resultCode, rsp.data.resultMsg);
+                console.log("invoke deleteApplication ok:", rsp.data.resultCode, rsp.data.resultMsg);
                 if (rsp.data.resultCode == 0) {
-                    //重新拉取监控机器
+                    //重新拉取监控应用
                     $scope.searchFunction(serverHost);
                 } else {
                     alert('删除失败！具体原因：' + rsp.data.resultMsg + "。");
                 }
 
             }, err => {
-                console.log("invoke deleteMachine err:", err);
+                console.log("invoke deleteApplication err:", err);
                 alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
             });
         };
@@ -307,14 +416,14 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         //下一页
         $scope.nextPageFunction = function (serverHost) {
             $scope.pageNum += 1;
-            //重新拉取监控机器
+            //重新拉取监控应用
             $scope.searchFunction(serverHost);
         };
 
         //上一页
         $scope.lastPageFunction = function (serverHost) {
             $scope.pageNum -= 1;
-            //重新拉取监控机器
+            //重新拉取监控应用
             $scope.searchFunction(serverHost);
         };
     }

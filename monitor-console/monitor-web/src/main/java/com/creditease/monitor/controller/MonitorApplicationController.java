@@ -33,14 +33,39 @@ public class MonitorApplicationController {
     //通过ApplicationName模糊搜索
     @RequestMapping("/searchApplicationByApplicationName")
     public Response searchApplicationByApplicationName(@YXRequestParam(required = false, errmsg = "服务端根据应用名称模糊搜索发生错误(applicationName不能为空)") String applicationName,
-                                         @YXRequestParam(required = false, errmsg = "服务端根据应用名称模糊搜索发生错误(pageNum不能为空)") Integer pageNum,
-                                         @YXRequestParam(required = false, errmsg = "服务端根据应用名称模糊搜索发生错误(pageSize不能为空)") Integer pageSize) {
-        logger.info("/searchApplicationByApplicationName param:applicationName:{},pageNum:{},pageSize:{}", applicationName, pageNum, pageSize);
-        List<MonitorApplication> monitorApplicationsList = monitorApplicationService.selectByApplicationName(applicationName, pageNum, pageSize);
+                                                       @YXRequestParam(required = false, errmsg = "服务端根据应用名称模糊搜索发生错误(projectId不能为空)") Integer projectId,
+                                                       @YXRequestParam(required = false, errmsg = "服务端根据应用名称模糊搜索发生错误(machineId不能为空)") Integer machineId,
+                                         @YXRequestParam(required = true, errmsg = "服务端根据应用名称模糊搜索发生错误(pageNum不能为空)") Integer pageNum,
+                                         @YXRequestParam(required = true, errmsg = "服务端根据应用名称模糊搜索发生错误(pageSize不能为空)") Integer pageSize) {
+        logger.info("/searchApplicationByApplicationName param:applicationName:{},projectId:{},machineId:{},pageNum:{},pageSize:{}", applicationName,projectId,machineId, pageNum, pageSize);
+        List<MonitorApplication> monitorApplicationsList = monitorApplicationService.selectByApplicationName(applicationName,projectId,machineId, pageNum, pageSize);
 
         //分页信息
         return Response.ok(new PageInfo(monitorApplicationsList));
     }
+
+
+    //启动/暂停
+    @RequestMapping("/startOrPauseApplication")
+    public Response startOrPauseApplication(@YXRequestParam(required = true, errmsg = "服务端启动/暂停应用状态发生错误") Integer applicationId,
+                                     @YXRequestParam(required = true, errmsg = "服务端启动/暂停应用状态发生错误") Byte status) {
+        logger.info("/startOrPauseApplication param:applicationId:{},status={}", applicationId, status);
+        MonitorApplication monitorApplication = monitorApplicationService.selectOneByApplicationId(applicationId);
+
+        if (monitorApplication == null) {
+            logger.info("startOrPauseApplication fail applicationId={} not exists", applicationId);
+            return Response.fail(ResponseCode.APPLICATION_NOT_EXISTS);
+        }
+
+        if (status == monitorApplication.getStatus()) {
+            logger.info("startOrPauseApplication 状态一致无需更改 applicationId:{},status={}", applicationId, status);
+            return Response.ok(true);
+        }
+        monitorApplication.setStatus(status);
+        boolean ok = monitorApplicationService.startOrPauseApplication(monitorApplication);
+        return Response.ok(ok);
+    }
+
 
 
     //删除
@@ -65,9 +90,11 @@ public class MonitorApplicationController {
      */
     @RequestMapping("/addApplication")
     public Response addApplication(@RequestBody MonitorApplication monitorApplication) {
-        logger.info("addApplication start applicationName={},applicationType={},applicationDetailParam={},desc={}",
+        logger.info("addApplication start applicationName={},applicationType={},projectId={},machineId={},applicationDetailParam={},desc={}",
                 monitorApplication.getApplicationName(),
                 monitorApplication.getApplicationType(),
+                monitorApplication.getProjectId(),
+                monitorApplication.getMachineId(),
                 monitorApplication.getApplicationDetailParam(),
                 monitorApplication.getApplicationDesc());
 //        Response response = paramVerification(monitorApplication);
@@ -76,10 +103,12 @@ public class MonitorApplicationController {
 //        }
         if (monitorApplicationService.isExists(monitorApplication.getApplicationName())) {
             logger.info("addApplication applicationName={} has exists", monitorApplication.getApplicationName());
-            return Response.fail(ResponseCode.MACHINE_NAME_HAS_EXISTS);
+            return Response.fail(ResponseCode.APPLICATION_NAME_HAS_EXISTS);
         }
 
         boolean ok = monitorApplicationService.addApplication(monitorApplication.getApplicationName(),
+                monitorApplication.getProjectId(),
+                monitorApplication.getMachineId(),
                 monitorApplication.getApplicationType(),
                 monitorApplication.getApplicationDetailParam(),
                 monitorApplication.getApplicationDesc());
@@ -190,4 +219,13 @@ public class MonitorApplicationController {
         logger.info("editApplication end applicationId={},result={}", monitorApplication.getId(), ok);
         return Response.ok(ok);
     }
+
+    //通过Application id查找
+    @RequestMapping("/getApplicationByApplicationId")
+    public Response getApplicationByApplicationId(@YXRequestParam(required = true, errmsg = "服务端根据应用Id查找发生错误(applicationId不能为空)") Integer id) {
+        logger.info("/getApplicationByApplicationId id:{}", id);
+        MonitorApplication monitorApplication = monitorApplicationService.selectOneByApplicationId(id);
+        return Response.ok(monitorApplication);
+    }
+
 }

@@ -241,5 +241,24 @@ public class MonitorMachineController {
         return Response.ok(monitorMachine);
     }
 
+    //搜索所有授权的机器
+    @RequestMapping("/searchAllAuthorizeMachines")
+    public Response searchAllAuthorizeMachines() {
+        logger.info("/searchAllAuthorizeMachines");
+        List<MonitorMachine> monitorMachinesList = monitorMachineService.selectAllAuthorizeMachines();
+        return Response.ok(monitorMachinesList);
+    }
+
+    //根据项目Id搜索所有授权的机器
+    @RequestMapping("/searchAllAuthorizeMachinesByProjectId")
+    public Response searchAllAuthorizeMachinesByProjectId(@YXRequestParam(required = false, errmsg = "服务端根据项目Id搜索所有授权的机器发生错误(projectId不能为空)") Integer projectId) {
+        logger.info("/searchAllAuthorizeMachines");
+        List<MonitorMachine> monitorMachinesList = monitorMachineService.selectAllAuthorizeMachinesByProjectId(projectId);
+        return Response.ok(monitorMachinesList);
+    }
+
+
+
+
 
 }

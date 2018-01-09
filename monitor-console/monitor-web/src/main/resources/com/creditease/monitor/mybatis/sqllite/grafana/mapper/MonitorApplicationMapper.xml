@@ -3,6 +3,7 @@
 <mapper namespace="com.creditease.monitor.mybatis.sqllite.grafana.mapper.MonitorApplicationMapper" >
   <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" >
     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="machine_id" property="machineId" jdbcType="INTEGER" />
     <result column="application_name" property="applicationName" jdbcType="VARCHAR" />
     <result column="application_type" property="applicationType" jdbcType="TINYINT" />
@@ -13,8 +14,8 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, machine_id, application_name, application_type, application_detail_param, application_desc, 
-    status, create_time, update_time
+    id, project_id, machine_id, application_name, application_type, application_detail_param, 
+    application_desc, status, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -30,14 +31,14 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into monitor_application (machine_id, application_name, application_type, 
-      application_detail_param, application_desc, 
-      status, create_time, update_time
-      )
-    values (#{machineId,jdbcType=INTEGER}, #{applicationName,jdbcType=VARCHAR}, #{applicationType,jdbcType=TINYINT}, 
-      #{applicationDetailParam,jdbcType=VARCHAR}, #{applicationDesc,jdbcType=VARCHAR}, 
-      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into monitor_application (project_id, machine_id, application_name, 
+      application_type, application_detail_param, 
+      application_desc, status, create_time, 
+      update_time)
+    values (#{projectId,jdbcType=INTEGER}, #{machineId,jdbcType=INTEGER}, #{applicationName,jdbcType=VARCHAR}, 
+      #{applicationType,jdbcType=TINYINT}, #{applicationDetailParam,jdbcType=VARCHAR}, 
+      #{applicationDesc,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
@@ -45,6 +46,9 @@
     </selectKey>
     insert into monitor_application
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="projectId != null" >
+        project_id,
+      </if>
       <if test="machineId != null" >
         machine_id,
       </if>
@@ -71,6 +75,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
       <if test="machineId != null" >
         #{machineId,jdbcType=INTEGER},
       </if>
@@ -100,6 +107,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" >
     update monitor_application
     <set >
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
       <if test="machineId != null" >
         machine_id = #{machineId,jdbcType=INTEGER},
       </if>
@@ -129,7 +139,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" >
     update monitor_application
-    set machine_id = #{machineId,jdbcType=INTEGER},
+    set project_id = #{projectId,jdbcType=INTEGER},
+      machine_id = #{machineId,jdbcType=INTEGER},
       application_name = #{applicationName,jdbcType=VARCHAR},
       application_type = #{applicationType,jdbcType=TINYINT},
       application_detail_param = #{applicationDetailParam,jdbcType=VARCHAR},

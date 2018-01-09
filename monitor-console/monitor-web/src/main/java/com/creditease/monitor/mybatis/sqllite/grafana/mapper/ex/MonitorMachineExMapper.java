@@ -22,4 +22,8 @@ public interface MonitorMachineExMapper extends MonitorMachineMapper {
 
     List<MonitorMachine> selectOneByProjectId(Integer projectId);
 
+    List<MonitorMachine> selectAllAuthorizeMachines();
+
+    List<MonitorMachine> selectAllAuthorizeMachinesByProjectId(Integer projectId);
+
 }

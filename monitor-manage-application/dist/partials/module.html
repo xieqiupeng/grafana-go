@@ -25,32 +25,40 @@
                 <div class="editor-row">
                     <table>
                         <tr>
-
                             <td>
                                 <table>
                                     <tr>
+
                                         <td><span class="gf-form-label width-7">所属项目</span></td>
                                         <td><select size="1" class="gf-form-input" id="projectId" ng-model="projectId"  ng-change="selectChangeProject(ctrl.panel.serverHost)" style="width: auto">
                                             <option value="" >请选择所属项目</option>
                                             <option ng-repeat="project in ctrl.allAuthorizeProject" value="{{project.id}}" >{{project.projectName}}</option>
                                         </select>
                                         </td>
+
+
+
+
+
+                                        <td><span class="gf-form-label width-7">所属机器</span></td>
+                                        <td><select size="1" class="gf-form-input" id="machineId" ng-model="machineId"  ng-change="selectChangeMachine(ctrl.panel.serverHost)" style="width: auto">
+                                            <option value="" >请选择所属机器</option>
+                                            <option ng-repeat="machine in ctrl.allAuthorizeMachine" value="{{machine.id}}" >{{machine.machineName}}</option>
+                                        </select>
+                                        </td>
                                     </tr>
                                 </table>
-
                             </td>
-
                             <td>
-                                <input type="text" class="gf-form-input width-25"  placeholder=" 根据机器名称模糊查找" id="machineName" ng-model='machineName'></input>
+                                <input type="text" class="gf-form-input width-25"  placeholder=" 根据应用名称模糊查找" id="applicationName" ng-model='applicationName'></input>
                             </td>
-
                             <td style="width: 60px">
                                 <a  ng-click="searchFunction(ctrl.panel.serverHost)">
                                     <i class="fa fa-search-plus" aria-hidden="true"></i>搜索
                                 </a>
                             </td>
                             <td >
-                                <a  ng-click="showAddMonitorMachineTab()">
+                                <a  ng-click="showAddMonitorApplicationTab()">
                                     <i class="fa fa-plus" aria-hidden="true"></i>新建
                                 </a>
                             </td>
@@ -64,24 +72,32 @@
                 <table border="2" width="100%" align="center">
                     <tr >
                         <td align="center">序号</td>
-                        <td align="center">机器Id</td>
-                        <td align="center">机器名称</td>
+                        <td align="center">应用Id</td>
+                        <td align="center">状态</td>
+                        <td align="center">应用名称</td>
                         <td align="center">所属项目</td>
+                        <td align="center">所属机器</td>
                         <td align="center">创建时间</td>
                         <td align="center">更新时间</td>
-                        <td align="center" colspan="2">操作</td>
+                        <td align="center" colspan="3">操作</td>
                     </tr>
-                    <tr ng-repeat="machine in machineArray">
+                    <tr ng-repeat="application in applicationArray">
                         <td>{{$index+1}}</td>
-                        <td>{{machine.id}}</td>
-                        <td>{{machine.machineName}}</td>
-                        <td>{{machine.projectId}}</td>
-                        <td>{{machine.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
-                        <td>{{machine.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td>{{application.id}}</td>
+                        <td>{{application.statusText}}</td>
+                        <td>{{application.applicationName}}</td>
+                        <td>{{application.projectName}}</td>
+                        <td>{{application.machineName}}</td>
+                        <td>{{application.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td>{{application.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
 
-                        <td  align="center"><input type="button" value="编辑" class="btn btn-primary"  ng-click="showEditMonitorMachineTab(ctrl.panel.serverHost,machine.id)" /></td>
+                        <td  align="center">
+                            <input type="button" value="暂停" ng-if="application.statusText=='启动'" class="btn btn-primary" ng-click="startOrPauseApplicationFunction(ctrl.panel.serverHost,application.id,1)"/>
+                            <input type="button" value="启动" ng-if="application.statusText=='暂停'" class="btn btn-primary" ng-click="startOrPauseApplicationFunction(ctrl.panel.serverHost,application.id,0)"/>
+                        </td>
+                        <td  align="center"><input type="button" value="编辑" class="btn btn-primary"  ng-click="showEditMonitorApplicationTab(ctrl.panel.serverHost,application.id)" /></td>
 
-                        <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteMachineFunction(ctrl.panel.serverHost,machine.machineName,machine.id)"/></td>
+                        <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteApplicationFunction(ctrl.panel.serverHost,application.applicationName,application.id)"/></td>
                     </tr>
                 </table>
                 <br/>
@@ -103,41 +119,51 @@
                         <div class="section gf-form-group">
                             <h5 class="section-heading">基本属性</h5>
                             <div class="gf-form" hidden>
-                                <span class="gf-form-label width-7">机器id</span>
+                                <span class="gf-form-label width-7">应用id</span>
                                 <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-disabled="data.current == 2"  ng-model="formData.id" type="text" placeholder="请填写机器Id">
+                                       ng-disabled="data.current == 2"  ng-model="formData.id" type="text" placeholder="请填写应用Id">
                             </div>
                             <div class="gf-form">
-                                <span class="gf-form-label width-7">机器名称</span>
+                                <span class="gf-form-label width-7">应用名称</span>
                                 <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-disabled="data.current == 2"  ng-model="formData.machineName" type="text" placeholder="请填写机器名称">
+                                       ng-disabled="data.current == 2"  ng-model="formData.applicationName" type="text" placeholder="请填写应用名称">
                             </div>
 
                             <div class="gf-form">
                                 <span class="gf-form-label width-7">所属项目</span>
-                                <select size="1" class="gf-form-input" ng-model="formData.projectId"  style="width: auto">
+                                <select size="1" ng-change="selectChangeFormDataProject(ctrl.panel.serverHost)" class="gf-form-input" ng-model="formData.projectId"  style="width: auto">
                                     <option ng-repeat="project in ctrl.allAuthorizeProject" value="{{project.id}}" >{{project.projectName}}</option>
                                 </select>
                             </div>
 
                             <div class="gf-form">
-                                <span class="gf-form-label width-7">操作系统</span>
-                                <select size="1" style="width: auto" class="gf-form-input" ng-model="formData.operateSystemType" >
-                                    <option value="0" selected>linux</option>
-                                    <option value="1">windows</option>
-                                    <option value="2">其他</option>
+                                <span class="gf-form-label width-7">所属机器</span>
+                                <select size="1" class="gf-form-input" ng-model="formData.machineId"  style="width: auto">
+                                    <option ng-repeat="machine in ctrl.allAuthorizeMachine" value="{{machine.id}}" >{{machine.machineName}}</option>
+                                </select>
+                            </div>
+
+                            <div class="gf-form">
+                                <span class="gf-form-label width-7">应用类型</span>
+                                <select size="1" style="width: auto" class="gf-form-input" ng-model="formData.applicationType" >
+                                    <option value="0" selected>应用服务器-tomcat</option>
+                                    <option value="1">应用服务器-weblogic</option>
+                                    <option value="2">数据库服务器-mysql</option>
+                                    <option value="3">数据库服务器-oracle</option>
+                                    <option value="4">消息队列-rabbitmq</option>
+                                    <option value="5">消息队列-rocketmq</option>
                                 </select>
                             </div>
                             <div class="gf-form">
-                                <span class="gf-form-label width-7">机器Ip</span>
+                                <span class="gf-form-label width-7">应用参数(端口)</span>
                                 <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-model="formData.machineIp" type="text" placeholder="请填写机器Ip，多个用英文逗号分隔">
+                                       ng-model="formData.applicationDetailParam" type="text" placeholder="请填写应用参数">
                             </div>
                             <div class="gf-form">
-                                <span class="gf-form-label width-7">机器描述</span>
+                                <span class="gf-form-label width-7">应用描述</span>
                                 <textarea class="gf-form-input width-31 ng-pristine ng-untouched ng-valid ng-empty"
-                                          rows="1" ng-model="formData.machineDesc"
-                                          placeholder="请填写机器的简要描述，限制100字符以内"></textarea>
+                                          rows="1" ng-model="formData.applicationDesc"
+                                          placeholder="请填写应用的简要描述，限制100字符以内"></textarea>
                             </div>
                         </div>
                     </div>
@@ -155,8 +181,3 @@
         </div>
     </div>
 </div>
-
-
-
-
-

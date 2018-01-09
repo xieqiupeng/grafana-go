@@ -1,8 +1,19 @@
 package com.creditease.monitor.mybatis.sqllite.grafana.po;
 
 import java.util.Date;
+
 public class MonitorApplication {
+
+    /******************start ??????*****************/
+    private String projectName;
+    private String machineName;
+    private String statusText;
+    /******************end ??????*****************/
+
     private Integer id;
+
+    private Integer projectId;
+
 
     private Integer machineId;
 
@@ -26,6 +37,14 @@ public class MonitorApplication {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     public Integer getMachineId() {
@@ -65,7 +84,7 @@ public class MonitorApplication {
     }
 
     public void setApplicationDesc(String applicationDesc) {
-        this.applicationDesc = applicationDesc;
+        this.applicationDesc = applicationDesc == null ? null : applicationDesc.trim();
     }
 
     public Byte getStatus() {
@@ -90,5 +109,29 @@ public class MonitorApplication {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getMachineName() {
+        return machineName;
+    }
+
+    public void setMachineName(String machineName) {
+        this.machineName = machineName;
+    }
+
+    public String getStatusText() {
+        return statusText;
+    }
+
+    public void setStatusText(String statusText) {
+        this.statusText = statusText;
     }
 }

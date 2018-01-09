@@ -49,5 +49,17 @@
   </select>
 
 
+  <select id="selectAllAuthorizeMachines" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from monitor_machine
+  </select>
+
+  <select id="selectAllAuthorizeMachinesByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from monitor_machine
+    WHERE project_id = #{projectId}
+  </select>
 
 </mapper>

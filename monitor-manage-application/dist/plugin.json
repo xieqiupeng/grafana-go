@@ -1,18 +1,18 @@
 {
   "type": "panel",
-  "name": "Monitor Manage Machine",
-  "id": "monitor-manage-machine-panel",
+  "name": "Monitor Manage Application",
+  "id": "monitor-manage-application-panel",
 
   "info": {
-    "description": "Monitor Manage Machine for Grafana",
+    "description": "Monitor Manage Application for Grafana",
     "author": {
       "name": "Credit Ease",
       "url": "http://raintank.io"
     },
     "keywords": [ "monitor", "manage" ],
     "logos": {
-      "small": "img/monitor-manage-machine.png",
-      "large": "img/monitor-manage-machine.png"
+      "small": "img/monitor-manage-application.png",
+      "large": "img/monitor-manage-application.png"
     },
     "links": [
       {"name": "Project site", "url": "https://github.com/NatelEnergy/grafana-influx-admin"},
@@ -27,7 +27,7 @@
       { "name": "Write Data",      "path": "img/screenshot-write.png"   }
     ],
     "version": "0.0.5",
-    "updated": "2018-01-08"
+    "updated": "2018-01-09"
   },
 
   "dependencies": {

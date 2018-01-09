@@ -1,7 +1,11 @@
 package com.creditease.monitor.service;
 
+import com.creditease.monitor.constant.MonitorApplicationConstant;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorApplicationExMapper;
+import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorMachineExMapper;
+import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorProjectExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication;
+import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorMachine;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorProject;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -26,13 +30,19 @@ public class MonitorApplicationService {
     @Autowired
     private MonitorApplicationExMapper monitorApplicationExMapper;
 
+    @Autowired
+    private MonitorMachineExMapper monitorMachineExMapper;
+
+    @Autowired
+    private MonitorProjectExMapper monitorProjectExMapper;
+
     /**
      * 根据应用名称模糊查找
      *
      * @param applicationName
      * @return
      */
-    public List selectByApplicationName(String applicationName, Integer pageNum, Integer pageSize) {
+    public List selectByApplicationName(String applicationName,Integer projectId,Integer machineId, Integer pageNum, Integer pageSize) {
         //设置参数
         if (applicationName == null) {
             applicationName = "";
@@ -41,9 +51,38 @@ public class MonitorApplicationService {
         //设置分页
         PageHelper.startPage(pageNum, pageSize);
         //执行查询
-        List<MonitorApplication> monitorApplicationsList = monitorApplicationExMapper.selectByApplicationName(applicationName);
-
+        MonitorApplication monitorApplication=new MonitorApplication();
+        monitorApplication.setApplicationName(applicationName);
+        monitorApplication.setProjectId(projectId);
+        monitorApplication.setMachineId(machineId);
+        List<MonitorApplication> monitorApplicationsList = monitorApplicationExMapper.selectByApplicationName(monitorApplication);
+        dealWithMonitorApplicationsList(monitorApplicationsList);
         return monitorApplicationsList;
+    }
+
+    private void dealWithMonitorApplicationsList(List<MonitorApplication> monitorApplicationsList){
+        if (monitorApplicationsList==null){
+            return ;
+        }
+        for (int i=0;i<monitorApplicationsList.size();i++){
+            MonitorApplication monitorApplication = monitorApplicationsList.get(i);
+            MonitorMachine monitorMachine = monitorMachineExMapper.selectByPrimaryKey(monitorApplication.getMachineId());
+            MonitorProject monitorProject = monitorProjectExMapper.selectByPrimaryKey(monitorApplication.getProjectId());
+            monitorApplication.setMachineName(monitorMachine==null?"未知机器":monitorMachine.getMachineName());
+            monitorApplication.setProjectName(monitorProject==null?"未知项目":monitorProject.getProjectName());
+
+            if(monitorApplication.getStatus()==MonitorApplicationConstant.MonitorApplicationStatus.START){
+                //启动状态
+                monitorApplication.setStatusText(MonitorApplicationConstant.MonitorApplicationStatus.STARTTEXT);
+            }else if(monitorApplication.getStatus()==MonitorApplicationConstant.MonitorApplicationStatus.PAUSE){
+                //暂停状态
+                monitorApplication.setStatusText(MonitorApplicationConstant.MonitorApplicationStatus.PAUSETEXT);
+            }else{
+                //未知状态
+                monitorApplication.setStatusText("未知状态");
+            }
+
+        }
     }
 
 
@@ -73,11 +112,15 @@ public class MonitorApplicationService {
      */
 
     public boolean addApplication(String applicationName,
+                           Integer projectId,
+                           Integer machineId,
                            Byte applicationType,
                            String applicationDetailParam,
                            String desc) {
         MonitorApplication monitorApplication = new MonitorApplication();
         monitorApplication.setApplicationName(applicationName);
+        monitorApplication.setProjectId(projectId);
+        monitorApplication.setMachineId(machineId);
         monitorApplication.setApplicationType(applicationType);
         monitorApplication.setApplicationDetailParam(applicationDetailParam);
         monitorApplication.setApplicationDesc(desc);
@@ -135,5 +178,12 @@ public class MonitorApplicationService {
         return selectOneByApplicationName(projectName) == null ? false : true;
     }
 
-
+    public boolean startOrPauseApplication(MonitorApplication monitorApplication) {
+        MonitorApplication newStatus = new MonitorApplication();
+        newStatus.setId(monitorApplication.getId());
+        newStatus.setStatus(monitorApplication.getStatus());
+        newStatus.setUpdateTime(new Date());
+        monitorApplicationExMapper.updateByPrimaryKeySelective(newStatus);
+        return true;
+    }
 }

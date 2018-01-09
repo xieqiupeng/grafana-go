@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorApplicationExMapper" >
+
   <resultMap id="BaseResultMap" type="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" >
     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="machine_id" property="machineId" jdbcType="INTEGER" />
     <result column="application_name" property="applicationName" jdbcType="VARCHAR" />
     <result column="application_type" property="applicationType" jdbcType="TINYINT" />
@@ -13,9 +15,10 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, machine_id, application_name, application_type, application_detail_param, application_desc, 
-    status, create_time, update_time
+    id, project_id, machine_id, application_name, application_type, application_detail_param,
+    application_desc, status, create_time, update_time
   </sql>
+
   <select id="selectOneByMachineId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
@@ -23,4 +26,25 @@
     WHERE machine_id = #{machineId}
     limit 1
   </select>
+
+  <select id="selectByApplicationName" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from monitor_application
+    where application_name like #{applicationName}
+    <if test="projectId != null" >
+      and project_id = #{projectId}
+    </if>
+    <if test="machineId != null" >
+      and machine_id = #{machineId}
+    </if>
+  </select>
+
+  <select id="selectOneByApplicationName" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM monitor_application
+    WHERE application_name = #{applicationName}
+  </select>
+
 </mapper>

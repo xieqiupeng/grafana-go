@@ -10,7 +10,9 @@ declare class MonitorManageCtrl extends MetricsPanelCtrl {
     onPanelInitalized(): void;
     onInitEditMode(): void;
     changeServerHost(object: any): void;
+    allAuthorizeMachine: any[];
     allAuthorizeProject: any[];
+    searchAllAuthorizeMachines: (serverHost: any, projectId: any) => void;
     searchAllAuthorizeProjects: (serverHost: any) => void;
     monitorManageController($scope: any, $http: any): void;
 }

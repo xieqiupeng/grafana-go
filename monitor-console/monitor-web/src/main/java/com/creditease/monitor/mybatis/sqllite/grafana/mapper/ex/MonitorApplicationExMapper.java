@@ -14,11 +14,10 @@ import java.util.List;
  */
 public interface MonitorApplicationExMapper extends MonitorApplicationMapper {
 
-    List<MonitorApplication> selectByApplicationName(String applicationName);
+    List<MonitorApplication> selectByApplicationName(MonitorApplication monitorApplication);
 
     MonitorApplication selectOneByApplicationName(String applicationName);
 
     List<MonitorApplication> selectOneByMachineId(Integer machineId);
-
 
 }

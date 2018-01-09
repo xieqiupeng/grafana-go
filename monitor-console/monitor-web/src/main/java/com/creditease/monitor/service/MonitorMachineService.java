@@ -171,4 +171,28 @@ public class MonitorMachineService {
         return selectOneByMachineId(machineId) == null ? false : true;
     }
 
+
+    /**
+     * 搜索所有授权的项目
+     * @return
+     */
+    public List selectAllAuthorizeMachines() {
+
+        //执行查询
+        List<MonitorMachine> monitorMachinesList = monitorMachineExMapper.selectAllAuthorizeMachines();
+
+        return monitorMachinesList;
+    }
+
+    /**
+     * //根据项目Id搜索所有授权的机器
+     * @return
+     */
+    public List selectAllAuthorizeMachinesByProjectId(Integer projectId) {
+
+        //执行查询
+        List<MonitorMachine> monitorMachinesList = monitorMachineExMapper.selectAllAuthorizeMachinesByProjectId(projectId);
+
+        return monitorMachinesList;
+    }
 }
