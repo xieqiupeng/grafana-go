@@ -4,7 +4,7 @@ import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorMachine;
 import com.creditease.monitor.response.ResponseCode;
 import com.creditease.monitor.service.MonitorApplicationService;
 import com.creditease.monitor.service.MonitorMachineService;
-import com.creditease.monitor.service.MonitorTask2Service;
+import com.creditease.monitor.service.MonitorTaskService;
 import com.creditease.response.Response;
 import com.creditease.spring.annotation.YXRequestParam;
 import com.github.pagehelper.PageInfo;
@@ -36,7 +36,7 @@ public class MonitorMachineController {
     private MonitorApplicationService monitorApplicationService;
 
     @Autowired
-    private MonitorTask2Service monitorTask2Service;
+    private MonitorTaskService monitorTaskService;
 
     //通过MachineName模糊搜索
     @RequestMapping("/searchMachineByMachineName")
@@ -76,7 +76,7 @@ public class MonitorMachineController {
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_APPLICATION);
         }
 
-        if(monitorTask2Service.referMachine(id)){
+        if(monitorTaskService.referMachine(id)){
             logger.info("deleteMachine failed,some monitorTask is referring machine id={}  ",id);
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_TASK);
         }
@@ -222,7 +222,7 @@ public class MonitorMachineController {
             logger.info("editMachine failed,some application is referring machine id={}",monitorMachine.getId());
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_APPLICATION);
         }
-        if(monitorTask2Service.referMachine(monitorMachine.getId())){
+        if(monitorTaskService.referMachine(monitorMachine.getId())){
             logger.info("deleteMachine failed,some monitorTask is referring machine id={}  ",monitorMachine.getId());
             return Response.fail(ResponseCode.MACHINE_IS_REFERRED_BY_TASK);
         }

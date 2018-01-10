@@ -1,10 +1,10 @@
 package com.creditease.monitor.service;
 
 import com.alibaba.fastjson.JSON;
+import com.creditease.monitor.constant.MonitorTaskConstant;
 import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.dataclean.DataCleanUtil;
 import com.creditease.monitor.dataclean.IDataCleanRule;
-import com.creditease.monitor.constant.MonitorTaskConstant;
 import com.creditease.monitor.exception.MonitorTaskException;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * @Author: created by zhixinsong2
- * @Date: created on 2017/12/12,at 14:54
+ * @Date: created on 2018/01/04,at 13:54
  * @Modified By:  zhixinsong2
  * @Description:
  * @Other: All Copyright @ CreditEase
@@ -34,6 +34,7 @@ public class MonitorTaskService {
     private static Logger logger = LoggerFactory.getLogger(MonitorTaskService.class);
     @Autowired
     private MonitorTaskExMapper monitorTaskExMapper;
+
     @Autowired
     private MonitorTaskEtcdService monitorTaskEtcdService;
 
@@ -56,6 +57,99 @@ public class MonitorTaskService {
 
         return monitorTasksList;
     }
+
+
+    /**
+     * 删除Task
+     *
+     * @param taskId
+     * @return
+     */
+    public boolean deleteTask(int taskId) {
+        //删除当前监控项目
+
+        monitorTaskExMapper.deleteByPrimaryKey(taskId);
+        return true;
+    }
+
+    public MonitorTask selectOneByTaskId(int taskId) {
+        return monitorTaskExMapper.selectByPrimaryKey(taskId);
+    }
+
+    /**
+          * 添加任务
+          *
+          * @param taskName
+          * @param cutTemplate
+          * @param dataSourceLog
+          * @param projectId
+          * @param machineId
+          * @return
+          */
+    public boolean addTask(String taskName,
+                           String cutTemplate,
+                           String dataSourceLog,
+                           Integer projectId,
+                           String machineId) {
+        MonitorTask monitorTask = new MonitorTask();
+        Date now = new Date();
+        monitorTask.setCreateTime(now);
+        monitorTask.setUpdateTime(now);
+        monitorTask.setTaskName(taskName);
+        monitorTask.setCutTemplate(cutTemplate);
+        monitorTask.setDataSourceLog(dataSourceLog);
+        monitorTask.setProjectId(projectId);
+        monitorTask.setMachineId(machineId);
+        monitorTask.setStatus(MonitorTaskConstant.MonitorTaskStatus.PAUSE);
+        monitorTaskExMapper.insertSelective(monitorTask);
+        return true;
+    }
+
+    /**
+          * 修改task
+          *
+          * @param cutTemplate
+          * @param dataSourceLog
+          * @param projectId
+          * @param machineId
+          * @return
+          */
+    @Transactional(rollbackFor = {})
+    public boolean editTask(int taskId,
+                            String cutTemplate,
+                            String dataSourceLog,
+                            Integer projectId,
+                            String machineId) {
+        MonitorTask monitorTask = new MonitorTask();
+        Date now = new Date();
+        monitorTask.setId(taskId);
+        monitorTask.setUpdateTime(now);
+        monitorTask.setCutTemplate(cutTemplate);
+        monitorTask.setDataSourceLog(dataSourceLog);
+        monitorTask.setProjectId(projectId);
+        monitorTask.setMachineId(machineId);
+        int count = monitorTaskExMapper.updateByPrimaryKeySelective(monitorTask);
+        if (count > 0) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public boolean referMachine(Integer machineId) {
+
+        List<MonitorTask> monitorTaskList = monitorTaskExMapper.selectOneByMachineId(machineId);
+        if(monitorTaskList!=null&&monitorTaskList.size()>0){
+            return true;
+        }
+        return false;
+    }
+
+    public MonitorTask selectOneByTaskName(String taskName) {
+        return monitorTaskExMapper.selectOneByTaskName(taskName);
+    }
+
 
     /**
      * 启动/暂停
@@ -102,19 +196,11 @@ public class MonitorTaskService {
         return false;
     }
 
-    /**
-     * 删除Task
-     *
-     * @param taskId
-     * @return
-     */
-    public boolean deleteTask(int taskId) {
-        //删除当前监控任务
-        monitorTaskExMapper.deleteByPrimaryKey(taskId);
-        return true;
+    public boolean isExists(String taskName) {
+        return selectOneByTaskName(taskName) == null ? false : true;
     }
 
-    /**
+        /**
      * 数据清洗
      *
      * @param monitorDates
@@ -134,93 +220,5 @@ public class MonitorTaskService {
         return vos;
     }
 
-    public boolean isExists(String taskName) {
-        return selectOneByTaskName(taskName) == null ? false : true;
-    }
-
-    public boolean isExists(int taskId) {
-        return selectOneByTaskId(taskId) == null ? false : true;
-    }
-
-    public MonitorTask selectOneByTaskName(String taskName) {
-        return monitorTaskExMapper.selectOneByTaskName(taskName);
-    }
-
-    public MonitorTask selectOneByTaskId(int taskId) {
-        return monitorTaskExMapper.selectByPrimaryKey(taskId);
-    }
-
-    /**
-     * 添加任务
-     *
-     * @param taskName
-     * @param cutTemplate
-     * @param dataSourceLog
-     * @param dataSourceServerIp
-     * @param isMonitorTomcatServer
-     * @param tomcatServerHost
-     * @return
-     */
-    public boolean addTask(String taskName,
-                           String cutTemplate,
-                           String dataSourceLog,
-                           String dataSourceServerIp,
-                           byte isMonitorTomcatServer,
-                           String tomcatServerHost) {
-        MonitorTask monitorTask = new MonitorTask();
-        Date now = new Date();
-        monitorTask.setCreateTime(now);
-        monitorTask.setUpdateTime(now);
-        monitorTask.setTaskName(taskName);
-        monitorTask.setCutTemplate(cutTemplate);
-        monitorTask.setDataSourceLog(dataSourceLog);
-        monitorTask.setDataSourceServerIp(dataSourceServerIp);
-        monitorTask.setStatus(MonitorTaskConstant.MonitorTaskStatus.PAUSE);
-        if (MonitorTaskConstant.MonitorTomcatServer.YES == isMonitorTomcatServer) {
-            monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.YES);
-            monitorTask.setTomcatServerHost(tomcatServerHost);
-        } else {
-            monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.NO);
-        }
-        monitorTaskExMapper.insertSelective(monitorTask);
-        return true;
-    }
-
-    /**
-     * 修改task
-     *
-     * @param cutTemplate
-     * @param dataSourceLog
-     * @param dataSourceServerIp
-     * @param isMonitorTomcatServer
-     * @param tomcatServerHost
-     * @return
-     */
-    @Transactional(rollbackFor = {})
-    public boolean editTask(int taskId,
-                            String cutTemplate,
-                            String dataSourceLog,
-                            String dataSourceServerIp,
-                            byte isMonitorTomcatServer,
-                            String tomcatServerHost) {
-        MonitorTask monitorTask = new MonitorTask();
-        Date now = new Date();
-        monitorTask.setId(taskId);
-        monitorTask.setUpdateTime(now);
-        monitorTask.setCutTemplate(cutTemplate);
-        monitorTask.setDataSourceLog(dataSourceLog);
-        monitorTask.setDataSourceServerIp(dataSourceServerIp);
-        if (MonitorTaskConstant.MonitorTomcatServer.YES == isMonitorTomcatServer) {
-            monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.YES);
-            monitorTask.setTomcatServerHost(tomcatServerHost);
-        } else {
-            monitorTask.setIsMonitorTomcatServer(MonitorTaskConstant.MonitorTomcatServer.NO);
-        }
-        int count = monitorTaskExMapper.updateByPrimaryKeySelective(monitorTask);
-        if (count > 0) {
-            return true;
-        }
-        return false;
-    }
 
 }

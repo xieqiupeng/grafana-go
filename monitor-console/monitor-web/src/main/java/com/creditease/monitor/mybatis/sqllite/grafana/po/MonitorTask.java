@@ -5,19 +5,17 @@ import java.util.Date;
 public class MonitorTask {
     private Integer id;
 
+    private Integer projectId;
+
     private String taskName;
+
+    private String dataSourceLog;
+
+    private String machineId;
 
     private Byte status;
 
     private String cutTemplate;
-
-    private String dataSourceServerIp;
-
-    private String dataSourceLog;
-
-    private Byte isMonitorTomcatServer;
-
-    private String tomcatServerHost;
 
     private Date createTime;
 
@@ -31,12 +29,36 @@ public class MonitorTask {
         this.id = id;
     }
 
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
     public String getTaskName() {
         return taskName;
     }
 
     public void setTaskName(String taskName) {
         this.taskName = taskName == null ? null : taskName.trim();
+    }
+
+    public String getDataSourceLog() {
+        return dataSourceLog;
+    }
+
+    public void setDataSourceLog(String dataSourceLog) {
+        this.dataSourceLog = dataSourceLog == null ? null : dataSourceLog.trim();
+    }
+
+    public String getMachineId() {
+        return machineId;
+    }
+
+    public void setMachineId(String machineId) {
+        this.machineId = machineId;
     }
 
     public Byte getStatus() {
@@ -53,38 +75,6 @@ public class MonitorTask {
 
     public void setCutTemplate(String cutTemplate) {
         this.cutTemplate = cutTemplate == null ? null : cutTemplate.trim();
-    }
-
-    public String getDataSourceServerIp() {
-        return dataSourceServerIp;
-    }
-
-    public void setDataSourceServerIp(String dataSourceServerIp) {
-        this.dataSourceServerIp = dataSourceServerIp == null ? null : dataSourceServerIp.trim();
-    }
-
-    public String getDataSourceLog() {
-        return dataSourceLog;
-    }
-
-    public void setDataSourceLog(String dataSourceLog) {
-        this.dataSourceLog = dataSourceLog == null ? null : dataSourceLog.trim();
-    }
-
-    public Byte getIsMonitorTomcatServer() {
-        return isMonitorTomcatServer;
-    }
-
-    public void setIsMonitorTomcatServer(Byte isMonitorTomcatServer) {
-        this.isMonitorTomcatServer = isMonitorTomcatServer;
-    }
-
-    public String getTomcatServerHost() {
-        return tomcatServerHost;
-    }
-
-    public void setTomcatServerHost(String tomcatServerHost) {
-        this.tomcatServerHost = tomcatServerHost == null ? null : tomcatServerHost.trim();
     }
 
     public Date getCreateTime() {

@@ -8,7 +8,11 @@ declare class MonitorManageCtrl extends MetricsPanelCtrl {
     /** @ngInject **/
     constructor($scope: any, $injector: any, $http: any, uiSegmentSrv: any);
     onPanelInitalized(): void;
+    allAuthorizeProject: any[];
+    allAuthorizeMachine: any[];
+    allAuthorizeMachineChecked: any[];
     onInitEditMode(): void;
+    searchAllAuthorizeProjects: (serverHost: any) => void;
     changeServerHost(object: any): void;
     monitorManageController($scope: any, $http: any): void;
 }

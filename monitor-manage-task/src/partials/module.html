@@ -52,7 +52,7 @@
                         <td align="center">任务Id</td>
                         <td align="center">任务名称</td>
                         <td align="center">状态</td>
-                        <td align="center">数据源</td>
+                        <td align="center">数据源文件位置</td>
                         <td align="center">创建时间</td>
                         <td align="center">更新时间</td>
                         <td align="center" colspan="3">操作</td>
@@ -62,15 +62,7 @@
                         <td>{{task.id}}</td>
                         <td>{{task.taskName}}</td>
                         <td>{{task.status}}</td>
-                        <td>
-                            <table>
-                                <tr><td>数据源Ip:</td></tr>
-                                <tr><td ng-bind-html="task.dataSourceServerIp"></td></tr>
-                                <tr><td>文件位置:</td></tr>
-                                <tr><td ng-bind-html="task.dataSourceLog"></td></tr>
-                            </table>
-                        </td>
-                        <td ng-bind-html="task.tomcatServerHost"></td>
+                        <td ng-bind-html="task.dataSourceLog"></td>
                         <td>{{task.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
                         <td>{{task.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
                         <td  align="center">
@@ -106,27 +98,37 @@
                                        ng-disabled="data.current == 2"  ng-model="formData.taskName" type="text" placeholder="请填写任务名称,不能含有中文">
                             </div>
                             <div class="gf-form">
-                                <span class="gf-form-label width-7">数据源Ip:</span>
-                                <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-model="formData.dataSourceServerIp" type="text" placeholder="请填写数据源ip,多个用英文逗号分隔" >
+                                <span class="gf-form-label width-7">所属项目</span>
+                                <select size="1" class="gf-form-input" id="projectId" ng-model="formData.projectId"  ng-change="selectChangeProject(ctrl.panel.serverHost)" style="width: auto">
+                                    <option value="" >请选择所属项目</option>
+                                    <option ng-repeat="project in ctrl.allAuthorizeProject" value="{{project.id}}" >{{project.projectName}}</option>
+                                </select>
                             </div>
                             <div class="gf-form">
-                                <span class="gf-form-label width-9">数据源文件位置:</span>
+                                <span class="gf-form-label width-7">监测机器</span>
+                                <div ng-if="ctrl.allAuthorizeMachine.length == 0">暂无机器</div>
+                                <table>
+                                    <tr ng-repeat="machine in ctrl.allAuthorizeMachine">
+                                        <td>
+                                            <gf-form-switch class="gf-form max-width-30" label="{{machine.machineName}}" label-class="width-12" checked="ctrl.allAuthorizeMachineChecked[$index]" switch-class="max-width-6" >
+                                                <div class="gf-form-switch max-width-6" >
+                                                    <input type="checkbox" class="ng-untouched ng-valid ng-dirty ng-valid-parse ng-empty">
+                                                </div>
+                                            </gf-form-switch>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="gf-form">
+                                <span class="gf-form-label width-9">数据源文件位置</span>
                                 <input class="gf-form-input width-23 ng-pristine ng-untouched ng-valid ng-not-empty"
                                        ng-model="formData.dataSourceLog" type="text" placeholder="请填写数据源文件位置" >
                             </div>
-                            <div class="gf-form">
-                                <gf-form-switch class="gf-form max-width-30" label="是否为tomcat服务器" label-class="width-12" checked="formData.isMonitorTomcatServer" switch-class="max-width-6" on-change="changeIsMonitorTomcatServer()">
-                                    <div class="gf-form-switch max-width-6" >
-                                        <input id="check-166" type="checkbox" class="ng-untouched ng-valid ng-dirty ng-valid-parse ng-empty">
-                                    </div>
-                                </gf-form-switch>
-                            </div>
-                            <div class="gf-form" ng-if="formData.isMonitorTomcatServer==true">
-                                <span class="gf-form-label width-7">服务器地址</span>
-                                <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-model="formData.tomcatServerHost" type="text" placeholder="请输入服务器地址(ip和port),多个用英文逗号分隔" >
-                            </div>
+
+                        </div>
+                        <div class="section gf-form-group">
+                            <h5 class="section-heading">数据清洗规则</h5>
                             <div class="gf-form">
                                 <span class="gf-form-label width-8">切分模板</span>
                                 <select class="gf-form-input ng-pristine ng-untouched ng-valid ng-empty"
@@ -134,9 +136,6 @@
                                     <option value="0" selected="selected">普通切分模板</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="section gf-form-group">
-                            <h5 class="section-heading">分隔符属性</h5>
                             <div class="gf-form">
                                 <gf-form-switch class="gf-form max-width-30" label="分隔符为正则" label-class="width-12" checked="formData.isRegex" switch-class="max-width-6" on-change="changeIsRegex()">
 

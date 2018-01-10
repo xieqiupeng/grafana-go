@@ -24,15 +24,42 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));
+        this.searchAllAuthorizeProjects(panelDefaults.serverHost);
     }
 
     onPanelInitalized() {
 
     }
-
+    allAuthorizeProject=[];
+    allAuthorizeMachine=[];
+    allAuthorizeMachineChecked=[];
     public onInitEditMode() {
         this.addEditorTab('Options', 'public/plugins/monitor-manage-panel/partials/option.html', 1);
     }
+
+    //搜索所有授权的项目
+    searchAllAuthorizeProjects = function (serverHost) {
+        this.allAuthorizeProject=[];
+        this.$http({
+            url: serverHost + 'monitorProject/searchAllAuthorizeProjects',
+            withCredentials: true,
+            method: 'GET'
+        }).then((rsp) => {
+            if (rsp.data.resultCode == 0) {
+                console.log("invoke searchAllAuthorizeProjects ok:", rsp.data.data);
+                //设置列表内容
+                this.allAuthorizeProject = rsp.data.data;
+                // if(rsp.data.data.length>0){
+                //
+                // }
+            } else {
+                alert('获取所有授权的项目失败!具体原因：' + rsp.data.resultMsg);
+            }
+        }, err => {
+            console.log("invoke searchAllAuthorizeProjects err:", err);
+            alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
+        });
+    };
 
     changeServerHost(object) {
         // alert(this.serverHost);
@@ -64,10 +91,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.formData={
             /************基本属性***********/
             taskName:'',
-            dataSourceServerIp:'',
             dataSourceLog:'',
-            isMonitorTomcatServer:false, //0-是tomcat服务器,1-不是tomcat服务器
-            tomcatServerHost:'',
             template:"0",
             /************分隔符属性***********/
             isRegex:false,//是否正则
@@ -80,14 +104,54 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             dataSourceLogSample:''
         };
 
-        //切换是否选择为tomcat服务器
-        $scope.changeIsMonitorTomcatServer=function () {
-            if($scope.formData.isMonitorTomcatServer=="false"){
-                $scope.formData.isMonitorTomcatServer="true";
-            }else if($scope.formData.isMonitorTomcatServer=="true"){
-                $scope.formData.isMonitorTomcatServer="false";
+
+
+        $scope.selectChangeProject=function (serverHost) {
+            $scope.projectId=document.getElementById('projectId');
+            $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
+            if($scope.projectId!=null&&$scope.projectId!=''){
+                $scope.searchAllAuthorizeMachines(serverHost,$scope.projectId);
+            }else{
+                this.ctrl.allAuthorizeMachine=[];
+                this.ctrl.allAuthorizeMachineChecked=[];
             }
         }
+
+        //搜索所有授权的机器
+        $scope.searchAllAuthorizeMachines = function (serverHost,projectId) {
+
+            $http({
+                url: serverHost + 'monitorMachine/searchAllAuthorizeMachinesByProjectId?projectId='+projectId,
+                withCredentials: true,
+                method: 'GET'
+            }).then((rsp) => {
+                if (rsp.data.resultCode == 0) {
+                    console.log("invoke searchAllAuthorizeMachines ok:", rsp.data.data);
+                    //设置列表内容
+                    this.ctrl.allAuthorizeMachine=[];
+                    this.ctrl.allAuthorizeMachineChecked=[];
+                    this.ctrl.allAuthorizeMachine = rsp.data.data;
+                    for(var i=0;i<this.ctrl.allAuthorizeMachine.length;i++){
+                        this.ctrl.allAuthorizeMachineChecked.push(false);
+                    }
+                    // if(this.ctrl.allAuthorizeMachine.length>0){
+                    //     // $scope.formData.machineId=this.ctrl.allAuthorizeMachine[0].id.toString();
+                    //     // console.log('$scope.formData.machineId '+$scope.formData.machineId);
+                    // }
+
+                    // if(rsp.data.data.length>0){
+                    //
+                    // }
+                } else {
+                    alert('获取所有授权的机器失败!具体原因：' + rsp.data.resultMsg);
+                }
+            }, err => {
+                console.log("invoke searchAllAuthorizeMachines err:", err);
+                alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
+            });
+        };
+
+
 
         //切换是否正则
         $scope.changeIsRegex=function () {
@@ -186,28 +250,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                         } else if (1 == rsp.data.data.list[i].status) {
                             rsp.data.data.list[i].status = '暂停';
                         }
-                        //处理tomcat服务器
-                        var tomcatServerHostStr = "";
-                        if (rsp.data.data.list[i].tomcatServerHost != null && "" != rsp.data.data.list[i].tomcatServerHost) {
-                            var tomcatServerHostArray = rsp.data.data.list[i].tomcatServerHost.split(",");
 
-                            for (var j = 0; j < tomcatServerHostArray.length; j++) {
-                                tomcatServerHostStr = tomcatServerHostStr + tomcatServerHostArray[j] + "<br/>";
-                            }
-                        }
-                        rsp.data.data.list[i].tomcatServerHost = tomcatServerHostStr;
-
-
-                        //处理数据源服务器ip
-                        var dataSourceServerIpStr = "";
-                        if (rsp.data.data.list[i].dataSourceServerIp != null && "" != rsp.data.data.list[i].dataSourceServerIp) {
-                            var dataSourceServerIpArray = rsp.data.data.list[i].dataSourceServerIp.split(",");
-
-                            for (var j = 0; j < dataSourceServerIpArray.length; j++) {
-                                dataSourceServerIpStr = dataSourceServerIpStr + dataSourceServerIpArray[j] + "<br/>";
-                            }
-                        }
-                        rsp.data.data.list[i].dataSourceServerIp = dataSourceServerIpStr;
                     }
                     $scope.taskArray = rsp.data.data.list;
                     //设置分页内容
@@ -260,32 +303,14 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 alert('任务名称不能含有中文!');
                 return ;
             }
-            //数据源Ip
-            var dataSourceServerIp=$scope.formData.dataSourceServerIp;
-            if(dataSourceServerIp==null||dataSourceServerIp.trim()==''){
-                alert('请填写数据源Ip!');
-                return ;
-            }
+
             //数据源文件位置
             var dataSourceLog=$scope.formData.dataSourceLog;
             if(dataSourceLog==null||dataSourceLog.trim()==''){
                 alert('请填写数据源文件位置!');
                 return ;
             }
-            //是否为tomcat服务器
-            var isMonitorTomcatServer=$scope.formData.isMonitorTomcatServer;
-            var tomcatServerHost='';
-            if(isMonitorTomcatServer==true){
-                tomcatServerHost=$scope.formData.tomcatServerHost;
-                if(tomcatServerHost==null||tomcatServerHost.trim()==''){
-                    alert('请填写tomcat服务器地址!');
-                    return ;
-                }
-            }else{
-                //不是tomcat服务器，就清空tomcatServerHost
-                $scope.formData.tomcatServerHost='';
-            }
-            isMonitorTomcatServer=(isMonitorTomcatServer==true?isMonitorTomcatServer=0:isMonitorTomcatServer=1);
+
             //切割模板类型
             var template=$scope.formData.template;
             //是否为正则
@@ -376,7 +401,6 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         //保存或者更新
         $scope.saveOrUpdate=function(serverHost){
 
-
             //任务名称
             var taskName=$scope.formData.taskName;
             if(taskName==null||taskName.trim()==''){
@@ -388,12 +412,32 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 return ;
             }
 
-            //数据源Ip
-            var dataSourceServerIp=$scope.formData.dataSourceServerIp;
-            if(dataSourceServerIp==null||dataSourceServerIp.trim()==''){
-                alert('请填写数据源Ip!');
+            var projectId=$scope.formData.projectId;
+            console.log(projectId);
+            if(projectId==null||projectId==""){
+                alert('请选择项目!');
                 return ;
             }
+
+            //处理监控机器Id
+            if(this.ctrl.allAuthorizeMachineChecked.length>0){
+                var allAreFalse=true;
+                var allMonitorMachineIdsStr="";
+                for(var i=0;i<this.ctrl.allAuthorizeMachineChecked.length;i++){
+                    if(this.ctrl.allAuthorizeMachineChecked[i]==true){
+                        allAreFalse=false;
+                        allMonitorMachineIdsStr+=this.ctrl.allAuthorizeMachine[i].id+",";
+                    }
+                }
+                if(true==allAreFalse){
+                    alert('请选择监测机器！');
+                    return ;
+                }
+                if(allMonitorMachineIdsStr.length>0)
+                    allMonitorMachineIdsStr=allMonitorMachineIdsStr.substr(1,allMonitorMachineIdsStr.length-1);
+                console.log('allMonitorMachineIdsStr:'+allMonitorMachineIdsStr);
+            }
+
             //数据源文件位置
             var dataSourceLog=$scope.formData.dataSourceLog;
             if(dataSourceLog==null||dataSourceLog.trim()==''){
@@ -401,23 +445,6 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 return ;
             }
 
-            //是否为tomcat服务器
-            var isMonitorTomcatServer=$scope.formData.isMonitorTomcatServer;
-            var tomcatServerHost='';
-            console.log('isMonitorTomcatServer:'+isMonitorTomcatServer);
-            if(isMonitorTomcatServer==true){
-                tomcatServerHost=$scope.formData.tomcatServerHost;
-                if(tomcatServerHost==null||tomcatServerHost.trim()==''){
-                    alert('请填写tomcat服务器地址!');
-                    return ;
-                }
-            }else{
-                //不是tomcat服务器，就清空tomcatServerHost
-                $scope.formData.tomcatServerHost='';
-                tomcatServerHost='';
-                alert('haha');
-            }
-            isMonitorTomcatServer=(isMonitorTomcatServer==true?isMonitorTomcatServer=0:isMonitorTomcatServer=1);
 
             //切割模板类型
             var template=$scope.formData.template;
@@ -470,10 +497,9 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                 method: 'POST',
                 data:{
                     taskName:taskName,
-                    dataSourceServerIp:dataSourceServerIp,
+                    machineId:allMonitorMachineIdsStr,
+                    projectId:projectId,
                     dataSourceLog:dataSourceLog,
-                    isMonitorTomcatServer:isMonitorTomcatServer,
-                    tomcatServerHost:tomcatServerHost,
                     cutTemplate:cutTemplateObject
                 }
             }).then((rsp) => {
@@ -531,14 +557,10 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             /********************************基本属性************************************/
             //任务名称
             $scope.formData.taskName="";
-            //数据源Ip
-            $scope.formData.dataSourceServerIp="";
+            //机器Id,多个用逗号分隔
+            $scope.formData.machineId="";
             //数据源文件位置
             $scope.formData.dataSourceLog="";
-            //是否为tomcat服务器 =1非tomcat
-            $scope.formData.isMonitorTomcatServer=false;
-            //tomcat服务器地址列表
-            $scope.formData.tomcatServerHost="";
             //设置切割模板类型 切割模板类型-默认普通文本类型
             $scope.formData.template="0";
 
@@ -588,13 +610,10 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                     //任务名称
                     $scope.formData.taskName=rsp.data.data.taskName;
                     //数据源Ip
-                    $scope.formData.dataSourceServerIp=rsp.data.data.dataSourceServerIp;
+                    $scope.formData.machineId=rsp.data.data.machineId;
                     //数据源文件位置
                     $scope.formData.dataSourceLog=rsp.data.data.dataSourceLog;
-                    //是否为tomcat服务器 =1非tomcat
-                    $scope.formData.isMonitorTomcatServer=(rsp.data.data.isMonitorTomcatServer==1?false:true);
-                    //tomcat服务器地址列表
-                    $scope.formData.tomcatServerHost=rsp.data.data.tomcatServerHost;
+
                     //设置切割模板类型
                     $scope.formData.template=rsp.data.data.cutTemplate.template;
 

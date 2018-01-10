@@ -2,17 +2,15 @@ package com.creditease.monitor.vo;
 
 public class EditMonitorTaskVo {
 
+    private Integer projectId;
+
+    private String machineId;
+
     private String taskName;
 
     private String cutTemplate;
 
-    private String dataSourceServerIp;
-
     private String dataSourceLog;
-
-    private Byte isMonitorTomcatServer;
-
-    private String tomcatServerHost;
 
     public String getTaskName() {
         return taskName;
@@ -30,14 +28,6 @@ public class EditMonitorTaskVo {
         this.cutTemplate = cutTemplate;
     }
 
-    public String getDataSourceServerIp() {
-        return dataSourceServerIp;
-    }
-
-    public void setDataSourceServerIp(String dataSourceServerIp) {
-        this.dataSourceServerIp = dataSourceServerIp;
-    }
-
     public String getDataSourceLog() {
         return dataSourceLog;
     }
@@ -46,19 +36,19 @@ public class EditMonitorTaskVo {
         this.dataSourceLog = dataSourceLog;
     }
 
-    public Byte getIsMonitorTomcatServer() {
-        return isMonitorTomcatServer;
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setIsMonitorTomcatServer(Byte isMonitorTomcatServer) {
-        this.isMonitorTomcatServer = isMonitorTomcatServer;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
-    public String getTomcatServerHost() {
-        return tomcatServerHost;
+    public String getMachineId() {
+        return machineId;
     }
 
-    public void setTomcatServerHost(String tomcatServerHost) {
-        this.tomcatServerHost = tomcatServerHost;
+    public void setMachineId(String machineId) {
+        this.machineId = machineId;
     }
 }
