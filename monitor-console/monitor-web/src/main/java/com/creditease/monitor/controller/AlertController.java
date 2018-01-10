@@ -24,18 +24,22 @@ public class AlertController {
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
         AlertVO alertVO = JSON.parseObject(JSON.toJSONString(object), AlertVO.class);
-        logger.info(JSON.toJSONString(alertVO));
+        logger.info("VO {}", JSON.toJSONString(alertVO));
         sendRequest(alertVO);
         return Response.ok(object);
     }
 
     public void sendRequest(AlertVO alertVO) {
+        String message = "";
+        if (alertVO.getEvalMatches().size() != 0) {
+            message = alertVO.getEvalMatches().get(0).getMetric()
+                    + "="
+                    + alertVO.getEvalMatches().get(0).getValue();
+        }
         RetrofitProvider.getService()
                 .WXAlert(alertVO.getTitle() + "",
                         alertVO.getState() + "",
-                        alertVO.getEvalMatches().get(0).getMetric()
-                                + "="
-                                + alertVO.getEvalMatches().get(0).getValue(),
+                        message + "",
                         System.currentTimeMillis() + "",
                         "Grafana",
                         alertVO.getRuleUrl() + "",
@@ -45,12 +49,12 @@ public class AlertController {
                 .subscribe(new Consumer<JSONObject>() {
                     @Override
                     public void accept(JSONObject object) throws Exception {
-                        logger.info(JSON.toJSONString(object));
+                        logger.info("Success {}", JSON.toJSONString(object));
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        logger.info(throwable.toString());
+                        logger.info("Exception {}", throwable.toString());
                     }
                 });
     }

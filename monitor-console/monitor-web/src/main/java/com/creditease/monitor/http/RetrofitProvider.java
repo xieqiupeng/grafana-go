@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * Target: 提供Retrofit的接口
  */
 public class RetrofitProvider {
-	private static String ENDPOINT = "http://10.100.130.110:8080";
+	private static String ENDPOINT = "http://10.100.130.110:8081";
 
 	private RetrofitProvider() {
 	}
