@@ -40,7 +40,7 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 	normAvgs := load.NormalizedAverages()
 
 	event := common.MapStr{
-		"cores_long":     system.NumCPU,
+		"cores_long_tag": system.NumCPU,
 		"one_double":     avgs.OneMinute,
 		"five_double":    avgs.FiveMinute,
 		"fifteen_double": avgs.FifteenMinute,

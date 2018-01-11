@@ -225,12 +225,12 @@ func getProcState(b byte) string {
 
 func (procStats *ProcStats) getProcessEvent(process *Process) common.MapStr {
 	proc := common.MapStr{
-		"pid_long":        process.Pid,
-		"ppid_long":       process.Ppid,
-		"pgid_long":       process.Pgid,
-		"name_string":     process.Name,
-		"state_string":    process.State,
-		"username_string": process.Username,
+		"pid_long_tag":     process.Pid,
+		"ppid_long_tag":    process.Ppid,
+		"pgid_long_tag":    process.Pgid,
+		"name_string_tag":  process.Name,
+		"state_string_tag": process.State,
+		"username_string":  process.Username,
 		"memory": common.MapStr{
 			"size_long": process.Mem.Size,
 			"rss": common.MapStr{

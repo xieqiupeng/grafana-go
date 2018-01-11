@@ -3,17 +3,20 @@ package ctr
 import (
 	"fmt"
 	"libbeat/etcd"
+	"libbeat/logp"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
+	"github.com/coreos/etcd/mvcc/mvccpb"
 )
 
 type BeatCtr struct {
 	etcd    *etcd.EtcdClient
 	modules map[string][]string
+	procs   map[string]*exec.Cmd
 }
 
 func New(endpoints []string, dialtimeout time.Duration, username string, password string, key string, mds []map[string]string) (bt *BeatCtr, err error) {
@@ -37,6 +40,7 @@ func New(endpoints []string, dialtimeout time.Duration, username string, passwor
 	bt = &BeatCtr{
 		etcd:    etcd,
 		modules: modules,
+		procs:   make(map[string]*exec.Cmd),
 	}
 	return bt, nil
 }
@@ -49,6 +53,7 @@ func (bt *BeatCtr) Run() (error *error) {
 	if cfg != nil && len(cfg) > 0 {
 		fmt.Println("start beats ...")
 		bt.forkProcess()
+		bt.startPeriodicWatch()
 	} else {
 		//etcd 没有本机相关配置等待配置下发后在启动相应beat
 
@@ -62,7 +67,25 @@ func (bt *BeatCtr) Run() (error *error) {
 	return err
 }
 
-func (bt *BeatCtr) startBeats(chan *clientv3.Event) (error *error) {
+func (bt *BeatCtr) startBeats(ch chan *clientv3.Event) (error *error) {
+
+	var ev *clientv3.Event
+
+	for {
+		select {
+		case ev = <-ch:
+			logp.Info("%s %s : %s\n", ev.Type, ev.Kv.Key, ev.Kv.Value)
+			switch ev.Type {
+
+			case mvccpb.PUT:
+				bt.forkProcess()
+				break
+			default:
+				fmt.Println("delete event don't care !")
+			}
+		}
+
+	}
 
 	return nil
 }
@@ -77,11 +100,29 @@ func (bt *BeatCtr) forkProcess() {
 			cmd.Stderr = os.Stderr
 			err := cmd.Start()
 			if err == nil {
+				bt.procs[p] = cmd
 				fmt.Printf(k+":启动成功...:%v", cmd.Process.Pid)
 			} else {
 				panic(err)
 			}
 		}
 
+	}
+}
+
+func (bt *BeatCtr) startPeriodicWatch() {
+	if len(bt.procs) == 0 {
+		panic("无正在运行模块....")
+		return
+	}
+	t := time.NewTicker(10 * time.Second)
+	defer t.Stop()
+	for {
+		select {
+		case <-t.C:
+			for k, v := range bt.procs {
+				fmt.Printf("%s:%s", k, v.ProcessState.String())
+			}
+		}
 	}
 }
