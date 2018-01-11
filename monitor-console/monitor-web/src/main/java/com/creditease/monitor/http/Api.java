@@ -11,7 +11,7 @@ import retrofit2.http.POST;
  * Created by MagicBean on 2016/01/13 10:10:37
  */
 public interface Api {
-    // WXAlert
+
     @FormUrlEncoded
     @POST("/sendMessageByProNameLimit.json")
     Observable<JSONObject> WXAlert(@Field("title") String title,

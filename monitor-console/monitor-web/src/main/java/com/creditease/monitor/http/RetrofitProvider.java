@@ -44,13 +44,13 @@ public class RetrofitProvider {
 	 */
 	private static class SingletonHolder {
 		private static final Retrofit INSTANCE = create();
-		private static final int TIME_OUT = 20;
+		private static final int TIME_OUT = 2000;
 
 		private static Retrofit create() {
 			OkHttpClient okHttpClient = new OkHttpClient.Builder()
-					.readTimeout(TIME_OUT, TimeUnit.SECONDS)
-					.connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-					.writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+					.readTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
+					.connectTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
+					.writeTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
 					.hostnameVerifier(new HostnameVerifier() {
 						@Override
 						public boolean verify(String hostname, SSLSession session) {

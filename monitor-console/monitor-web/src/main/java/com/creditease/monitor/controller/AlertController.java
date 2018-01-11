@@ -29,7 +29,7 @@ public class AlertController {
         return Response.ok(object);
     }
 
-    public void sendRequest(AlertVO alertVO) {
+    private void sendRequest(AlertVO alertVO) {
         String message = "";
         if (alertVO.getEvalMatches().size() != 0) {
             message = alertVO.getEvalMatches().get(0).getMetric()
