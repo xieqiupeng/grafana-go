@@ -186,7 +186,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                             resultColumnObject.columnName = "列名" + (biggestColumnSeq + 1);
                             resultColumnObject.columnType = "string";
                             resultColumnObject.format = "";
-                            resultColumnObject.tagOrValue = "0";
+                            resultColumnObject.tagOrValue = false;
                         }
                         resultColumnObject.resultColumnIndex = 'resultColumnIndex' + $scope.formData.resultColumnIndex;
                         $scope.formData.resultColumnIndex++;
@@ -219,7 +219,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         $scope.taskArray = [];
                         var param = 'taskName=' + $scope.taskName + "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
                         $http({
-                            url: serverHost + 'monitorTask2/searchTaskByTaskName' + "?" + param,
+                            url: serverHost + 'monitorTask/searchTaskByTaskName' + "?" + param,
                             withCredentials: true,
                             method: 'GET'
                         }).then(function (rsp) {
@@ -255,7 +255,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     $scope.startOrPauseTaskFunction = function (serverHost, taskName, status) {
                         var param = 'taskName=' + taskName + '&status=' + status;
                         $http({
-                            url: serverHost + 'monitorTask2/startOrPauseTask' + "?" + param,
+                            url: serverHost + 'monitorTask/startOrPauseTask' + "?" + param,
                             withCredentials: true,
                             method: 'GET'
                         }).then(function (rsp) {
@@ -323,7 +323,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         cutTemplateObject = JSON.stringify(cutTemplateObject);
                         console.log('separatorKeys ' + cutTemplateObject);
                         $http({
-                            url: serverHost + "monitorTask2/dataClean",
+                            url: serverHost + "monitorTask/dataClean",
                             data: "data=" + $scope.formData.dataSourceLogSample + "&dataCleanRule=" + cutTemplateObject,
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             withCredentials: true,
@@ -335,7 +335,15 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 //结果列索引值
                                 $scope.formData.resultColumnIndex = 0;
                                 for (var i = 0; i < rsp.data.data.length; i++) {
-                                    rsp.data.data[i].tagOrValue = rsp.data.data[i].tagOrValue.toString();
+                                    if (rsp.data.data[i].tagOrValue == 0) {
+                                        rsp.data.data[i].tagOrValue = true;
+                                    }
+                                    else if (rsp.data.data[i].tagOrValue == 1) {
+                                        rsp.data.data[i].tagOrValue = false;
+                                    }
+                                    else {
+                                        alert('tagOrValue发生异常！');
+                                    }
                                     $scope.addResultColumn(rsp.data.data[i]);
                                 }
                             }
@@ -398,8 +406,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 return;
                             }
                             if (allMonitorMachineIdsStr.length > 0)
-                                allMonitorMachineIdsStr = allMonitorMachineIdsStr.substr(1, allMonitorMachineIdsStr.length - 1);
-                            console.log('allMonitorMachineIdsStr:' + allMonitorMachineIdsStr);
+                                allMonitorMachineIdsStr = allMonitorMachineIdsStr.substr(0, allMonitorMachineIdsStr.length - 1);
                         }
                         //数据源文件位置
                         var dataSourceLog = $scope.formData.dataSourceLog;
@@ -439,10 +446,10 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         var cutTemplateObject = $scope.getCutTemplateObject(template, isOrder, isRegex, separatorKeys, resultColumns);
                         var saveOrUpdateContextPath = '';
                         if ($scope.data.current == 2) {
-                            saveOrUpdateContextPath = 'monitorTask2/editTask';
+                            saveOrUpdateContextPath = 'monitorTask/editTask';
                         }
                         else if ($scope.data.current == 3) {
-                            saveOrUpdateContextPath = 'monitorTask2/addTask';
+                            saveOrUpdateContextPath = 'monitorTask/addTask';
                         }
                         $http({
                             url: serverHost + saveOrUpdateContextPath,
@@ -474,7 +481,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     };
                     $scope.getCutTemplateObject = function (template, isOrder, isRegex, separatorKeys, resultColumns) {
                         //拼接切割模板
-                        var cutTemplate = { template: '', separator: {}, resultColumns: '' };
+                        var cutTemplate = { template: '', separator: {}, resultColumns: [] };
                         cutTemplate.template = template;
                         var separatorObject = { isOrder: false, isRegex: false, separatorKeys: {} };
                         separatorObject.isOrder = isOrder;
@@ -487,12 +494,54 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         console.log('bb ' + JSON.stringify(separatorKeysArray));
                         separatorObject.separatorKeys = separatorKeysArray;
                         cutTemplate.separator = separatorObject;
+                        resultColumns = $scope.clone(resultColumns);
                         //删除多余的字段--结果列
                         for (var i = 0; i < resultColumns.length; i++) {
                             delete resultColumns[i].resultColumnIndex;
                         }
+                        for (var i = 0; i < resultColumns.length; i++) {
+                            if (true == resultColumns[i].tagOrValue) {
+                                resultColumns[i].tagOrValue = 0;
+                            }
+                            else if (false == resultColumns[i].tagOrValue) {
+                                resultColumns[i].tagOrValue = 1;
+                            }
+                            else {
+                                alert('tagOrValue发生异常！');
+                            }
+                        }
                         cutTemplate.resultColumns = resultColumns;
                         return cutTemplate;
+                    };
+                    $scope.clone = function (obj) {
+                        // Handle the 3 simple types, and null or undefined
+                        if (null == obj || "object" != typeof obj)
+                            return obj;
+                        // Handle Date
+                        var copy;
+                        if (obj instanceof Date) {
+                            copy = new Date();
+                            copy.setTime(obj.getTime());
+                            return copy;
+                        }
+                        // Handle Array
+                        if (obj instanceof Array) {
+                            copy = [];
+                            for (var i = 0, len = obj.length; i < len; ++i) {
+                                copy[i] = $scope.clone(obj[i]);
+                            }
+                            return copy;
+                        }
+                        // Handle Object
+                        if (obj instanceof Object) {
+                            copy = {};
+                            for (var attr in obj) {
+                                if (obj.hasOwnProperty(attr))
+                                    copy[attr] = $scope.clone(obj[attr]);
+                            }
+                            return copy;
+                        }
+                        throw new Error("Unable to copy obj! Its type isn't supported.");
                     };
                     //清空新建or编辑Tab页面
                     $scope.clearNewOrEditMonitorTaskTab = function () {
@@ -505,7 +554,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         $scope.formData.dataSourceLog = "";
                         //设置切割模板类型 切割模板类型-默认普通文本类型
                         $scope.formData.template = "0";
-                        /********************************分隔符属性************************************/
+                        /********************************数据清洗规则************************************/
                         //是否为正则
                         $scope.formData.isRegex = false;
                         //是否为有序
@@ -522,6 +571,14 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         //数据源样例
                         $scope.formData.dataSourceLogSample = '';
                     };
+                    $scope.selectChangeColumnType = function (resultColumnObject) {
+                        if (resultColumnObject.columnType == 'date') {
+                            resultColumnObject.format = "yyyy-MM-dd HH:mm:ss";
+                        }
+                        else {
+                            resultColumnObject.format = "";
+                        }
+                    };
                     $scope.showAddMonitorTaskTab = function () {
                         //清空新增Tab页面
                         $scope.clearNewOrEditMonitorTaskTab();
@@ -533,7 +590,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         $scope.clearNewOrEditMonitorTaskTab();
                         var param = 'taskName=' + taskName;
                         $http({
-                            url: serverHost + 'monitorTask2/getTaskByTaskName' + "?" + param,
+                            url: serverHost + 'monitorTask/getTaskByTaskName' + "?" + param,
                             withCredentials: true,
                             method: 'GET'
                         }).then(function (rsp) {
@@ -570,12 +627,20 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 var resultColumns = rsp.data.data.cutTemplate.resultColumns;
                                 //新增结果列
                                 for (var i = 0; i < resultColumns.length; i++) {
-                                    var resultColumnObject = { resultColumnIndex: '', columnSeq: '', columnName: '', columnType: '', format: '', tagOrValue: '' };
+                                    var resultColumnObject = { resultColumnIndex: '', columnSeq: '', columnName: '', columnType: '', format: '', tagOrValue: false };
                                     resultColumnObject.columnSeq = resultColumns[i].columnSeq;
                                     resultColumnObject.columnName = resultColumns[i].columnName;
                                     resultColumnObject.columnType = resultColumns[i].columnType;
                                     resultColumnObject.format = resultColumns[i].format;
-                                    resultColumnObject.tagOrValue = resultColumns[i].tagOrValue.toString();
+                                    if (resultColumns[i].tagOrValue == 0) {
+                                        resultColumnObject.tagOrValue = true;
+                                    }
+                                    else if (resultColumns[i].tagOrValue == 1) {
+                                        resultColumnObject.tagOrValue = false;
+                                    }
+                                    else {
+                                        alert('tagOrValue发生异常！');
+                                    }
                                     $scope.addResultColumn(resultColumnObject);
                                 }
                                 //跳转到编辑页面
@@ -596,7 +661,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         }
                         var param = 'taskName=' + taskName;
                         $http({
-                            url: serverHost + 'monitorTask2/deleteTask' + "?" + param,
+                            url: serverHost + 'monitorTask/deleteTask' + "?" + param,
                             withCredentials: true,
                             method: 'GET'
                         }).then(function (rsp) {

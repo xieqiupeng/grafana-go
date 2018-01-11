@@ -197,15 +197,15 @@
                                                <th>列名称</th>
                                                <th>列类型</th>
                                                <th>格式化(可为空)</th>
-                                               <th>标签还是值</th>
+                                               <th>是否标签</th>
                                                <th>操作</th>
                                            </tr>
                                            <tr ng-repeat="resultColumnObject in formData.resultColumns" ng-model="resultColumnObject.resultColumnIndex">
                                                <td>{{resultColumnObject.columnExampleValue}}</td>
-                                               <td><input type="text" ng-model="resultColumnObject.columnSeq" class="width-8"/></td>
-                                               <td><input type="text" ng-model="resultColumnObject.columnName" class="width-8"/></td>
+                                               <td><input type="text" ng-model="resultColumnObject.columnSeq" class="gf-form-input"/></td>
+                                               <td><input type="text" ng-model="resultColumnObject.columnName" class="gf-form-input"/></td>
                                                <td>
-                                                   <select size="1" class="width-8" ng-model="resultColumnObject.columnType">
+                                                   <select size="1" class="width-8 gf-form-input" ng-model="resultColumnObject.columnType" ng-change="selectChangeColumnType(resultColumnObject)" >
                                                        <option value="string" selected>string</option>
                                                        <option value="boolean">boolean</option>
                                                        <option value="long">long</option>
@@ -213,14 +213,15 @@
                                                        <option value="date">date</option>
                                                    </select>
                                                </td>
-                                               <td><input type="text" ng-model="resultColumnObject.format"/></td>
+                                               <td><input type="text" class="gf-form-input" ng-disabled="resultColumnObject.columnType!='date'" ng-model="resultColumnObject.format"/></td>
                                                <td>
-                                                   <select size="1" class="width-8" ng-model="resultColumnObject.tagOrValue" >
-                                                       <option value="0" selected>tag</option>
-                                                       <option value="1">field</option>
-                                                   </select>
+                                                   <gf-form-switch class=" max-width-35npm" label="" label-class="width-12" checked="resultColumnObject.tagOrValue" switch-class="max-width-16">
+                                                       <div class="gf-form-switch " >
+                                                           <input type="checkbox"  class="ng-untouched ng-valid ng-dirty ng-valid-parse ng-empty " >
+                                                       </div>
+                                                   </gf-form-switch>
                                                </td>
-                                               <td><input type="button" value="删除" ng-click="removeColumnResult(resultColumnObject.resultColumnIndex)"></input></td>
+                                               <td><input type="button"  class="gf-form-input" value="删除" ng-click="removeColumnResult(resultColumnObject.resultColumnIndex)"></input></td>
                                            </tr>
 
                                        </table>

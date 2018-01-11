@@ -133,7 +133,7 @@ public class MonitorTaskController {
      */
     @RequestMapping("/addTask")
     public Response addTask(@RequestBody EditMonitorTaskVo monitorTask) {
-        logger.info("addTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
+        logger.info("addTask start taskName={},cutTemplate={},dataSourceLog={},projectId={},machineId={}",
                 monitorTask.getTaskName(),
                 monitorTask.getCutTemplate(),
                 monitorTask.getDataSourceLog(),
@@ -180,36 +180,36 @@ public class MonitorTaskController {
         return null;
     }
 
-//    /**
-//     * 编辑监控任务
-//     *
-//     * @param monitorTask
-//     * @return
-//     */
-//    @RequestMapping("/editTask")
-//    public Response editTask(@RequestBody EditMonitorTaskVo monitorTask) {
-//        logger.info("editTask start taskName={},cutTemplate={},dataSourceLog,dataSourceServerIp={},isMonitorTomcatServer={},tomcatServerHost",
-//                monitorTask.getTaskName(),
-//                monitorTask.getCutTemplate(),
-//                monitorTask.getDataSourceLog(),
-//                monitorTask.getDataSourceServerIp(),
-//                monitorTask.getIsMonitorTomcatServer(),
-//                monitorTask.getTomcatServerHost());
-//        Response response = paramVerification(monitorTask);
-//        if (response != null) {
-//            return response;
-//        }
-//        MonitorTask monitorTaskDB = monitorTaskService.selectOneByTaskName(monitorTask.getTaskName());
-//        if (monitorTaskDB == null) {
-//            logger.info("editTask fail taskName={} not exists", monitorTask.getTaskName());
-//            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
-//        }
-//        if (MonitorTaskConstant.MonitorTaskStatus.START == monitorTaskDB.getStatus()) {
-//            logger.info("editTask fail taskName={} is starting", monitorTask.getTaskName());
-//            return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
-//        }
-//        boolean ok = monitorTaskService.editTask(monitorTaskDB.getId(), monitorTask.getCutTemplate(), monitorTask.getDataSourceLog(), monitorTask.getDataSourceServerIp(), monitorTask.getIsMonitorTomcatServer(), monitorTask.getTomcatServerHost());
-//        logger.info("editTask end taskName={},result={}", monitorTask.getTaskName(), ok);
-//        return Response.ok(ok);
-//    }
+    /**
+     * 编辑监控任务
+     *
+     * @param monitorTask
+     * @return
+     */
+    @RequestMapping("/editTask")
+    public Response editTask(@RequestBody EditMonitorTaskVo monitorTask) {
+        logger.info("editTask start taskName={},cutTemplate={},dataSourceLog={},projectId={},machineId={}",
+                monitorTask.getTaskName(),
+                monitorTask.getCutTemplate(),
+                monitorTask.getDataSourceLog(),
+                monitorTask.getProjectId(),
+                monitorTask.getMachineId());
+        Response response = paramVerification(monitorTask);
+        if (response != null) {
+            return response;
+        }
+        MonitorTask monitorTaskDB = monitorTaskService.selectOneByTaskName(monitorTask.getTaskName());
+        if (monitorTaskDB == null) {
+            logger.info("editTask fail taskName={} not exists", monitorTask.getTaskName());
+            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
+        }
+        if (MonitorTaskConstant.MonitorTaskStatus.START == monitorTaskDB.getStatus()) {
+            logger.info("editTask fail taskName={} is starting", monitorTask.getTaskName());
+            return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
+        }
+        boolean ok = monitorTaskService.editTask(monitorTaskDB.getId(), monitorTask.getCutTemplate(), monitorTask.getDataSourceLog(),monitorTask.getProjectId(),
+                monitorTask.getMachineId() );
+        logger.info("editTask end taskName={},result={}", monitorTask.getTaskName(), ok);
+        return Response.ok(ok);
+    }
 }
