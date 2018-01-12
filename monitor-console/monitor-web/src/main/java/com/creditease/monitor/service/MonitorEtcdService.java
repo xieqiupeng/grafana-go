@@ -34,7 +34,7 @@ public class MonitorEtcdService {
 
 //    private static final String MONITOR_TASK_DIR = "/monitor";
     private static final String MONITOR_TASK_PREFFIX_DIR = "/testmonitor";
-    private static final String PROJECT_DIR="project_id_";
+    private static final String PROJECT_DIR="/project_id_";
     private static final String APPLICATION_HOME = "/application_home";
     private static final String CHAR_START = "/";
     private static final String ETCD_DATA_TYPE = "log";
@@ -62,8 +62,7 @@ public class MonitorEtcdService {
                 }
 
                 /*************************************检查service是否存在**************************/
-                String applicationHomeKey = checkAndGetEtcdKey(String.valueOf(monitorApplication.getProjectId()),APPLICATION_HOME);
-                MonitorNoteDataEntity applicationHomeDataEntity = select(applicationHomeKey);
+                MonitorNoteDataEntity applicationHomeDataEntity = select(monitorApplication.getProjectId(),APPLICATION_HOME);
                 List<MonitorNoteDataEntity.MonitorService> applicationHomeServices = applicationHomeDataEntity.getServices();
 
                 boolean hasAddService=false;
@@ -104,10 +103,7 @@ public class MonitorEtcdService {
                     LOGGER.info("etcd不含有此ip={}的应用,所以直接添加此ip的应用",needAddService.getHost());
                 }
                 String str = JSON.toJSONString(applicationHomeDataEntity);
-                etcdClient.getKVClient()
-                        .put(ByteSequence.fromString(applicationHomeKey),
-                                ByteSequence.fromString(str))
-                        .get();
+                setValue(monitorApplication.getProjectId(),APPLICATION_HOME,str);
                 return true;
             } catch (Exception e) {
                 LOGGER.error("upSertMonitorApplication error monitorApplication={},errorMsg",
@@ -119,18 +115,14 @@ public class MonitorEtcdService {
     }
 
     //初始化applicationHome文件,创建一个空的文件
-    public MonitorNoteDataEntity initApplicationHome(String applicationHomeKey) throws Exception {
+    public boolean initApplicationHome(Integer projectId) throws Exception {
         MonitorNoteDataEntity applicationHomeDataEntity=new MonitorNoteDataEntity();
         applicationHomeDataEntity.setCleanRule(" ");
         applicationHomeDataEntity.setPath(new ArrayList<>());
         applicationHomeDataEntity.setServices(new ArrayList<>());
         applicationHomeDataEntity.setType(ETCD_DATA_TYPE);
         String applicationHomeDataEntityStr = JSON.toJSONString(applicationHomeDataEntity);
-        etcdClient.getKVClient()
-                .put(ByteSequence.fromString(applicationHomeKey),
-                        ByteSequence.fromString(applicationHomeDataEntityStr))
-                .get();
-        return applicationHomeDataEntity;
+        return setValue(projectId,APPLICATION_HOME,applicationHomeDataEntityStr);
     }
 
     //创建监控任务
@@ -163,8 +155,7 @@ public class MonitorEtcdService {
             // APPLICATION_HOME文件位置:/MONITOR_TASK_PREFFIX_DIR/projectId/APPLICATION_HOME。
             // 最后创建task文件,task文件路径/MONITOR_TASK_PREFFIX_DIR/projectId/taskname
             try {
-                String applicationHomeKey = checkAndGetEtcdKey(String.valueOf(monitorTask.getProjectId()),APPLICATION_HOME);
-                MonitorNoteDataEntity applicationHomeDataEntity = select(applicationHomeKey);
+                MonitorNoteDataEntity applicationHomeDataEntity = select(monitorTask.getProjectId(),APPLICATION_HOME);
                 List<MonitorNoteDataEntity.MonitorService> needCopyServices = new ArrayList<>();
                 List<MonitorNoteDataEntity.MonitorService> applicationHomeServices = applicationHomeDataEntity.getServices();
                 //从applicationHome文件拷贝service记录
@@ -180,13 +171,8 @@ public class MonitorEtcdService {
                 taskNoteDataEntity.setCleanRule(cutTemplate);
                 taskNoteDataEntity.setPath(Arrays.asList(pathArr));
                 taskNoteDataEntity.setServices(needCopyServices);
-                String str = JSON.toJSONString(taskNoteDataEntity);
-                String taskKey = checkAndGetEtcdKey(String.valueOf(monitorTask.getProjectId()),monitorTask.getTaskName());
-                etcdClient.getKVClient()
-                        .put(ByteSequence.fromString(taskKey),
-                                ByteSequence.fromString(str))
-                        .get();
-                return true;
+
+                return setValue(monitorTask.getProjectId(),monitorTask.getTaskName(),JSON.toJSONString(taskNoteDataEntity));
             } catch (Exception e) {
                 LOGGER.error("upSertMonitorTask error monitorTask={},errorMsg",
                         JSON.toJSONString(taskNoteDataEntity),
@@ -196,7 +182,38 @@ public class MonitorEtcdService {
         return false;
     }
 
-    public boolean delete(String projectId,String key) {
+    public boolean setValue(Integer projectId,String key,String value) {
+        String ectdKey = checkAndGetEtcdKey(projectId,key);
+        try {
+            etcdClient.getKVClient()
+                    .put(ByteSequence.fromString(ectdKey),
+                            ByteSequence.fromString(value))
+                    .get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+
+    public boolean deleteApplicationHome(Integer projectId) {
+        String ectdKey = checkAndGetEtcdKey(projectId,APPLICATION_HOME);
+        try {
+            etcdClient.getKVClient()
+                    .delete(ByteSequence.fromString(ectdKey))
+                    .get();
+        } catch (InterruptedException | ExecutionException e1) {
+            LOGGER.info("delete key={} error,msg={}", ectdKey, e1.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+
+
+    public boolean delete(Integer projectId,String key) {
         String ectdKey = checkAndGetEtcdKey(projectId,key);
         try {
             etcdClient.getKVClient()
@@ -209,10 +226,11 @@ public class MonitorEtcdService {
         return true;
     }
 
-    public MonitorNoteDataEntity select(String etcdKey) throws Exception {
-        if (StringUtils.isNotBlank(etcdKey)) {
+    public MonitorNoteDataEntity select(Integer projectId,String key) throws Exception {
+        String ectdKey = checkAndGetEtcdKey(projectId,key);
+        if (StringUtils.isNotBlank(ectdKey)) {
             GetResponse response = etcdClient.getKVClient()
-                    .get(ByteSequence.fromString(etcdKey))
+                    .get(ByteSequence.fromString(ectdKey))
                     .get();
             String nodeValue = response.getKvs()
                     .get(0)
@@ -225,20 +243,23 @@ public class MonitorEtcdService {
         return null;
     }
 
-    private void checkNull(String str) {
-        if (StringUtils.isBlank(str)) {
+
+    private void checkNull(Object str) {
+        if (str==null) {
             throw new NullPointerException();
+        }
+        if (str instanceof String){
+            if (StringUtils.isBlank((String)str)) {
+                throw new NullPointerException();
+            }
         }
     }
 
-    private String checkAndGetEtcdKey(String projectId,String key) {
+    private String checkAndGetEtcdKey(Integer projectId,String key) {
         checkNull(projectId);
         checkNull(key);
 
         StringBuffer buffer = new StringBuffer(MONITOR_TASK_PREFFIX_DIR);
-        if (!projectId.startsWith(CHAR_START)) {
-            buffer.append(CHAR_START);
-        }
         buffer.append(PROJECT_DIR);
         buffer.append(projectId);
 

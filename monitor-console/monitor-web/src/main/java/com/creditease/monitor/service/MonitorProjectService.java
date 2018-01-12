@@ -25,6 +25,9 @@ public class MonitorProjectService {
     @Autowired
     private MonitorProjectExMapper monitorProjectExMapper;
 
+    @Autowired
+    private MonitorEtcdService monitorApplicationEtcdService;
+
     /**
      * 根据项目名称模糊查找
      *
@@ -60,17 +63,24 @@ public class MonitorProjectService {
     }
 
 
+
     /**
      * 删除Project
      *
      * @param projectId
      * @return
      */
+    @Transactional(rollbackFor = {})
     public boolean deleteProject(int projectId) {
         //删除当前监控项目
-
         monitorProjectExMapper.deleteByPrimaryKey(projectId);
-        return true;
+        try {
+            return monitorApplicationEtcdService.deleteApplicationHome(projectId);
+        } catch (Exception e) {
+            logger.error("删除projectId为{}的ApplicationHome失败,失败原因：{}",projectId,e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public MonitorProject selectOneByProjectId(int projectId) {
@@ -84,6 +94,7 @@ public class MonitorProjectService {
      * @param desc
      * @return
      */
+    @Transactional(rollbackFor = {})
     public boolean addProject(String projectName,
                            String desc) {
         MonitorProject monitorProject = new MonitorProject();
@@ -92,9 +103,14 @@ public class MonitorProjectService {
         Date now = new Date();
         monitorProject.setCreateTime(now);
         monitorProject.setUpdateTime(now);
-
         monitorProjectExMapper.insertSelective(monitorProject);
-        return true;
+        try {
+            return monitorApplicationEtcdService.initApplicationHome(monitorProject.getId());
+        } catch (Exception e) {
+            logger.error("初始化projectId为{}的ApplicationHome失败",monitorProject.getId());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
