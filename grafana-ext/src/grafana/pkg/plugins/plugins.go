@@ -11,9 +11,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/setting"
-	"github.com/grafana/grafana/pkg/util"
+	"grafana/pkg/log"
+	"grafana/pkg/setting"
+	"grafana/pkg/util"
 )
 
 var (

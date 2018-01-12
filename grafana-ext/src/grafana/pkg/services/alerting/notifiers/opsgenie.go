@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/log"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/alerting"
+	"grafana/pkg/bus"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/log"
+	m "grafana/pkg/models"
+	"grafana/pkg/services/alerting"
 )
 
 func init() {

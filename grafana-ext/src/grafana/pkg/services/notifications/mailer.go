@@ -14,9 +14,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/grafana/grafana/pkg/log"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/log"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
 	"gopkg.in/gomail.v2"
 )
 

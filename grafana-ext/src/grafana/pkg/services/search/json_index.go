@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/log"
-	m "github.com/grafana/grafana/pkg/models"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/log"
+	m "grafana/pkg/models"
 )
 
 type JsonDashIndex struct {

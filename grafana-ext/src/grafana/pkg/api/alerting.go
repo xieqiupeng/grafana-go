@@ -3,11 +3,11 @@ package api
 import (
 	"fmt"
 
-	"github.com/grafana/grafana/pkg/api/dtos"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/middleware"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/alerting"
+	"grafana/pkg/api/dtos"
+	"grafana/pkg/bus"
+	"grafana/pkg/middleware"
+	"grafana/pkg/models"
+	"grafana/pkg/services/alerting"
 )
 
 func ValidateOrgAlert(c *middleware.Context) {

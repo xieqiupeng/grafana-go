@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	"grafana/pkg/models"
+	"grafana/pkg/plugins"
+	"grafana/pkg/setting"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

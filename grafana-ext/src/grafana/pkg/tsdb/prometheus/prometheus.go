@@ -11,10 +11,10 @@ import (
 
 	"net/http"
 
-	"github.com/grafana/grafana/pkg/components/null"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/tsdb"
+	"grafana/pkg/components/null"
+	"grafana/pkg/log"
+	"grafana/pkg/models"
+	"grafana/pkg/tsdb"
 	api "github.com/prometheus/client_golang/api"
 	apiv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"

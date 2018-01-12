@@ -3,9 +3,9 @@ package middleware
 import (
 	"fmt"
 
-	"github.com/grafana/grafana/pkg/bus"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
 	"gopkg.in/macaron.v1"
 )
 

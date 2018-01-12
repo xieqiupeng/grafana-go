@@ -3,14 +3,14 @@ package api
 import (
 	"context"
 
-	"github.com/grafana/grafana/pkg/api/dtos"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/middleware"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/tsdb"
-	"github.com/grafana/grafana/pkg/tsdb/testdata"
-	"github.com/grafana/grafana/pkg/util"
+	"grafana/pkg/api/dtos"
+	"grafana/pkg/bus"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/middleware"
+	"grafana/pkg/models"
+	"grafana/pkg/tsdb"
+	"grafana/pkg/tsdb/testdata"
+	"grafana/pkg/util"
 )
 
 // POST /api/tsdb/query

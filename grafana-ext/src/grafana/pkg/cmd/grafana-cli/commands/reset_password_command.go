@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/cmd/grafana-cli/logger"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/util"
+	"grafana/pkg/bus"
+	"grafana/pkg/cmd/grafana-cli/logger"
+	"grafana/pkg/models"
+	"grafana/pkg/util"
 )
 
 const AdminUserId = 1

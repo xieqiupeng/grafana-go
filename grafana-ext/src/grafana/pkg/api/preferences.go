@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/grafana/grafana/pkg/api/dtos"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/middleware"
-	m "github.com/grafana/grafana/pkg/models"
+	"grafana/pkg/api/dtos"
+	"grafana/pkg/bus"
+	"grafana/pkg/middleware"
+	m "grafana/pkg/models"
 )
 
 // POST /api/preferences/set-home-dash

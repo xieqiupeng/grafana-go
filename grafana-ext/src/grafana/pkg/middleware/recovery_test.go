@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/go-macaron/session"
-	"github.com/grafana/grafana/pkg/bus"
+	"grafana/pkg/bus"
 	. "github.com/smartystreets/goconvey/convey"
 	"gopkg.in/macaron.v1"
 )

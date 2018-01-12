@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/annotations"
+	"grafana/pkg/models"
+	"grafana/pkg/services/annotations"
 )
 
 type SqlAnnotationRepo struct {

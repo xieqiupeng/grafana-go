@@ -1,14 +1,14 @@
 package api
 
 import (
-	"github.com/grafana/grafana/pkg/api/dtos"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/events"
-	"github.com/grafana/grafana/pkg/metrics"
-	"github.com/grafana/grafana/pkg/middleware"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
-	"github.com/grafana/grafana/pkg/util"
+	"grafana/pkg/api/dtos"
+	"grafana/pkg/bus"
+	"grafana/pkg/events"
+	"grafana/pkg/metrics"
+	"grafana/pkg/middleware"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
+	"grafana/pkg/util"
 )
 
 // GET /api/user/signup/options

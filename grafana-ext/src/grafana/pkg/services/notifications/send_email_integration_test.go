@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/grafana/grafana/pkg/bus"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

@@ -1,8 +1,8 @@
 package sqlstore
 
 import (
-	"github.com/grafana/grafana/pkg/bus"
-	m "github.com/grafana/grafana/pkg/models"
+	"grafana/pkg/bus"
+	m "grafana/pkg/models"
 )
 
 func init() {

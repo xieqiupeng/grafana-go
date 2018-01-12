@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	"github.com/go-xorm/xorm"
-	. "github.com/grafana/grafana/pkg/services/sqlstore/migrator"
-	"github.com/grafana/grafana/pkg/services/sqlstore/sqlutil"
+	. "grafana/pkg/services/sqlstore/migrator"
+	"grafana/pkg/services/sqlstore/sqlutil"
 
 	. "github.com/smartystreets/goconvey/convey"
-	//"github.com/grafana/grafana/pkg/log"
+	//"grafana/pkg/log"
 )
 
 var indexTypes = []string{"Unknown", "INDEX", "UNIQUE INDEX"}

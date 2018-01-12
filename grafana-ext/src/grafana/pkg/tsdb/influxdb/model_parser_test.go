@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/models"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/models"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

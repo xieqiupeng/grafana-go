@@ -8,11 +8,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/log"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/alerting"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	"grafana/pkg/log"
+	m "grafana/pkg/models"
+	"grafana/pkg/services/alerting"
+	"grafana/pkg/setting"
 )
 
 func init() {

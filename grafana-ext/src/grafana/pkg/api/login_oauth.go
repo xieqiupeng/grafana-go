@@ -14,13 +14,13 @@ import (
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/metrics"
-	"github.com/grafana/grafana/pkg/middleware"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
-	"github.com/grafana/grafana/pkg/social"
+	"grafana/pkg/bus"
+	"grafana/pkg/log"
+	"grafana/pkg/metrics"
+	"grafana/pkg/middleware"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
+	"grafana/pkg/social"
 )
 
 var (

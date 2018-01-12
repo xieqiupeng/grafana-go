@@ -3,10 +3,10 @@ package alerting
 import (
 	"testing"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	"grafana/pkg/components/simplejson"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
