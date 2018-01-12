@@ -90,8 +90,7 @@ public class MonitorProjectController {
             logger.info("addProject projectName={} has exists", monitorProject.getProjectName());
             return Response.fail(ResponseCode.PROJECT_NAME_HAS_EXISTS);
         }
-        boolean ok = monitorProjectService.addProject(monitorProject.getProjectName(),
-                monitorProject.getProjectDesc());
+        boolean ok = monitorProjectService.addProject(monitorProject.getProjectName(),monitorProject.getProjectDesc());
         logger.info("addProject end projectName={},result={}", monitorProject.getProjectName(), ok);
         return Response.ok(ok);
     }

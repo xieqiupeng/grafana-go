@@ -79,7 +79,7 @@
                         <td align="center">所属机器</td>
                         <td align="center">创建时间</td>
                         <td align="center">更新时间</td>
-                        <td align="center" colspan="3">操作</td>
+                        <td align="center" colspan="2">操作</td>
                     </tr>
                     <tr ng-repeat="application in applicationArray">
                         <td>{{$index+1}}</td>
@@ -91,10 +91,6 @@
                         <td>{{application.createTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
                         <td>{{application.updateTime| date:"yyyy-MM-dd HH:mm:ss"}}</td>
 
-                        <td  align="center">
-                            <input type="button" value="暂停" ng-if="application.statusText=='启动'" class="btn btn-primary" ng-click="startOrPauseApplicationFunction(ctrl.panel.serverHost,application.id,1)"/>
-                            <input type="button" value="启动" ng-if="application.statusText=='暂停'" class="btn btn-primary" ng-click="startOrPauseApplicationFunction(ctrl.panel.serverHost,application.id,0)"/>
-                        </td>
                         <td  align="center"><input type="button" value="编辑" class="btn btn-primary"  ng-click="showEditMonitorApplicationTab(ctrl.panel.serverHost,application.id)" /></td>
 
                         <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteApplicationFunction(ctrl.panel.serverHost,application.applicationName,application.id)"/></td>
@@ -146,18 +142,18 @@
                             <div class="gf-form">
                                 <span class="gf-form-label width-7">应用类型</span>
                                 <select size="1" style="width: auto" class="gf-form-input" ng-model="formData.applicationType" >
-                                    <option value="0" selected>应用服务器-tomcat</option>
-                                    <option value="1">应用服务器-weblogic</option>
-                                    <option value="2">数据库服务器-mysql</option>
-                                    <option value="3">数据库服务器-oracle</option>
-                                    <option value="4">消息队列-rabbitmq</option>
-                                    <option value="5">消息队列-rocketmq</option>
+                                    <option value="1">应用服务器-tomcat</option>
+                                    <option value="2">应用服务器-weblogic</option>
+                                    <option value="3">数据库服务器-mysql</option>
+                                    <option value="4">数据库服务器-oracle</option>
+                                    <option value="5">消息队列-rabbitmq</option>
+                                    <option value="6">消息队列-rocketmq</option>
                                 </select>
                             </div>
                             <div class="gf-form">
-                                <span class="gf-form-label width-7">应用参数(端口)</span>
+                                <span class="gf-form-label width-7">应用参数</span>
                                 <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-model="formData.applicationDetailParam" type="text" placeholder="请填写应用参数">
+                                       ng-model="formData.applicationDetailParam" type="text" placeholder="请填写应用参数如端口,多个用逗号分隔">
                             </div>
                             <div class="gf-form">
                                 <span class="gf-form-label width-7">应用描述</span>

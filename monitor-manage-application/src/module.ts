@@ -373,6 +373,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                     //所属机器
                     $scope.formData.machineId=rsp.data.data.machineId.toString();
 
+                    $scope.formData.applicationType=rsp.data.data.applicationType.toString();
                     //应用端口
                     $scope.formData.applicationDetailParam=rsp.data.data.applicationDetailParam;
 

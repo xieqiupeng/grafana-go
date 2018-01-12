@@ -80,6 +80,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
                     // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
                     this.events.on('panel-initialized', this.render.bind(this));
+                    this.panel.title = '应用管理';
                     this.searchAllAuthorizeProjects(panelDefaults.serverHost);
                 }
                 MonitorManageCtrl.prototype.onPanelInitalized = function () {
@@ -333,6 +334,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 $scope.formData.applicationDesc = rsp.data.data.applicationDesc;
                                 //所属机器
                                 $scope.formData.machineId = rsp.data.data.machineId.toString();
+                                $scope.formData.applicationType = rsp.data.data.applicationType.toString();
                                 //应用端口
                                 $scope.formData.applicationDetailParam = rsp.data.data.applicationDetailParam;
                                 //跳转到编辑页面
