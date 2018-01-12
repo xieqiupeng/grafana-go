@@ -46,7 +46,7 @@ func (m *MetricSet) Fetch() ([]common.MapStr, error) {
 	for _, counters := range stats {
 
 		event := common.MapStr{
-			"name_string": counters.Name,
+			"name_string_tag": counters.Name,
 			"read": common.MapStr{
 				"count_long": counters.ReadCount,
 				"time_long":  counters.ReadTime,
@@ -98,7 +98,7 @@ func (m *MetricSet) Fetch() ([]common.MapStr, error) {
 		events = append(events, event)
 
 		if counters.SerialNumber != "" {
-			event["serial_number_string"] = counters.SerialNumber
+			event["serial_number_string_tag"] = counters.SerialNumber
 		}
 	}
 

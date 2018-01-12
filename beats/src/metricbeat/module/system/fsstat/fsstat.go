@@ -83,7 +83,7 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 			"used_long":  totalSizeUsed,
 			"total_long": totalSize,
 		},
-		"count_long":       len(dict),
+		"count_long_tag":   len(dict),
 		"total_files_long": totalFiles,
 	}, nil
 }

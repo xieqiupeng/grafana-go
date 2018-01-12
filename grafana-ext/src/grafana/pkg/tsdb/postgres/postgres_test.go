@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/go-xorm/xorm"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/services/sqlstore/sqlutil"
-	"github.com/grafana/grafana/pkg/tsdb"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/log"
+	"grafana/pkg/services/sqlstore/sqlutil"
+	"grafana/pkg/tsdb"
 	_ "github.com/lib/pq"
 	. "github.com/smartystreets/goconvey/convey"
 )

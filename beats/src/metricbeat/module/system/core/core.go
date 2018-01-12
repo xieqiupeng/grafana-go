@@ -53,7 +53,7 @@ func (m *MetricSet) Fetch(report mb.Reporter) {
 	}
 
 	for id, sample := range samples {
-		event := common.MapStr{"id_long": id}
+		event := common.MapStr{"id_long_tag": id}
 
 		for _, metric := range m.config.Metrics {
 			switch strings.ToLower(metric) {

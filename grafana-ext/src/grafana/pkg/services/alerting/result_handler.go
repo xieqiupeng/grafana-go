@@ -3,12 +3,12 @@ package alerting
 import (
 	"time"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/metrics"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/annotations"
+	"grafana/pkg/bus"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/log"
+	"grafana/pkg/metrics"
+	m "grafana/pkg/models"
+	"grafana/pkg/services/annotations"
 )
 
 type ResultHandler interface {

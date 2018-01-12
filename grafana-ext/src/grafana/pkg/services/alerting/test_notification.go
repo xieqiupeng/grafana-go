@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/components/null"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/log"
-	m "github.com/grafana/grafana/pkg/models"
+	"grafana/pkg/bus"
+	"grafana/pkg/components/null"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/log"
+	m "grafana/pkg/models"
 )
 
 type NotificationTestCommand struct {

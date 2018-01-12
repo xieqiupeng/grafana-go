@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/grafana/grafana/pkg/components/null"
-	"github.com/grafana/grafana/pkg/tsdb"
+	"grafana/pkg/components/null"
+	"grafana/pkg/tsdb"
 )
 
 type ResponseParser struct{}

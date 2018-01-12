@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/login"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	"grafana/pkg/log"
+	"grafana/pkg/login"
+	m "grafana/pkg/models"
+	"grafana/pkg/setting"
 )
 
 func initContextWithAuthProxy(ctx *Context, orgId int64) bool {

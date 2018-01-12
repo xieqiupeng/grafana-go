@@ -51,7 +51,7 @@ func (m *MetricSet) Fetch() (common.MapStr, error) {
 		return nil, errors.Wrap(err, "failed to fetch CPU times")
 	}
 
-	event := common.MapStr{"cores_long": system.NumCPU}
+	event := common.MapStr{"cores_long_tag": system.NumCPU}
 
 	for _, metric := range m.config.Metrics {
 		switch strings.ToLower(metric) {

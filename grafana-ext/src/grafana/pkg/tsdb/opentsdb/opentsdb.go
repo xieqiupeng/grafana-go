@@ -14,11 +14,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/grafana/grafana/pkg/components/null"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
-	"github.com/grafana/grafana/pkg/tsdb"
+	"grafana/pkg/components/null"
+	"grafana/pkg/log"
+	"grafana/pkg/models"
+	"grafana/pkg/setting"
+	"grafana/pkg/tsdb"
 )
 
 type OpenTsdbExecutor struct {

@@ -11,8 +11,8 @@ import (
 
 	"golang.org/x/net/context/ctxhttp"
 
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/util"
+	"grafana/pkg/log"
+	"grafana/pkg/util"
 )
 
 type Webhook struct {

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/bus"
+	"grafana/pkg/models"
+	"grafana/pkg/setting"
 
 	"gopkg.in/macaron.v1"
 )

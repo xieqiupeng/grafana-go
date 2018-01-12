@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/grafana/grafana/pkg/middleware"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/middleware"
+	"grafana/pkg/setting"
 	"gopkg.in/macaron.v1"
 )
 

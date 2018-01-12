@@ -9,26 +9,26 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/grafana/grafana/pkg/cmd/grafana-cli/logger"
-	"github.com/grafana/grafana/pkg/services/provisioning"
+	"grafana/pkg/cmd/grafana-cli/logger"
+	"grafana/pkg/services/provisioning"
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/grafana/grafana/pkg/api"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/login"
-	"github.com/grafana/grafana/pkg/metrics"
-	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
-	"github.com/grafana/grafana/pkg/services/alerting"
-	"github.com/grafana/grafana/pkg/services/cleanup"
-	"github.com/grafana/grafana/pkg/services/notifications"
-	"github.com/grafana/grafana/pkg/services/search"
-	"github.com/grafana/grafana/pkg/services/sqlstore"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/api"
+	"grafana/pkg/log"
+	"grafana/pkg/login"
+	"grafana/pkg/metrics"
+	"grafana/pkg/models"
+	"grafana/pkg/plugins"
+	"grafana/pkg/services/alerting"
+	"grafana/pkg/services/cleanup"
+	"grafana/pkg/services/notifications"
+	"grafana/pkg/services/search"
+	"grafana/pkg/services/sqlstore"
+	"grafana/pkg/setting"
 
-	"github.com/grafana/grafana/pkg/social"
-	"github.com/grafana/grafana/pkg/tracing"
+	"grafana/pkg/social"
+	"grafana/pkg/tracing"
 )
 
 func NewGrafanaServer() models.GrafanaServer {

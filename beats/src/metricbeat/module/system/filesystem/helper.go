@@ -82,14 +82,14 @@ func AddFileSystemUsedPercentage(f *FileSystemStat) {
 
 func GetFilesystemEvent(fsStat *FileSystemStat) common.MapStr {
 	return common.MapStr{
-		"type_string":        fsStat.SysTypeName,
-		"device_name_string": fsStat.DevName,
-		"mount_point_string": fsStat.Mount,
-		"total_long":         fsStat.Total,
-		"free_long":          fsStat.Free,
-		"available_long":     fsStat.Avail,
-		"files_long":         fsStat.Files,
-		"free_files_long":    fsStat.FreeFiles,
+		"type_string_tag":        fsStat.SysTypeName,
+		"device_name_string_tag": fsStat.DevName,
+		"mount_point_string_tag": fsStat.Mount,
+		"total_long":             fsStat.Total,
+		"free_long":              fsStat.Free,
+		"available_long":         fsStat.Avail,
+		"files_long":             fsStat.Files,
+		"free_files_long":        fsStat.FreeFiles,
 		"used": common.MapStr{
 			"pct_double": fsStat.UsedPercent,
 			"bytes_long": fsStat.Used,

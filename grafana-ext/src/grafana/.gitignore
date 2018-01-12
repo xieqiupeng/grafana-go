@@ -50,9 +50,9 @@ debug.test
 /packaging/**/*.rpm
 /packaging/**/*.deb
 
-/vendor/**/*.py
-/vendor/**/*.xml
-/vendor/**/*.yml
-/vendor/**/*_test.go
-/vendor/**/.editorconfig
-/vendor/**/appengine*
+
+!/vendor/golang.org/x/oauth2/google/appengine.go
+!/vendor/golang.org/x/oauth2/google/appengine_hook.go
+!/vendor/golang.org/x/oauth2/google/appengineflex_hook.go
+!/vendor/golang.org/
+!/vendor/

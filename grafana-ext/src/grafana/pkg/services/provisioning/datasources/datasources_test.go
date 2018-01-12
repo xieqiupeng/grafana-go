@@ -3,9 +3,9 @@ package datasources
 import (
 	"testing"
 
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/models"
+	"grafana/pkg/bus"
+	"grafana/pkg/log"
+	"grafana/pkg/models"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

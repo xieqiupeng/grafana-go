@@ -23,8 +23,8 @@ import (
 
 	"gopkg.in/macaron.v1"
 
-	"github.com/grafana/grafana/pkg/log"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/log"
+	"grafana/pkg/setting"
 )
 
 var (

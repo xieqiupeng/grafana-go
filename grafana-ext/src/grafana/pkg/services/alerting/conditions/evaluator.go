@@ -3,9 +3,9 @@ package conditions
 import (
 	"encoding/json"
 
-	"github.com/grafana/grafana/pkg/components/null"
-	"github.com/grafana/grafana/pkg/components/simplejson"
-	"github.com/grafana/grafana/pkg/services/alerting"
+	"grafana/pkg/components/null"
+	"grafana/pkg/components/simplejson"
+	"grafana/pkg/services/alerting"
 )
 
 var (

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/grafana/grafana/pkg/api/pluginproxy"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/metrics"
-	"github.com/grafana/grafana/pkg/middleware"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
+	"grafana/pkg/api/pluginproxy"
+	"grafana/pkg/bus"
+	"grafana/pkg/metrics"
+	"grafana/pkg/middleware"
+	m "grafana/pkg/models"
+	"grafana/pkg/plugins"
 )
 
 const HeaderNameNoBackendCache = "X-Grafana-NoCache"

@@ -21,9 +21,9 @@ class Settings {
     constructor(options) {
         var defaults = {
             datasources: {},
-            window_title_prefix: 'Grafana - ',
+            window_title_prefix: '业务监控 - ',
             panels: {},
-            new_panel_title: 'Panel Title',
+            new_panel_title: '面板名称',
             playlist_timespan: "1m",
             unsaved_changes_warning: true,
             appSubUrl: ""

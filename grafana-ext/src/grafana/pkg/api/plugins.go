@@ -3,12 +3,12 @@ package api
 import (
 	"sort"
 
-	"github.com/grafana/grafana/pkg/api/dtos"
-	"github.com/grafana/grafana/pkg/bus"
-	"github.com/grafana/grafana/pkg/middleware"
-	m "github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
-	"github.com/grafana/grafana/pkg/setting"
+	"grafana/pkg/api/dtos"
+	"grafana/pkg/bus"
+	"grafana/pkg/middleware"
+	m "grafana/pkg/models"
+	"grafana/pkg/plugins"
+	"grafana/pkg/setting"
 )
 
 func GetPluginList(c *middleware.Context) Response {
