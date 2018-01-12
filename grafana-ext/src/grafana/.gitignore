@@ -51,3 +51,8 @@ debug.test
 /packaging/**/*.deb
 
 
+!/vendor/golang.org/x/oauth2/google/appengine.go
+!/vendor/golang.org/x/oauth2/google/appengine_hook.go
+!/vendor/golang.org/x/oauth2/google/appengineflex_hook.go
+!/vendor/golang.org/
+!/vendor/
