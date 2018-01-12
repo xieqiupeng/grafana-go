@@ -59,6 +59,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
                     // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
                     this.events.on('panel-initialized', this.render.bind(this));
+                    this.panel.title = '任务管理';
                     this.searchAllAuthorizeProjects(panelDefaults.serverHost);
                 }
                 MonitorManageCtrl.prototype.onPanelInitalized = function () {
@@ -94,6 +95,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         /************基本属性***********/
                         taskName: '',
                         dataSourceLog: '',
+                        projectId: '',
                         template: "0",
                         /************分隔符属性***********/
                         isRegex: false,
@@ -109,7 +111,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         $scope.projectId = document.getElementById('projectId');
                         $scope.projectId = ($scope.projectId == null ? "" : $scope.projectId.value);
                         if ($scope.projectId != null && $scope.projectId != '') {
-                            $scope.searchAllAuthorizeMachines(serverHost, $scope.projectId);
+                            $scope.searchAllAuthorizeMachines(serverHost, $scope.projectId, null);
                         }
                         else {
                             this.ctrl.allAuthorizeMachine = [];
@@ -117,7 +119,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         }
                     };
                     //搜索所有授权的机器
-                    $scope.searchAllAuthorizeMachines = function (serverHost, projectId) {
+                    $scope.searchAllAuthorizeMachines = function (serverHost, projectId, machineId) {
                         var _this = this;
                         $http({
                             url: serverHost + 'monitorMachine/searchAllAuthorizeMachinesByProjectId?projectId=' + projectId,
@@ -130,8 +132,26 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 _this.ctrl.allAuthorizeMachine = [];
                                 _this.ctrl.allAuthorizeMachineChecked = [];
                                 _this.ctrl.allAuthorizeMachine = rsp.data.data;
-                                for (var i = 0; i < _this.ctrl.allAuthorizeMachine.length; i++) {
-                                    _this.ctrl.allAuthorizeMachineChecked.push(false);
+                                if (machineId == null || machineId == '') {
+                                    for (var i = 0; i < _this.ctrl.allAuthorizeMachine.length; i++) {
+                                        _this.ctrl.allAuthorizeMachineChecked.push(false);
+                                    }
+                                }
+                                else if (machineId != null && machineId != '') {
+                                    var machineIdArray = machineId.split(',');
+                                    for (var i = 0; i < _this.ctrl.allAuthorizeMachine.length; i++) {
+                                        var setTrue = false;
+                                        for (var j = 0; j < machineIdArray.length; j++) {
+                                            if (machineIdArray[j] == _this.ctrl.allAuthorizeMachine[i].id) {
+                                                _this.ctrl.allAuthorizeMachineChecked.push(true);
+                                                setTrue = true;
+                                                break;
+                                            }
+                                        }
+                                        if (setTrue == false) {
+                                            _this.ctrl.allAuthorizeMachineChecked.push(false);
+                                        }
+                                    }
                                 }
                             }
                             else {
@@ -215,7 +235,11 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     //搜索功能
                     $scope.searchFunction = function (serverHost) {
                         $scope.taskName = document.getElementById('taskName');
-                        $scope.taskName = $scope.taskName.value;
+                        if ($scope.taskName == null) {
+                            $scope.taskName = '';
+                        }
+                        else
+                            $scope.taskName = $scope.taskName.value;
                         $scope.taskArray = [];
                         var param = 'taskName=' + $scope.taskName + "&pageNum=" + $scope.pageNum + "&pageSize=" + $scope.pageSize;
                         $http({
@@ -466,10 +490,10 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                             console.log("invoke " + saveOrUpdateContextPath + " ok:", rsp.data.resultCode, rsp.data.resultMsg);
                             if (rsp.data.resultCode == 0) {
                                 alert('保存成功！');
-                                //重新拉取监控任务
-                                $scope.searchFunction(serverHost);
                                 //跳转到查询tab
                                 $scope.actions.setCurrent(1);
+                                //重新拉取监控任务
+                                $scope.searchFunction(serverHost);
                             }
                             else {
                                 alert('保存失败！具体原因：' + rsp.data.resultMsg + "。");
@@ -548,10 +572,12 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                         /********************************基本属性************************************/
                         //任务名称
                         $scope.formData.taskName = "";
-                        //机器Id,多个用逗号分隔
-                        $scope.formData.machineId = "";
                         //数据源文件位置
                         $scope.formData.dataSourceLog = "";
+                        //设置项目Id
+                        $scope.formData.projectId = '';
+                        this.ctrl.allAuthorizeMachine = [];
+                        this.ctrl.allAuthorizeMachineChecked = [];
                         //设置切割模板类型 切割模板类型-默认普通文本类型
                         $scope.formData.template = "0";
                         /********************************数据清洗规则************************************/
@@ -600,10 +626,12 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 rsp.data.data.cutTemplate = JSON.parse(rsp.data.data.cutTemplate);
                                 //任务名称
                                 $scope.formData.taskName = rsp.data.data.taskName;
-                                //数据源Ip
-                                $scope.formData.machineId = rsp.data.data.machineId;
                                 //数据源文件位置
                                 $scope.formData.dataSourceLog = rsp.data.data.dataSourceLog;
+                                //设置项目Id
+                                $scope.formData.projectId = rsp.data.data.projectId.toString();
+                                //搜索所有授权的机器
+                                $scope.searchAllAuthorizeMachines(serverHost, $scope.formData.projectId, rsp.data.data.machineId);
                                 //设置切割模板类型
                                 $scope.formData.template = rsp.data.data.cutTemplate.template;
                                 /********************************分隔符属性************************************/

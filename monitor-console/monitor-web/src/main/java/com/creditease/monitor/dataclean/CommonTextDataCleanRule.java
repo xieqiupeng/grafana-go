@@ -56,12 +56,14 @@ public class CommonTextDataCleanRule implements IDataCleanRule {
                 separatorKeys.forEach(key->{
                     if(StringUtils.isNotBlank(key)){
                         set.add(escapeCharacter.concat(key).trim());
+                    }else{
+                        set.add(key);
                     }
                 });
                 String splitkey =  generateSplitkey(set);
-                if(StringUtils.isNotBlank(splitkey)){
+//                if(StringUtils.isNotBlank(splitkey)){
                     list.addAll(Arrays.asList(monitorData.split(splitkey)));
-                }
+//                }
             }
         }
         return  converter(list,resultColumns);
@@ -88,9 +90,10 @@ public class CommonTextDataCleanRule implements IDataCleanRule {
             }else{
                 Set<String> set = new HashSet<>();
                 separatorKeys.forEach(key->{
-                    if(StringUtils.isNotBlank(key)){
-                        set.add(key.trim());
-                    }
+                    //if(StringUtils.isNotBlank(key)){
+                     //   set.add(key.trim());
+                        set.add(key);
+                    //}
                 });
                 String splitkey =  generateSplitkey(set);
                 if(StringUtils.isNotBlank(splitkey)){

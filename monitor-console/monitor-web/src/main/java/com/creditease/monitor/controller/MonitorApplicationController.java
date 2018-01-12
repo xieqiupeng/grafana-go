@@ -44,30 +44,6 @@ public class MonitorApplicationController {
         return Response.ok(new PageInfo(monitorApplicationsList));
     }
 
-
-    //启动/暂停
-    @RequestMapping("/startOrPauseApplication")
-    public Response startOrPauseApplication(@YXRequestParam(required = true, errmsg = "服务端启动/暂停应用状态发生错误") Integer applicationId,
-                                     @YXRequestParam(required = true, errmsg = "服务端启动/暂停应用状态发生错误") Byte status) {
-        logger.info("/startOrPauseApplication param:applicationId:{},status={}", applicationId, status);
-        MonitorApplication monitorApplication = monitorApplicationService.selectOneByApplicationId(applicationId);
-
-        if (monitorApplication == null) {
-            logger.info("startOrPauseApplication fail applicationId={} not exists", applicationId);
-            return Response.fail(ResponseCode.APPLICATION_NOT_EXISTS);
-        }
-
-        if (status == monitorApplication.getStatus()) {
-            logger.info("startOrPauseApplication 状态一致无需更改 applicationId:{},status={}", applicationId, status);
-            return Response.ok(true);
-        }
-        monitorApplication.setStatus(status);
-        boolean ok = monitorApplicationService.startOrPauseApplication(monitorApplication);
-        return Response.ok(ok);
-    }
-
-
-
     //删除
     @RequestMapping("/deleteApplication")
     public Response deleteApplication(@YXRequestParam(required = true, errmsg = "服务端删除应用发生错误,id不能为空") Integer id) {

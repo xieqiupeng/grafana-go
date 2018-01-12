@@ -1,8 +1,7 @@
 package com.creditease.monitor.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.creditease.monitor.constant.MonitorTaskConstant;
-import com.creditease.monitor.constant.VerifyUtil;
+import com.creditease.monitor.constant.MonitorConstant;
 import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.exception.MonitorTaskException;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
@@ -94,7 +93,7 @@ public class MonitorTaskController {
             logger.info("deleteTask fail taskName={} not exists", taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
-        if (MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()) {
+        if (MonitorConstant.MonitorTaskStatus.START == monitorTask.getStatus()) {
             logger.info("deleteTask fail taskName={} is starting", taskName);
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }
@@ -118,7 +117,7 @@ public class MonitorTaskController {
             List<String> monitorDates = Arrays.asList(str.split("\\r\\n"));
             DataCleanRuleEntity dataCleanRuleEntity = JSON.parseObject(dataCleanRule, DataCleanRuleEntity.class);
             List<CutExampleVo> vos = monitorTaskService.dataClean(monitorDates, dataCleanRuleEntity);
-            logger.info("数据清洗完成 data={},dataCleanRule={}", data, dataCleanRule);
+            logger.info("数据清洗完成 data={},dataCleanRule={},cutExampleVo={},", data, dataCleanRule,vos);
             return Response.ok(vos);
         } catch (Exception e) {
             return Response.fail(BaseResultCode.COMMON_SYSTEM_ERROR, "数据清洗异常");
@@ -203,7 +202,7 @@ public class MonitorTaskController {
             logger.info("editTask fail taskName={} not exists", monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
         }
-        if (MonitorTaskConstant.MonitorTaskStatus.START == monitorTaskDB.getStatus()) {
+        if (MonitorConstant.MonitorTaskStatus.START == monitorTaskDB.getStatus()) {
             logger.info("editTask fail taskName={} is starting", monitorTask.getTaskName());
             return Response.fail(ResponseCode.DATA_SOURCE_IS_STARTING);
         }

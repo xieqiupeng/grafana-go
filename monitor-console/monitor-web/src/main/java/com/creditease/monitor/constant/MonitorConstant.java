@@ -1,6 +1,6 @@
 package com.creditease.monitor.constant;
 
-public class MonitorTaskConstant {
+public class MonitorConstant {
 
     public static final String comma = ",";
 
@@ -23,12 +23,29 @@ public class MonitorTaskConstant {
         public static final Byte NO = 1;
     }
 
+
+
     /***
-     * 监控服务类型
+     * 监控服务类型（应用类型）
      */
     public static class MonitorServerType{
         /**tomcat服务*/
         public static final Integer tomcatServer = 1;
+
+        /**weblogic服务*/
+        public static final Integer weblogicServer = 2;
+
+        /**mysql数据库服务器*/
+        public static final Integer mysqlServer = 3;
+
+        /**oracle数据库服务器*/
+        public static final Integer oracleServer = 4;
+
+        /**rabbitmq消息队列*/
+        public static final Integer rabbitmqServer = 5;
+
+        /**rocketmq消息队列*/
+        public static final Integer rocketmqServer = 6;
     }
 
 }

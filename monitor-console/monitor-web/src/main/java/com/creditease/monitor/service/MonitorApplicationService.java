@@ -36,6 +36,10 @@ public class MonitorApplicationService {
     @Autowired
     private MonitorProjectExMapper monitorProjectExMapper;
 
+
+    @Autowired
+    private MonitorEtcdService monitorApplicationEtcdService;
+
     /**
      * 根据应用名称模糊查找
      *
@@ -110,7 +114,7 @@ public class MonitorApplicationService {
      * @param desc
      * @return
      */
-
+    @Transactional(rollbackFor = {})
     public boolean addApplication(String applicationName,
                            Integer projectId,
                            Integer machineId,
@@ -128,6 +132,10 @@ public class MonitorApplicationService {
         monitorApplication.setCreateTime(now);
         monitorApplication.setUpdateTime(now);
         monitorApplicationExMapper.insertSelective(monitorApplication);
+
+        monitorApplicationEtcdService.upSertApplicationHome(monitorApplication);
+
+
         return true;
     }
 
@@ -178,12 +186,4 @@ public class MonitorApplicationService {
         return selectOneByApplicationName(projectName) == null ? false : true;
     }
 
-    public boolean startOrPauseApplication(MonitorApplication monitorApplication) {
-        MonitorApplication newStatus = new MonitorApplication();
-        newStatus.setId(monitorApplication.getId());
-        newStatus.setStatus(monitorApplication.getStatus());
-        newStatus.setUpdateTime(new Date());
-        monitorApplicationExMapper.updateByPrimaryKeySelective(newStatus);
-        return true;
-    }
 }

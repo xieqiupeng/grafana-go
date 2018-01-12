@@ -1,7 +1,7 @@
 package com.creditease.monitor.service;
 
 import com.alibaba.fastjson.JSON;
-import com.creditease.monitor.constant.MonitorTaskConstant;
+import com.creditease.monitor.constant.MonitorConstant;
 import com.creditease.monitor.dataclean.DataCleanRuleEntity;
 import com.creditease.monitor.dataclean.DataCleanUtil;
 import com.creditease.monitor.dataclean.IDataCleanRule;
@@ -36,7 +36,7 @@ public class MonitorTaskService {
     private MonitorTaskExMapper monitorTaskExMapper;
 
     @Autowired
-    private MonitorTaskEtcdService monitorTaskEtcdService;
+    private MonitorEtcdService monitorTaskEtcdService;
 
     /**
      * 根据任务名称模糊查找
@@ -100,7 +100,7 @@ public class MonitorTaskService {
         monitorTask.setDataSourceLog(dataSourceLog);
         monitorTask.setProjectId(projectId);
         monitorTask.setMachineId(machineId);
-        monitorTask.setStatus(MonitorTaskConstant.MonitorTaskStatus.PAUSE);
+        monitorTask.setStatus(MonitorConstant.MonitorTaskStatus.PAUSE);
         monitorTaskExMapper.insertSelective(monitorTask);
         return true;
     }
@@ -163,9 +163,9 @@ public class MonitorTaskService {
             //查询当前监控任务
             boolean isStart;
             //启动/暂停状态发生切换
-            if (MonitorTaskConstant.MonitorTaskStatus.START == monitorTask.getStatus()) {
+            if (MonitorConstant.MonitorTaskStatus.START == monitorTask.getStatus()) {
                 isStart = true;
-            } else if (MonitorTaskConstant.MonitorTaskStatus.PAUSE == monitorTask.getStatus()) {
+            } else if (MonitorConstant.MonitorTaskStatus.PAUSE == monitorTask.getStatus()) {
                 isStart = false;
             } else {
                 return false;
@@ -179,13 +179,13 @@ public class MonitorTaskService {
             if (count > 0) {
                 if (isStart) {
                     logger.info("同步ETCD数据源成功 monitorTask={}", JSON.toJSONString(monitorTask));
-                    boolean ok = monitorTaskEtcdService.upSert(monitorTask);
+                    boolean ok = monitorTaskEtcdService.upSertMonitorTask(monitorTask);
                     if (!ok) {
                         throw new MonitorTaskException(ResponseCode.START_TASK_ERROR, StringUtils.EMPTY);
                     }
                 } else {
                     logger.info("删除ETCD数据源成功 monitorTaskName={}", monitorTask.getTaskName());
-                    boolean ok = monitorTaskEtcdService.delete(monitorTask.getTaskName());
+                    boolean ok = monitorTaskEtcdService.delete(String.valueOf(monitorTask.getProjectId()),monitorTask.getTaskName());
                     if (!ok) {
                         throw new MonitorTaskException(ResponseCode.PAUSE_TASK_ERROR, StringUtils.EMPTY);
                     }

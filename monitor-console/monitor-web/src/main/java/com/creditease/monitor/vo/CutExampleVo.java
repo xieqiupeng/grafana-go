@@ -63,4 +63,16 @@ public class CutExampleVo {
     public void setTagOrValue(Integer tagOrValue) {
         this.tagOrValue = tagOrValue;
     }
+
+    @Override
+    public String toString() {
+        return "CutExampleVo{" +
+                "columnName='" + columnName + '\'' +
+                ", columnFormat='" + columnFormat + '\'' +
+                ", columnSeq=" + columnSeq +
+                ", columnType='" + columnType + '\'' +
+                ", tagOrValue=" + tagOrValue +
+                ", columnExampleValue=" + columnExampleValue +
+                '}';
+    }
 }

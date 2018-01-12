@@ -68,6 +68,20 @@ public class MonitorMachineService {
     }
 
 
+    /**
+     * 根据机器Id和项目Id查找
+     *
+     * @param machineId
+     * @return
+     */
+    public MonitorMachine selectByMachineIdAndProjectId(Integer machineId,Integer projectId) {
+
+        //执行查询
+        MonitorMachine monitorMachine = monitorMachineExMapper.selectByMachineIdAndProjectId(machineId, projectId);
+        return monitorMachine;
+    }
+
+
 
 
 

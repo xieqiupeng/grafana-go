@@ -24,6 +24,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));
+        this.panel.title='项目管理';
     }
 
     onPanelInitalized() {

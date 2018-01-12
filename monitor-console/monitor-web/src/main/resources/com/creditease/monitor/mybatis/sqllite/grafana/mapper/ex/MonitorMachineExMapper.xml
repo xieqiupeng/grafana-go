@@ -23,6 +23,13 @@
     WHERE machine_name = #{machineName}
   </select>
 
+  <select id="selectByMachineIdAndProjectId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from monitor_machine
+    where machine_id = #{0} AND project_id=#{1}
+  </select>
+
 
   <select id="selectByMachineNameAndProjectId" resultMap="BaseResultMap" >
     select
