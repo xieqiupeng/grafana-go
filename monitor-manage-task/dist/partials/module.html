@@ -69,9 +69,8 @@
                             <input type="button" value="暂停" ng-if="task.status=='启动'" class="btn btn-primary" ng-click="startOrPauseTaskFunction(ctrl.panel.serverHost,task.taskName,1)"/>
                             <input type="button" value="启动" ng-if="task.status=='暂停'" class="btn btn-primary" ng-click="startOrPauseTaskFunction(ctrl.panel.serverHost,task.taskName,0)"/>
                         </td>
-                        <td  align="center"><input type="button" value="编辑" class="btn btn-primary"  ng-click="showEditMonitorTaskTab(ctrl.panel.serverHost,task.taskName)" /></td>
-
-                        <td  align="center"><input type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(ctrl.panel.serverHost,task.taskName)"/></td>
+                        <td  align="center"><input ng-disabled="task.status=='启动'" type="button" value="编辑" class="btn btn-primary"  ng-click="showEditMonitorTaskTab(ctrl.panel.serverHost,task.taskName)" /></td>
+                        <td  align="center"><input ng-disabled="task.status=='启动'" type="button" value="删除" class="btn btn-primary" ng-click="deleteTaskFunction(ctrl.panel.serverHost,task.taskName)"/></td>
                     </tr>
                 </table>
                 <br/>

@@ -266,7 +266,6 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                         } else if (1 == rsp.data.data.list[i].status) {
                             rsp.data.data.list[i].status = '暂停';
                         }
-
                     }
                     $scope.taskArray = rsp.data.data.list;
                     //设置分页内容
