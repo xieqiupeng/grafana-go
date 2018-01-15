@@ -10,13 +10,12 @@
     <result column="application_type" property="applicationType" jdbcType="TINYINT" />
     <result column="application_detail_param" property="applicationDetailParam" jdbcType="VARCHAR" />
     <result column="application_desc" property="applicationDesc" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, project_id, machine_id, application_name, application_type, application_detail_param,
-    application_desc, status, create_time, update_time
+    application_desc, create_time, update_time
   </sql>
 
   <select id="selectOneByMachineId" parameterType="java.lang.Integer" resultMap="BaseResultMap">

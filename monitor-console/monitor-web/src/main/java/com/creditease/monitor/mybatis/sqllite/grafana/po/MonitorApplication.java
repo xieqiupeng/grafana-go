@@ -7,7 +7,6 @@ public class MonitorApplication {
     /******************start ??????*****************/
     private String projectName;
     private String machineName;
-    private String statusText;
     /******************end ??????*****************/
 
     private Integer id;
@@ -25,7 +24,6 @@ public class MonitorApplication {
 
     private String applicationDesc;
 
-    private Byte status;
 
     private Date createTime;
 
@@ -87,14 +85,6 @@ public class MonitorApplication {
         this.applicationDesc = applicationDesc == null ? null : applicationDesc.trim();
     }
 
-    public Byte getStatus() {
-        return status;
-    }
-
-    public void setStatus(Byte status) {
-        this.status = status;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -127,11 +117,4 @@ public class MonitorApplication {
         this.machineName = machineName;
     }
 
-    public String getStatusText() {
-        return statusText;
-    }
-
-    public void setStatusText(String statusText) {
-        this.statusText = statusText;
-    }
 }

@@ -34,7 +34,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
     }
 
     public onInitEditMode() {
-        this.addEditorTab('Options', 'public/plugins/monitor-manage-panel/partials/option.html', 1);
+        this.addEditorTab('Options', 'public/plugins/monitor-manage-machine-panel/partials/option.html', 1);
     }
 
     changeServerHost(object) {
@@ -259,13 +259,16 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                     $scope.formData.id=rsp.data.data.id;
                     //机器名称
                     $scope.formData.machineName=rsp.data.data.machineName;
-                    //数据源Ip
+                    //机器描述
                     $scope.formData.machineDesc=rsp.data.data.machineDesc;
                     //所属项目
                     $scope.formData.projectId=rsp.data.data.projectId.toString();
 
                     //机器Ip
                     $scope.formData.machineIp=rsp.data.data.machineIp;
+
+                    //操作系统
+                    $scope.formData.operateSystemType=rsp.data.data.operateSystemType.toString();
 
                     //跳转到编辑页面
                     $scope.actions.setCurrent(2);

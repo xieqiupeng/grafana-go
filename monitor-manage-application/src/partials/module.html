@@ -41,7 +41,7 @@
 
 
                                         <td><span class="gf-form-label width-7">所属机器</span></td>
-                                        <td><select size="1" class="gf-form-input" id="machineId" ng-model="machineId"  ng-change="selectChangeMachine(ctrl.panel.serverHost)" style="width: auto">
+                                        <td><select size="1" class="gf-form-input" id="machineId" ng-model="machineId" style="width: auto">
                                             <option value="" >请选择所属机器</option>
                                             <option ng-repeat="machine in ctrl.allAuthorizeMachine" value="{{machine.id}}" >{{machine.machineName}}</option>
                                         </select>
@@ -58,7 +58,7 @@
                                 </a>
                             </td>
                             <td >
-                                <a  ng-click="showAddMonitorApplicationTab()">
+                                <a  ng-click="showAddMonitorApplicationTab(ctrl.panel.serverHost)">
                                     <i class="fa fa-plus" aria-hidden="true"></i>新建
                                 </a>
                             </td>
@@ -73,7 +73,6 @@
                     <tr >
                         <td align="center">序号</td>
                         <td align="center">应用Id</td>
-                        <td align="center">状态</td>
                         <td align="center">应用名称</td>
                         <td align="center">所属项目</td>
                         <td align="center">所属机器</td>
@@ -84,7 +83,6 @@
                     <tr ng-repeat="application in applicationArray">
                         <td>{{$index+1}}</td>
                         <td>{{application.id}}</td>
-                        <td>{{application.statusText}}</td>
                         <td>{{application.applicationName}}</td>
                         <td>{{application.projectName}}</td>
                         <td>{{application.machineName}}</td>
@@ -153,7 +151,7 @@
                             <div class="gf-form">
                                 <span class="gf-form-label width-7">应用参数</span>
                                 <input class="gf-form-input width-25 ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       ng-model="formData.applicationDetailParam" type="text" placeholder="请填写应用参数如端口,多个用逗号分隔">
+                                       ng-model="formData.applicationDetailParam" type="text" placeholder="请填写应用参数如端口，多个用逗号分隔">
                             </div>
                             <div class="gf-form">
                                 <span class="gf-form-label width-7">应用描述</span>

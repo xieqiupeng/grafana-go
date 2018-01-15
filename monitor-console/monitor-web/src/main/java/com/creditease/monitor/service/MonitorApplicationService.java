@@ -75,17 +75,6 @@ public class MonitorApplicationService {
             monitorApplication.setMachineName(monitorMachine==null?"未知机器":monitorMachine.getMachineName());
             monitorApplication.setProjectName(monitorProject==null?"未知项目":monitorProject.getProjectName());
 
-            if(monitorApplication.getStatus()==MonitorApplicationConstant.MonitorApplicationStatus.START){
-                //启动状态
-                monitorApplication.setStatusText(MonitorApplicationConstant.MonitorApplicationStatus.STARTTEXT);
-            }else if(monitorApplication.getStatus()==MonitorApplicationConstant.MonitorApplicationStatus.PAUSE){
-                //暂停状态
-                monitorApplication.setStatusText(MonitorApplicationConstant.MonitorApplicationStatus.PAUSETEXT);
-            }else{
-                //未知状态
-                monitorApplication.setStatusText("未知状态");
-            }
-
         }
     }
 

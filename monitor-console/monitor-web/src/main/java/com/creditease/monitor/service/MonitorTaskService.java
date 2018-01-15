@@ -185,7 +185,7 @@ public class MonitorTaskService {
                     }
                 } else {
                     logger.info("删除ETCD数据源成功 monitorTaskName={}", monitorTask.getTaskName());
-                    boolean ok = monitorTaskEtcdService.delete(monitorTask.getProjectId(),monitorTask.getTaskName());
+                    boolean ok = monitorTaskEtcdService.deleteTask(monitorTask.getProjectId(),monitorTask.getTaskName());
                     if (!ok) {
                         throw new MonitorTaskException(ResponseCode.PAUSE_TASK_ERROR, StringUtils.EMPTY);
                     }

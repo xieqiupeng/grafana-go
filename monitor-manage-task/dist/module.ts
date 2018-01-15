@@ -35,7 +35,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
     allAuthorizeMachine=[];
     allAuthorizeMachineChecked=[];
     public onInitEditMode() {
-        this.addEditorTab('Options', 'public/plugins/monitor-manage-panel/partials/option.html', 1);
+        this.addEditorTab('Options', 'public/plugins/monitor-manage-task-panel/partials/option.html', 1);
     }
 
     //搜索所有授权的项目

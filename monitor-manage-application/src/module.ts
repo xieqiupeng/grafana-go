@@ -34,7 +34,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
     }
 
     public onInitEditMode() {
-        this.addEditorTab('Options', 'public/plugins/monitor-manage-panel/partials/option.html', 1);
+        this.addEditorTab('Options', 'public/plugins/monitor-manage-application/partials/option.html', 1);
     }
 
     changeServerHost(object) {
@@ -137,20 +137,16 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         $scope.selectChangeProject=function (serverHost) {
             $scope.projectId=document.getElementById('projectId');
             $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
+            //项目下拉列表发生变化时,1、机器id设置为空，2、机器下拉列表设置为空。
+            $scope.machineId=''
+            this.ctrl.allAuthorizeMachine=[];
+
             if($scope.projectId!=null&&$scope.projectId!=''){
                 this.ctrl.searchAllAuthorizeMachines(serverHost,$scope.projectId);
             }else{
-                this.ctrl.allAuthorizeMachine=[];
+                // this.ctrl.allAuthorizeMachine=[];
             }
         }
-
-        $scope.selectChangeMachine= function (serverHost) {
-            $scope.searchFunction(serverHost);
-        }
-
-
-
-
 
         //搜索功能
         $scope.searchFunction = function (serverHost) {
@@ -198,27 +194,6 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             });
         };
 
-        //启动/暂停
-        $scope.startOrPauseApplicationFunction = function (serverHost, applicationId, status) {
-            var param = 'applicationId=' + applicationId + '&status=' + status;
-            $http({
-                url: serverHost + 'monitorApplication/startOrPauseApplication' + "?" + param,
-                withCredentials: true,
-                method: 'GET'
-            }).then((rsp) => {
-                console.log("invoke startOrPauseApplication ok:", rsp.data.resultCode, rsp.data.resultMsg);
-                if (rsp.data.resultCode == 0) {
-                    //重新拉取监控任务
-                    $scope.searchFunction(serverHost);
-                } else {
-                    alert('启动/暂停失败！具体原因：' + rsp.data.resultMsg + "。");
-                }
-            }, err => {
-                console.log("invoke startOrPauseApplication err:", err);
-                alert("连接后台服务异常,请检查options中serverHost地址是否连通！");
-            });
-        };
-        
         //切换tab时,提示确定退出
         $scope.confirmChangeTab=function(serverHost){
             if($scope.data.current!=1){
@@ -279,7 +254,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         }
 
         //搜索所有授权的机器
-        $scope.searchAllAuthorizeMachines = function (serverHost,projectId) {
+        $scope.searchAllAuthorizeMachines = function (serverHost,projectId,fun) {
 
             $http({
                 url: serverHost + 'monitorMachine/searchAllAuthorizeMachinesByProjectId?projectId='+projectId,
@@ -291,14 +266,14 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
                     //设置列表内容
                     this.ctrl.allAuthorizeMachine=[];
                     this.ctrl.allAuthorizeMachine = rsp.data.data;
-                    if(this.ctrl.allAuthorizeMachine.length>0){
-                        $scope.formData.machineId=this.ctrl.allAuthorizeMachine[0].id.toString();
-                        console.log('$scope.formData.machineId '+$scope.formData.machineId);
+                    // if(this.ctrl.allAuthorizeMachine.length>0){
+                    //     $scope.formData.machineId=this.ctrl.allAuthorizeMachine[0].id.toString();
+                    //     console.log('$scope.formData.machineId '+$scope.formData.machineId);
+                    // }
+                    if(fun!=null){
+                        fun(rsp.data.data);
                     }
 
-                    // if(rsp.data.data.length>0){
-                    //
-                    // }
                 } else {
                     alert('获取所有授权的机器失败!具体原因：' + rsp.data.resultMsg);
                 }
@@ -310,14 +285,11 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
 
 
         $scope.selectChangeFormDataProject=function(serverHost){
-            // $scope.projectId=document.getElementById('projectId');
-            // $scope.projectId=($scope.projectId==null? "":$scope.projectId.value);
-            //console.log("serverHost:"+serverHost);
-            $scope.searchAllAuthorizeMachines(serverHost,$scope.formData.projectId);
+            $scope.searchAllAuthorizeMachines(serverHost,$scope.formData.projectId,$scope.initAddMonitorApplicationTab);
 
         }
         //清空新建or编辑Tab页面
-        $scope.clearNewOrEditMonitorApplicationTab=function(){
+        $scope.clearNewOrEditMonitorApplicationTab=function(serverHost,flag){
 
             /********************************基本属性************************************/
             //应用id
@@ -329,7 +301,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             //应用端口
             $scope.formData.applicationDetailParam="";
             //应用类型
-            $scope.formData.applicationType="0";
+            $scope.formData.applicationType="1";
 
             //所属项目
             if(this.ctrl.allAuthorizeProject.length>0){
@@ -337,22 +309,30 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
             }
 
             //所属机器
-            if(this.ctrl.allAuthorizeMachine.length>0){
-                $scope.formData.machineId=this.ctrl.allAuthorizeMachine[0].id.toString();
+            if(flag=='new'){
+                $scope.searchAllAuthorizeMachines(serverHost,$scope.formData.projectId,$scope.initAddMonitorApplicationTab);
+            }else{
+                $scope.searchAllAuthorizeMachines(serverHost,$scope.formData.projectId,null);
             }
 
         }
+        $scope.initAddMonitorApplicationTab=function(allAuthorizeMachine){
+            if(allAuthorizeMachine.length>0){
+                $scope.formData.machineId=allAuthorizeMachine[0].id.toString();
+                //赋值了
+            }
+        }
 
-        $scope.showAddMonitorApplicationTab=function () {
+        $scope.showAddMonitorApplicationTab=function (serverHost) {
             //清空新建Tab页面
-            $scope.clearNewOrEditMonitorApplicationTab();
+            $scope.clearNewOrEditMonitorApplicationTab(serverHost,'new');
             //跳转到新建页面
             $scope.actions.setCurrent(3);
         }
 
         $scope.showEditMonitorApplicationTab=function (serverHost,id) {
             //清空编辑Tab页面
-            $scope.clearNewOrEditMonitorApplicationTab();
+            $scope.clearNewOrEditMonitorApplicationTab(serverHost,'edit');
             var param = 'id=' + id;
             $http({
                 url: serverHost + 'monitorApplication/getApplicationByApplicationId' + "?" + param,

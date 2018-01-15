@@ -27,7 +27,7 @@
     select
     <include refid="Base_Column_List" />
     from monitor_machine
-    where machine_id = #{0} AND project_id=#{1}
+    where id = #{0} AND project_id=#{1}
   </select>
 
 

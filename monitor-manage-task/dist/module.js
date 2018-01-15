@@ -65,7 +65,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                 MonitorManageCtrl.prototype.onPanelInitalized = function () {
                 };
                 MonitorManageCtrl.prototype.onInitEditMode = function () {
-                    this.addEditorTab('Options', 'public/plugins/monitor-manage-panel/partials/option.html', 1);
+                    this.addEditorTab('Options', 'public/plugins/monitor-manage-task-panel/partials/option.html', 1);
                 };
                 MonitorManageCtrl.prototype.changeServerHost = function (object) {
                     // alert(this.serverHost);

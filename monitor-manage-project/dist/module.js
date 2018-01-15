@@ -34,6 +34,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
                     // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
                     this.events.on('panel-initialized', this.render.bind(this));
+                    this.panel.title = '项目管理';
                 }
                 MonitorManageCtrl.prototype.onPanelInitalized = function () {
                 };

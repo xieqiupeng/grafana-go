@@ -33,11 +33,11 @@ public class MonitorEtcdService {
     private MonitorMachineService monitorMachineService;
 
 //    private static final String MONITOR_TASK_DIR = "/monitor";
-    private static final String MONITOR_TASK_PREFFIX_DIR = "/testmonitor";
-    private static final String PROJECT_DIR="/project_id_";
-    //只存应用
-    private static final String APPLICATION_HOME = "/application_home";
-    private static final String CHAR_START = "/";
+    private static final String MONITOR_DIR = "/testmonitor";
+    private static final String PROJECT_PREFFIX="/projectId";
+    private static final String TASK_PREFFIX="_taskName";
+    private static final String APPLICATION_HOME = "_applicationHome";
+
     private static final String ETCD_DATA_TYPE = "log";
 
 
@@ -64,7 +64,7 @@ public class MonitorEtcdService {
                 }
 
                 /*************************************检查service是否存在**************************/
-                MonitorNoteDataEntity applicationHomeDataEntity = select(monitorApplication.getProjectId(),APPLICATION_HOME);
+                MonitorNoteDataEntity applicationHomeDataEntity = selectApplicationHome(monitorApplication.getProjectId());
                 List<MonitorNoteDataEntity.MonitorService> applicationHomeServices = applicationHomeDataEntity.getServices();
 
                 boolean hasAddService=false;
@@ -74,8 +74,9 @@ public class MonitorEtcdService {
                         for (MonitorNoteDataEntity.ServerTypeParam applicationServerTypeParam:applicationServerTypeParams){
                             int applicationType = applicationServerTypeParam.getType();
                             //新增的一个服务只有一个serverTypeParam元素
+                            String beforeMergeStr=JSON.toJSONString(applicationHomeDataEntity);
+                            //同一个ip的相同应用
                             if (applicationType==monitorApplication.getApplicationType()){
-                                String beforeMergeStr=JSON.toJSONString(applicationHomeDataEntity);
                                 for(String needParam:needParamList){
                                     if (!applicationServerTypeParam.getParam().contains(needParam)){
                                         applicationServerTypeParam.getParam().add(needParam);
@@ -86,8 +87,14 @@ public class MonitorEtcdService {
                                 break;
                             }
                         }
-
-                        hasAddService=true;
+                        if(hasAddService==false){
+                            //同一个ip的不同应用
+                            MonitorNoteDataEntity.ServerTypeParam needServerTypeParam=new MonitorNoteDataEntity.ServerTypeParam();
+                            needServerTypeParam.setParam(needParamList);
+                            needServerTypeParam.setType(monitorApplication.getApplicationType());
+                            applicationServerTypeParams.add(needServerTypeParam);
+                            hasAddService=true;
+                        }
                         break;
                     }
                 }
@@ -154,10 +161,10 @@ public class MonitorEtcdService {
             MonitorNoteDataEntity taskNoteDataEntity = new MonitorNoteDataEntity();
 
             //处理应用,首先从APPLICATION_HOME文件中拷贝,如果APPLICATION_HOME文件不存在,则首先创建APPLICATION_HOME文件，
-            // APPLICATION_HOME文件位置:/MONITOR_TASK_PREFFIX_DIR/projectId/APPLICATION_HOME。
-            // 最后创建task文件,task文件路径/MONITOR_TASK_PREFFIX_DIR/projectId/taskname
+            // APPLICATION_HOME文件位置:/MONITOR_DIR/projectId/APPLICATION_HOME。
+            // 最后创建task文件,task文件路径/MONITOR_DIR/projectId/taskname
             try {
-                MonitorNoteDataEntity applicationHomeDataEntity = select(monitorTask.getProjectId(),APPLICATION_HOME);
+                MonitorNoteDataEntity applicationHomeDataEntity = selectApplicationHome(monitorTask.getProjectId());
                 List<MonitorNoteDataEntity.MonitorService> needCopyServices = new ArrayList<>();
                 List<MonitorNoteDataEntity.MonitorService> applicationHomeServices = applicationHomeDataEntity.getServices();
                 //从applicationHome文件拷贝service记录
@@ -185,7 +192,7 @@ public class MonitorEtcdService {
     }
 
     public boolean setValue(Integer projectId,String key,String value) {
-        String ectdKey = checkAndGetEtcdKey(projectId,key);
+        String ectdKey = checkAndGetTaskEtcdKey(projectId,key);
         try {
             etcdClient.getKVClient()
                     .put(ByteSequence.fromString(ectdKey),
@@ -201,7 +208,7 @@ public class MonitorEtcdService {
 
 
     public boolean deleteApplicationHome(Integer projectId) {
-        String ectdKey = checkAndGetEtcdKey(projectId,APPLICATION_HOME);
+        String ectdKey = checkAndGetApplicationHomeEtcdKey(projectId);
         try {
             etcdClient.getKVClient()
                     .delete(ByteSequence.fromString(ectdKey))
@@ -215,8 +222,8 @@ public class MonitorEtcdService {
 
 
 
-    public boolean delete(Integer projectId,String key) {
-        String ectdKey = checkAndGetEtcdKey(projectId,key);
+    public boolean deleteTask(Integer projectId,String taskName) {
+        String ectdKey = checkAndGetTaskEtcdKey(projectId,taskName);
         try {
             etcdClient.getKVClient()
                     .delete(ByteSequence.fromString(ectdKey))
@@ -228,8 +235,9 @@ public class MonitorEtcdService {
         return true;
     }
 
-    public MonitorNoteDataEntity select(Integer projectId,String key) throws Exception {
-        String ectdKey = checkAndGetEtcdKey(projectId,key);
+
+    public MonitorNoteDataEntity selectApplicationHome(Integer projectId) throws Exception {
+        String ectdKey = checkAndGetApplicationHomeEtcdKey(projectId);
         if (StringUtils.isNotBlank(ectdKey)) {
             GetResponse response = etcdClient.getKVClient()
                     .get(ByteSequence.fromString(ectdKey))
@@ -257,18 +265,23 @@ public class MonitorEtcdService {
         }
     }
 
-    private String checkAndGetEtcdKey(Integer projectId,String key) {
+    private String checkAndGetTaskEtcdKey(Integer projectId, String taskName) {
         checkNull(projectId);
-        checkNull(key);
-
-        StringBuffer buffer = new StringBuffer(MONITOR_TASK_PREFFIX_DIR);
-        buffer.append(PROJECT_DIR);
+        checkNull(taskName);
+        StringBuffer buffer = new StringBuffer(MONITOR_DIR);
+        buffer.append(PROJECT_PREFFIX);
         buffer.append(projectId);
+        buffer.append(TASK_PREFFIX);
+        buffer.append(taskName);
+        return buffer.toString();
+    }
 
-        if (!key.startsWith(CHAR_START)) {
-            buffer.append(CHAR_START);
-        }
-        buffer.append(key);
+    private String checkAndGetApplicationHomeEtcdKey(Integer projectId) {
+        checkNull(projectId);
+        StringBuffer buffer = new StringBuffer(MONITOR_DIR);
+        buffer.append(PROJECT_PREFFIX);
+        buffer.append(projectId);
+        buffer.append(APPLICATION_HOME);
         return buffer.toString();
     }
 
@@ -281,7 +294,7 @@ public class MonitorEtcdService {
 //        monitorTask.setDataSourceLog("a.txt");
 //        monitorTask.setCutTemplate("CutTemplate");
 //        if (monitorTask != null) {
-//            String key = monitorTaskEtcdService.checkAndGetEtcdKey(monitorTask.getTaskName()); // key:  /monitor/taskName
+//            String key = monitorTaskEtcdService.checkAndGetTaskEtcdKey(monitorTask.getTaskName()); // key:  /monitor/taskName
 //            String cutTemplate = monitorTask.getCutTemplate();
 //            String dataSourceServerIp ="127.0.0.1,127.0.0.2" ;
 //            String dataSourceLog = monitorTask.getDataSourceLog();

@@ -57,6 +57,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
                     // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
                     this.events.on('panel-initialized', this.render.bind(this));
+                    this.panel.title = '机器管理';
                     this.searchAllAuthorizeProjects(panelDefaults.serverHost);
                 }
                 MonitorManageCtrl.prototype.onPanelInitalized = function () {
@@ -241,12 +242,14 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                                 $scope.formData.id = rsp.data.data.id;
                                 //机器名称
                                 $scope.formData.machineName = rsp.data.data.machineName;
-                                //数据源Ip
+                                //机器描述
                                 $scope.formData.machineDesc = rsp.data.data.machineDesc;
                                 //所属项目
                                 $scope.formData.projectId = rsp.data.data.projectId.toString();
                                 //机器Ip
                                 $scope.formData.machineIp = rsp.data.data.machineIp;
+                                //操作系统
+                                $scope.formData.operateSystemType = rsp.data.data.operateSystemType.toString();
                                 //跳转到编辑页面
                                 $scope.actions.setCurrent(2);
                             }
