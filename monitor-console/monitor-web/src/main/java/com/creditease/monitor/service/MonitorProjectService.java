@@ -105,7 +105,8 @@ public class MonitorProjectService {
         monitorProject.setUpdateTime(now);
         monitorProjectExMapper.insertSelective(monitorProject);
         try {
-            return monitorApplicationEtcdService.initApplicationHome(monitorProject.getId());
+            monitorApplicationEtcdService.initApplicationHome(monitorProject.getId());
+            return true;
         } catch (Exception e) {
             logger.error("初始化projectId为{}的ApplicationHome失败",monitorProject.getId());
             e.printStackTrace();

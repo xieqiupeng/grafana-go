@@ -53,7 +53,7 @@ public class MonitorApplicationController {
             logger.info("deleteApplication fail id={} not exists", id);
             return Response.fail(ResponseCode.APPLICATION_NOT_EXISTS);
         }
-        boolean ok = monitorApplicationService.deleteApplication(monitorApplication.getId());
+        boolean ok = monitorApplicationService.deleteApplication(monitorApplication);
         return Response.ok(ok);
     }
 
@@ -177,8 +177,10 @@ public class MonitorApplicationController {
      */
     @RequestMapping("/editApplication")
     public Response editApplication(@RequestBody MonitorApplication monitorApplication) {
-        logger.info("editApplication start applicationName={},applicationType={},applicationDetailParam={},desc={}",
+        logger.info("editApplication start applicationName={},projectId={},machineId={},applicationType={},applicationDetailParam={},applicationDesc={}",
                 monitorApplication.getApplicationName(),
+                monitorApplication.getProjectId(),
+                monitorApplication.getMachineId(),
                 monitorApplication.getApplicationType(),
                 monitorApplication.getApplicationDetailParam(),
                 monitorApplication.getApplicationDesc());
@@ -191,7 +193,7 @@ public class MonitorApplicationController {
             return Response.fail(ResponseCode.APPLICATION_NOT_EXISTS);
         }
 
-        boolean ok = monitorApplicationService.editApplication(monitorApplication.getId(),  monitorApplication.getApplicationType(), monitorApplication.getApplicationDetailParam(), monitorApplication.getApplicationDesc());
+        boolean ok = monitorApplicationService.editApplication(monitorApplication);
         logger.info("editApplication end applicationId={},result={}", monitorApplication.getId(), ok);
         return Response.ok(ok);
     }

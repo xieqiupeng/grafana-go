@@ -26,6 +26,13 @@
     limit 1
   </select>
 
+  <select id="selectByProjectId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM monitor_application
+    WHERE project_id = #{projectId}
+  </select>
+
   <select id="selectByApplicationName" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

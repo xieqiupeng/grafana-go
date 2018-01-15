@@ -16,6 +16,8 @@ public interface MonitorApplicationExMapper extends MonitorApplicationMapper {
 
     List<MonitorApplication> selectByApplicationName(MonitorApplication monitorApplication);
 
+    List<MonitorApplication> selectByProjectId(Integer projectId);
+
     MonitorApplication selectOneByApplicationName(String applicationName);
 
     List<MonitorApplication> selectOneByMachineId(Integer machineId);

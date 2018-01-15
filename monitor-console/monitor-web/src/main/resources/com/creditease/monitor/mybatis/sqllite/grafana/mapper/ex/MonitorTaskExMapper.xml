@@ -38,4 +38,12 @@
     FROM monitor_task2
     WHERE task_name = #{taskName}
   </select>
+
+  <select id="selectByProjectId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM monitor_task2
+    WHERE project_id = #{projectId}
+  </select>
+
 </mapper>

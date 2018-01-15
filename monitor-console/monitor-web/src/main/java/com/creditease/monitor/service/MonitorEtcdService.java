@@ -3,6 +3,7 @@ package com.creditease.monitor.service;
 import com.alibaba.fastjson.JSON;
 import com.coreos.jetcd.Client;
 import com.coreos.jetcd.data.ByteSequence;
+import com.coreos.jetcd.data.KeyValue;
 import com.coreos.jetcd.kv.GetResponse;
 import com.creditease.monitor.constant.MonitorConstant;
 import com.creditease.monitor.etcd.entity.MonitorNoteDataEntity;
@@ -65,6 +66,9 @@ public class MonitorEtcdService {
 
                 /*************************************检查service是否存在**************************/
                 MonitorNoteDataEntity applicationHomeDataEntity = selectApplicationHome(monitorApplication.getProjectId());
+                if(null==applicationHomeDataEntity){
+                    applicationHomeDataEntity=initApplicationHome(monitorApplication.getProjectId());
+                }
                 List<MonitorNoteDataEntity.MonitorService> applicationHomeServices = applicationHomeDataEntity.getServices();
 
                 boolean hasAddService=false;
@@ -112,10 +116,11 @@ public class MonitorEtcdService {
                     LOGGER.info("etcd不含有此ip={}的应用,所以直接添加此ip的应用",needAddService.getHost());
                 }
                 String str = JSON.toJSONString(applicationHomeDataEntity);
-                setValue(monitorApplication.getProjectId(),APPLICATION_HOME,str);
+                setApplicationHomeValue(monitorApplication.getProjectId(),str);
                 return true;
             } catch (Exception e) {
-                LOGGER.error("upSertMonitorApplication error monitorApplication={},errorMsg",
+
+                LOGGER.error("upSertMonitorApplication error monitorApplication={},errorMsg={}",
                         JSON.toJSONString(monitorApplication),
                         e.getMessage());
             }
@@ -124,14 +129,18 @@ public class MonitorEtcdService {
     }
 
     //初始化applicationHome文件,创建一个空的文件
-    public boolean initApplicationHome(Integer projectId) throws Exception {
+    public MonitorNoteDataEntity initApplicationHome(Integer projectId) throws Exception {
         MonitorNoteDataEntity applicationHomeDataEntity=new MonitorNoteDataEntity();
         applicationHomeDataEntity.setCleanRule(" ");
         applicationHomeDataEntity.setPath(new ArrayList<>());
         applicationHomeDataEntity.setServices(new ArrayList<>());
         applicationHomeDataEntity.setType(ETCD_DATA_TYPE);
         String applicationHomeDataEntityStr = JSON.toJSONString(applicationHomeDataEntity);
-        return setValue(projectId,APPLICATION_HOME,applicationHomeDataEntityStr);
+        boolean setFlag=setApplicationHomeValue(projectId,applicationHomeDataEntityStr);
+        if (true==setFlag){
+            return applicationHomeDataEntity;
+        }
+        throw new RuntimeException("初始化applicationHome文件失败");
     }
 
     //创建监控任务
@@ -181,9 +190,9 @@ public class MonitorEtcdService {
                 taskNoteDataEntity.setPath(Arrays.asList(pathArr));
                 taskNoteDataEntity.setServices(needCopyServices);
 
-                return setValue(monitorTask.getProjectId(),monitorTask.getTaskName(),JSON.toJSONString(taskNoteDataEntity));
+                return setTaskValue(monitorTask.getProjectId(),monitorTask.getTaskName(),JSON.toJSONString(taskNoteDataEntity));
             } catch (Exception e) {
-                LOGGER.error("upSertMonitorTask error monitorTask={},errorMsg",
+                LOGGER.error("upSertMonitorTask error monitorTask={},errorMsg={}",
                         JSON.toJSONString(taskNoteDataEntity),
                         e.getMessage());
             }
@@ -191,13 +200,29 @@ public class MonitorEtcdService {
         return false;
     }
 
-    public boolean setValue(Integer projectId,String key,String value) {
+    public boolean setTaskValue(Integer projectId,String key,String value) {
         String ectdKey = checkAndGetTaskEtcdKey(projectId,key);
         try {
             etcdClient.getKVClient()
                     .put(ByteSequence.fromString(ectdKey),
                             ByteSequence.fromString(value))
                     .get();
+            LOGGER.info("setTaskValue key={},value={}",ectdKey, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean setApplicationHomeValue(Integer projectId,String value) {
+        String ectdKey = checkAndGetApplicationHomeEtcdKey(projectId);
+        try {
+            etcdClient.getKVClient()
+                    .put(ByteSequence.fromString(ectdKey),
+                            ByteSequence.fromString(value))
+                    .get();
+            LOGGER.info("setApplicationHomeValue key={},value={}",ectdKey, value);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -213,6 +238,7 @@ public class MonitorEtcdService {
             etcdClient.getKVClient()
                     .delete(ByteSequence.fromString(ectdKey))
                     .get();
+            LOGGER.info("deleteApplicationHome projectId={}",projectId);
         } catch (InterruptedException | ExecutionException e1) {
             LOGGER.info("delete key={} error,msg={}", ectdKey, e1.getMessage());
             return false;
@@ -228,6 +254,7 @@ public class MonitorEtcdService {
             etcdClient.getKVClient()
                     .delete(ByteSequence.fromString(ectdKey))
                     .get();
+            LOGGER.info("deleteTask projectId={},taskName={}",projectId,taskName);
         } catch (InterruptedException | ExecutionException e1) {
             LOGGER.info("delete key={} error,msg={}", ectdKey, e1.getMessage());
             return false;
@@ -242,7 +269,12 @@ public class MonitorEtcdService {
             GetResponse response = etcdClient.getKVClient()
                     .get(ByteSequence.fromString(ectdKey))
                     .get();
-            String nodeValue = response.getKvs()
+
+            List<KeyValue> kvs = response.getKvs();
+            if (kvs==null||kvs.size()==0){
+                return null;
+            }
+            String nodeValue = kvs
                     .get(0)
                     .getValue()
                     .toStringUtf8();

@@ -1,12 +1,15 @@
 package com.creditease.monitor.service;
 
 import com.creditease.monitor.constant.MonitorApplicationConstant;
+import com.creditease.monitor.constant.MonitorConstant;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorApplicationExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorMachineExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorProjectExMapper;
+import com.creditease.monitor.mybatis.sqllite.grafana.mapper.ex.MonitorTaskExMapper;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorApplication;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorMachine;
 import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorProject;
+import com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,8 @@ public class MonitorApplicationService {
     @Autowired
     private MonitorProjectExMapper monitorProjectExMapper;
 
+    @Autowired
+    private MonitorTaskExMapper monitorTaskExMapper;
 
     @Autowired
     private MonitorEtcdService monitorApplicationEtcdService;
@@ -81,15 +86,50 @@ public class MonitorApplicationService {
 
     /**
      * 删除Application
-     *
-     * @param applicationId
+     * @param monitorApplication
      * @return
      */
-    public boolean deleteApplication(int applicationId) {
-        //删除当前监控项目
+    @Transactional(rollbackFor = {})
+    public boolean deleteApplication(MonitorApplication monitorApplication) {
+        //删除应用前,因为存在application共有的情况。在此处采用的策略是,
+        //1、删除数据库记录
+        //2、删除etc application home文件
+        //3、根据当前项目的所有application,重新生成application home文件
+        //4、删除当前项目下的所有task的etc文件，并且同时生成task的etc文件
 
-        monitorApplicationExMapper.deleteByPrimaryKey(applicationId);
-        return true;
+        //1 删除数据库记录
+        int count = monitorApplicationExMapper.deleteByPrimaryKey(monitorApplication.getId());
+        if (count>0){
+            updateAllReferenceEtcdKey(monitorApplication);
+            return true;
+        }
+        return false;
+    }
+
+    //更新所有相关的EtcdKey
+    private void updateAllReferenceEtcdKey(MonitorApplication monitorApplication){
+
+        //2 删除etc application home文件
+        monitorApplicationEtcdService.deleteApplicationHome(monitorApplication.getProjectId());
+        //3 根据当前项目的所有application,重新生成application home文件
+        List<MonitorApplication> monitorApplicationList = monitorApplicationExMapper.selectByProjectId(monitorApplication.getProjectId());
+        if (monitorApplicationList!=null){
+            monitorApplicationList.forEach((ma)->{
+                monitorApplicationEtcdService.upSertApplicationHome(ma);
+            });
+        }
+        //4、删除当前项目下的所有task的etc文件，并且同时生成task的etc文件
+        List<MonitorTask> monitorTaskList = monitorTaskExMapper.selectByProjectId(monitorApplication.getProjectId());
+        if (monitorTaskList!=null){
+            for (int i=0;i<monitorTaskList.size();i++){
+                MonitorTask monitorTask = monitorTaskList.get(i);
+                if (monitorTask.getStatus()== MonitorConstant.MonitorTaskStatus.START){
+                    monitorApplicationEtcdService.deleteTask(monitorTask.getProjectId(),monitorTask.getTaskName());
+                    monitorApplicationEtcdService.upSertMonitorTask(monitorTask);
+                }
+            }
+        }
+
     }
 
     public MonitorApplication selectOneByApplicationId(int applicationId) {
@@ -124,34 +164,21 @@ public class MonitorApplicationService {
 
         monitorApplicationEtcdService.upSertApplicationHome(monitorApplication);
 
-
         return true;
     }
 
     /**
      * 修改application
-     *
-     * @param id
-     * @param applicationType
-     * @param applicationDetailParam
-     * @param desc
+     * @param monitorApplication
      * @return
      */
     @Transactional(rollbackFor = {})
-    public boolean editApplication(Integer id,
-                                   Byte applicationType,
-                                   String applicationDetailParam,
-                                   String desc
-                            ) {
-        MonitorApplication monitorApplication = new MonitorApplication();
+    public boolean editApplication(MonitorApplication monitorApplication) {
         Date now = new Date();
-        monitorApplication.setId(id);
-        monitorApplication.setApplicationType(applicationType);
-        monitorApplication.setApplicationDesc(desc);
-        monitorApplication.setApplicationDetailParam(applicationDetailParam);
         monitorApplication.setUpdateTime(now);
         int count = monitorApplicationExMapper.updateByPrimaryKeySelective(monitorApplication);
         if (count > 0) {
+            updateAllReferenceEtcdKey(monitorApplication);
             return true;
         }
         return false;
