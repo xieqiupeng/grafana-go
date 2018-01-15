@@ -35,9 +35,11 @@ public class MonitorEtcdService {
 //    private static final String MONITOR_TASK_DIR = "/monitor";
     private static final String MONITOR_TASK_PREFFIX_DIR = "/testmonitor";
     private static final String PROJECT_DIR="/project_id_";
+    //只存应用
     private static final String APPLICATION_HOME = "/application_home";
     private static final String CHAR_START = "/";
     private static final String ETCD_DATA_TYPE = "log";
+
 
 
     //更新application_home文件
