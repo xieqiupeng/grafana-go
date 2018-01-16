@@ -3,6 +3,9 @@ package com.creditease.monitor.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author qiupengxie
+ */
 public class AlertVO {
     private String ruleName = "";
     private String state = "";

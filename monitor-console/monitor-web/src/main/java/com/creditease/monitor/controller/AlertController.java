@@ -21,16 +21,19 @@ public class AlertController {
     @PostMapping("/checkWebhook")
     public Response checkWebhook(@RequestBody JSONObject object) {
         if (object == null) {
-            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS);
+            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS,"参数不能为空");
         }
         AlertVO alertVO = JSON.parseObject(JSON.toJSONString(object), AlertVO.class);
         logger.info("VO {}", JSON.toJSONString(alertVO));
+        if ("".equals(alertVO.getRuleId())) {
+            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS, "参数错误");
+        }
         sendRequest(alertVO);
         return Response.ok(object);
     }
 
     private void sendRequest(AlertVO alertVO) {
-        String message = "";
+        String message = "ok 正常";
         if (alertVO.getEvalMatches().size() != 0) {
             message = alertVO.getEvalMatches().get(0).getMetric()
                     + "="
@@ -41,7 +44,7 @@ public class AlertController {
                         alertVO.getState() + "",
                         message + "",
                         System.currentTimeMillis() + "",
-                        "Grafana",
+                        "10007",
                         alertVO.getRuleUrl() + "",
                         "")
                 .observeOn(Schedulers.io())
