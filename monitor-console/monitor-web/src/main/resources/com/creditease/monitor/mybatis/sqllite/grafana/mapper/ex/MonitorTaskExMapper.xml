@@ -19,7 +19,7 @@
   <select id="selectOneByMachineId" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
-    FROM monitor_task2
+    FROM monitor_task
     WHERE machine_id like concat("'%,",${0},",%'") OR
           machine_id like concat("'",${0},",%'") OR
           machine_id like concat("'%,",${0},"'")
@@ -29,20 +29,20 @@
   <select id="selectByTaskName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
-    from monitor_task2
+    from monitor_task
     where task_name like #{taskName}
   </select>
   <select id="selectOneByTaskName" parameterType="string" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
-    FROM monitor_task2
+    FROM monitor_task
     WHERE task_name = #{taskName}
   </select>
 
   <select id="selectByProjectId" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
-    FROM monitor_task2
+    FROM monitor_task
     WHERE project_id = #{projectId}
   </select>
 

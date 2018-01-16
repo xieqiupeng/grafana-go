@@ -19,18 +19,18 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from monitor_task2
+    from monitor_task
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from monitor_task2
+    delete from monitor_task
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into monitor_task2 (project_id, task_name, data_source_log, 
+    insert into monitor_task (project_id, task_name, data_source_log,
       machine_id, status, cut_template, 
       create_time, update_time)
     values (#{projectId,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{dataSourceLog,jdbcType=VARCHAR}, 
@@ -41,7 +41,7 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into monitor_task2
+    insert into monitor_task
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="projectId != null" >
         project_id,
@@ -96,7 +96,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
-    update monitor_task2
+    update monitor_task
     <set >
       <if test="projectId != null" >
         project_id = #{projectId,jdbcType=INTEGER},
@@ -126,7 +126,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.creditease.monitor.mybatis.sqllite.grafana.po.MonitorTask" >
-    update monitor_task2
+    update monitor_task
     set project_id = #{projectId,jdbcType=INTEGER},
       task_name = #{taskName,jdbcType=VARCHAR},
       data_source_log = #{dataSourceLog,jdbcType=VARCHAR},
