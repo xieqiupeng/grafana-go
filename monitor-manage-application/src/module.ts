@@ -34,7 +34,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
     }
 
     public onInitEditMode() {
-        this.addEditorTab('Options', 'public/plugins/monitor-manage-application/partials/option.html', 1);
+        this.addEditorTab('Options', 'public/plugins/monitor-manage-application-panel/partials/option.html', 1);
     }
 
     changeServerHost(object) {
