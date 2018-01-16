@@ -1,12 +1,12 @@
 {
   "type": "panel",
-  "name": "Monitor Manage Task",
+  "name": "任务管理",
   "id": "monitor-manage-task-panel",
 
   "info": {
     "description": "Monitor Manage for Grafana",
     "author": {
-      "name": "Credit Ease",
+      "name": "宜信",
       "url": "http://raintank.io"
     },
     "keywords": [ "monitor", "manage" ],

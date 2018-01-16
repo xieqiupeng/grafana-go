@@ -1,12 +1,12 @@
 {
   "type": "panel",
-  "name": "Monitor Manage Project",
+  "name": "项目管理",
   "id": "monitor-manage-project-panel",
 
   "info": {
     "description": "Monitor Manage Project for Grafana",
     "author": {
-      "name": "Credit Ease",
+      "name": "宜信",
       "url": "http://raintank.io"
     },
     "keywords": [ "monitor", "manage" ],

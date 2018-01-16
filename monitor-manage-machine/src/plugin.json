@@ -1,12 +1,12 @@
 {
   "type": "panel",
-  "name": "Monitor Manage Machine",
+  "name": "机器管理",
   "id": "monitor-manage-machine-panel",
 
   "info": {
     "description": "Monitor Manage Machine for Grafana",
     "author": {
-      "name": "Credit Ease",
+      "name": "宜信",
       "url": "http://raintank.io"
     },
     "keywords": [ "monitor", "manage" ],

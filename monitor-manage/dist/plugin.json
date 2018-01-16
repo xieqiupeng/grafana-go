@@ -11,7 +11,7 @@
   "info": {
     "description": "Project Configuration app for Grafana",
     "author": {
-      "name": "Credit Ease",
+      "name": "宜信",
       "url": "https://percona.com"
     },
     "keywords": ["percona", "mysql"],
@@ -23,14 +23,14 @@
       {"name": "Percona", "url": "https://percona.com"},
       {"name": "GitHub", "url": "https://github.com/percona/grafana-app"}
     ],
-    "version": "1.0.0",
-    "updated": "2016-05-25"
+    "version": "0.0.1",
+    "updated": "2018-01-01"
   },
 
   "includes": [
     {"type": "dashboard", "name": "项目管理", "path": "dashboards/Monitor_Manage_Project.json", "addToNav": true,"defaultNav": true},
-    {"type": "dashboard", "name": "机器管理", "path": "dashboards/Monitor_Manage_Machine.json", "addToNav": true,"defaultNav": true},
-    {"type": "dashboard", "name": "应用管理", "path": "dashboards/Monitor_Manage_Application.json", "addToNav": true,"defaultNav": true},
+    {"type": "dashboard", "name": "机器管理", "path": "dashboards/Monitor_Manage_Machine.json", "addToNav": true},
+    {"type": "dashboard", "name": "应用管理", "path": "dashboards/Monitor_Manage_Application.json", "addToNav": true},
     {"type": "dashboard", "name": "任务管理", "path": "dashboards/Monitor_Manage_Task.json", "addToNav": true}
   ],
 
