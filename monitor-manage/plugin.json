@@ -28,8 +28,10 @@
   },
 
   "includes": [
-    {"type": "dashboard", "name": "创建项目", "path": "dashboards/Monitor_Manage_Project.json", "addToNav": true,"defaultNav": true},
-    {"type": "dashboard", "name": "创建数据源", "path": "dashboards/Monitor_Manage_DataSource.json", "addToNav": true}
+    {"type": "dashboard", "name": "项目管理", "path": "dashboards/Monitor_Manage_Project.json", "addToNav": true,"defaultNav": true},
+    {"type": "dashboard", "name": "机器管理", "path": "dashboards/Monitor_Manage_Machine.json", "addToNav": true,"defaultNav": true},
+    {"type": "dashboard", "name": "应用管理", "path": "dashboards/Monitor_Manage_Application.json", "addToNav": true,"defaultNav": true},
+    {"type": "dashboard", "name": "任务管理", "path": "dashboards/Monitor_Manage_Task.json", "addToNav": true}
   ],
 
   "dependencies": {

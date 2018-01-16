@@ -28,6 +28,7 @@
   },
 
   "includes": [
+    {"type": "dashboard", "name": "项目管理", "path": "dashboards/Monitor_Manage_Project.json", "addToNav": true,"defaultNav": true},
     {"type": "dashboard", "name": "Cross Server Graphs | Percona App", "path": "dashboards/Cross_Server_Graphs.json", "addToNav": true, "defaultNav": true},
     {"type": "dashboard", "name": "Disk Performance | Percona App", "path": "dashboards/Disk_Performance.json", "addToNav": true},
     {"type": "dashboard", "name": "Disk Space | Percona App", "path": "dashboards/Disk_Space.json", "addToNav": true},
