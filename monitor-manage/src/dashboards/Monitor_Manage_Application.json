@@ -46,6 +46,7 @@
                     "renderer": "flot", 
                     "seriesOverrides": [], 
                     "span": 12,
+                    "serverHost":"http://10.100.131.182:8080/",
                     "stack": false, 
                     "steppedLine": false, 
                     "title": "应用管理",

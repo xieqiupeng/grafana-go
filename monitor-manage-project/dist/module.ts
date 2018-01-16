@@ -7,7 +7,7 @@ import './css/module.css!';
 // import './css/jqui.css!';
 
 const panelDefaults = {
-    serverHost: 'http://127.0.0.1:8080/'
+
 };
 
 class MonitorManageCtrl extends MetricsPanelCtrl {
@@ -32,7 +32,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
     }
 
     public onInitEditMode() {
-        this.addEditorTab('Options', 'public/plugins/monitor-manage-project-panel/partials/option.html', 1);
+         this.addEditorTab('Options', 'public/plugins/monitor-manage-project-panel/partials/option.html', 1);
     }
 
     changeServerHost(object) {

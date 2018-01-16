@@ -18,9 +18,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
             function (_1) {}],
         execute: function() {
             // import './css/jqui.css!';
-            panelDefaults = {
-                serverHost: 'http://127.0.0.1:8080/'
-            };
+            panelDefaults = {};
             MonitorManageCtrl = (function (_super) {
                 __extends(MonitorManageCtrl, _super);
                 /** @ngInject **/

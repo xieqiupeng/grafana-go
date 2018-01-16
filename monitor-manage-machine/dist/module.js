@@ -18,9 +18,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
             function (_1) {}],
         execute: function() {
             // import './css/jqui.css!';
-            panelDefaults = {
-                serverHost: 'http://127.0.0.1:8080/'
-            };
+            panelDefaults = {};
             MonitorManageCtrl = (function (_super) {
                 __extends(MonitorManageCtrl, _super);
                 /** @ngInject **/
@@ -58,7 +56,7 @@ System.register(['app/plugins/sdk', 'lodash', './css/module.css!'], function(exp
                     // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
                     this.events.on('panel-initialized', this.render.bind(this));
                     this.panel.title = '机器管理';
-                    this.searchAllAuthorizeProjects(panelDefaults.serverHost);
+                    this.searchAllAuthorizeProjects(this.panel.serverHost);
                 }
                 MonitorManageCtrl.prototype.onPanelInitalized = function () {
                 };

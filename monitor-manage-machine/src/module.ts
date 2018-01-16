@@ -7,7 +7,6 @@ import './css/module.css!';
 // import './css/jqui.css!';
 
 const panelDefaults = {
-    serverHost: 'http://127.0.0.1:8080/'
 };
 
 class MonitorManageCtrl extends MetricsPanelCtrl {
@@ -25,7 +24,7 @@ class MonitorManageCtrl extends MetricsPanelCtrl {
         // this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));
         this.panel.title='机器管理';
-        this.searchAllAuthorizeProjects(panelDefaults.serverHost);
+        this.searchAllAuthorizeProjects(this.panel.serverHost);
     }
 
 
