@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @RestController
 public class AlertController {
     private static Logger logger = LoggerFactory.getLogger(MonitorApplicationController.class);
@@ -21,7 +24,7 @@ public class AlertController {
     @PostMapping("/checkWebhook")
     public Response checkWebhook(@RequestBody JSONObject object) {
         if (object == null) {
-            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS,"参数不能为空");
+            return Response.fail(ResponseCode.DATA_SOURCE_NOT_EXISTS, "参数不能为空");
         }
         AlertVO alertVO = JSON.parseObject(JSON.toJSONString(object), AlertVO.class);
         logger.info("VO {}", JSON.toJSONString(alertVO));
@@ -34,6 +37,8 @@ public class AlertController {
 
     private void sendRequest(AlertVO alertVO) {
         String message = "ok 正常";
+        String alarmTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                .format(new Date());
         if (alertVO.getEvalMatches().size() != 0) {
             message = alertVO.getEvalMatches().get(0).getMetric()
                     + "="
@@ -43,7 +48,7 @@ public class AlertController {
                 .WXAlert(alertVO.getTitle() + "",
                         alertVO.getState() + "",
                         message + "",
-                        System.currentTimeMillis() + "",
+                        alarmTime + "",
                         "10007",
                         alertVO.getRuleUrl() + "",
                         "")
