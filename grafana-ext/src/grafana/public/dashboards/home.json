@@ -1,6 +1,6 @@
 {
   "id": null,
-  "title": "Home",
+  "title": "主页",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -9,7 +9,7 @@
   "sharedCrosshair": false,
   "rows": [
    {
-      "title": "Home Dashboard",
+      "title": "主页 仪表板",
       "collapse": false,
       "editable": true,
       "height": "25px",
