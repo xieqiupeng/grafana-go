@@ -24,7 +24,7 @@ export class NavModelSrv {
   getAlertingNav(subPage) {
     return {
       section: {
-        title: 'Alerting',
+        title: "警报",
         url: 'plugins',
         icon: 'icon-gf icon-gf-alert'
       },
@@ -38,7 +38,7 @@ export class NavModelSrv {
   getDatasourceNav(subPage) {
     return {
       section: {
-        title: 'Data Sources',
+        title: "数据源",
         url: 'datasources',
         icon: 'icon-gf icon-gf-datasources'
       },
@@ -52,7 +52,7 @@ export class NavModelSrv {
   getPlaylistsNav(subPage) {
     return {
       section: {
-        title: 'Playlists',
+        title: "播放列表",
         url: 'playlists',
         icon: 'fa fa-fw fa-film'
       },
@@ -103,12 +103,12 @@ export class NavModelSrv {
   getAdminNav(subPage) {
     return {
       section: {
-        title: 'Admin',
+        title: '管理员',
         url: 'admin',
         icon: 'fa fa-fw fa-cogs'
       },
       menu: [
-        {title: 'Users', active: subPage === 0, url: 'admin/users', icon: 'fa fa-fw fa-user'},
+        {title: "用户", active: subPage === 0, url: 'admin/users', icon: 'fa fa-fw fa-user'},
         {title: 'Orgs', active: subPage === 1, url: 'admin/orgs', icon: 'fa fa-fw fa-users'},
         {title: 'Server Settings', active: subPage === 2, url: 'admin/settings', icon: 'fa fa-fw fa-cogs'},
         {title: 'Server Stats', active: subPage === 2, url: 'admin/stats', icon: 'fa fa-fw fa-line-chart'},
@@ -120,7 +120,7 @@ export class NavModelSrv {
   getPluginsNav() {
     return {
       section: {
-        title: 'Plugins',
+        title: "插件",
         url: 'plugins',
         icon: 'icon-gf icon-gf-apps'
       },
@@ -162,7 +162,7 @@ export class NavModelSrv {
       });
 
       menu.push({
-        title: '标注',
+        title: "标注",
         icon: 'fa fa-fw fa-comment',
         clickHandler: () => dashNavCtrl.openEditView('annotations')
       });
