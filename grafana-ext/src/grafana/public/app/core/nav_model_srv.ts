@@ -29,8 +29,8 @@ export class NavModelSrv {
         icon: 'icon-gf icon-gf-alert'
       },
       menu: [
-        {title: 'Alert List', active: subPage === 0, url: 'alerting/list', icon: 'fa fa-list-ul'},
-        {title: 'Notification channels', active: subPage === 1, url: 'alerting/notifications', icon: 'fa fa-bell-o'},
+        {title: '告警列表', active: subPage === 0, url: 'alerting/list', icon: 'fa fa-list-ul'},
+        {title: '通知渠道', active: subPage === 1, url: 'alerting/notifications', icon: 'fa fa-bell-o'},
       ]
     };
   }
@@ -43,8 +43,8 @@ export class NavModelSrv {
         icon: 'icon-gf icon-gf-datasources'
       },
       menu: [
-        {title: 'List view', active: subPage === 0, url: 'datasources', icon: 'fa fa-list-ul'},
-        {title: 'Add data source', active: subPage === 1, url: 'datasources/new', icon: 'fa fa-plus'},
+        {title: '显示列表', active: subPage === 0, url: 'datasources', icon: 'fa fa-list-ul'},
+        {title: '添加数据源', active: subPage === 1, url: 'datasources/new', icon: 'fa fa-plus'},
       ]
     };
   }
@@ -57,8 +57,8 @@ export class NavModelSrv {
         icon: 'fa fa-fw fa-film'
       },
       menu: [
-        {title: 'List view', active: subPage === 0, url: 'playlists', icon: 'fa fa-list-ul'},
-        {title: 'Add Playlist', active: subPage === 1, url: 'playlists/create', icon: 'fa fa-plus'},
+        {title: '显示列表', active: subPage === 0, url: 'playlists', icon: 'fa fa-list-ul'},
+        {title: '添加播放列表', active: subPage === 1, url: 'playlists/create', icon: 'fa fa-plus'},
       ]
     };
   }
@@ -109,10 +109,10 @@ export class NavModelSrv {
       },
       menu: [
         {title: "用户", active: subPage === 0, url: 'admin/users', icon: 'fa fa-fw fa-user'},
-        {title: 'Orgs', active: subPage === 1, url: 'admin/orgs', icon: 'fa fa-fw fa-users'},
-        {title: 'Server Settings', active: subPage === 2, url: 'admin/settings', icon: 'fa fa-fw fa-cogs'},
-        {title: 'Server Stats', active: subPage === 2, url: 'admin/stats', icon: 'fa fa-fw fa-line-chart'},
-        {title: 'Style Guide', active: subPage === 2, url: 'styleguide', icon: 'fa fa-fw fa-key'},
+        {title: '机构', active: subPage === 1, url: 'admin/orgs', icon: 'fa fa-fw fa-users'},
+        {title: '服务器设置', active: subPage === 2, url: 'admin/settings', icon: 'fa fa-fw fa-cogs'},
+        {title: '服务器统计', active: subPage === 2, url: 'admin/stats', icon: 'fa fa-fw fa-line-chart'},
+        {title: '样式说明', active: subPage === 2, url: 'styleguide', icon: 'fa fa-fw fa-key'},
       ]
     };
   }
