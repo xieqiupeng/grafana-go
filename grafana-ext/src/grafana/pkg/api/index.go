@@ -97,7 +97,7 @@ func setIndexViewData(c *middleware.Context) (*dtos.IndexViewData, error) {
 	}
 
 	data.MainNavLinks = append(data.MainNavLinks, &dtos.NavLink{
-		Text:     "Dashboards",
+		Text:     "仪表板",
 		Icon:     "icon-gf icon-gf-dashboard",
 		Url:      setting.AppSubUrl + "/",
 		Children: dashboardChildNavs,
@@ -105,12 +105,12 @@ func setIndexViewData(c *middleware.Context) (*dtos.IndexViewData, error) {
 
 	if setting.AlertingEnabled && (c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR) {
 		alertChildNavs := []*dtos.NavLink{
-			{Text: "Alert List", Url: setting.AppSubUrl + "/alerting/list"},
-			{Text: "Notification channels", Url: setting.AppSubUrl + "/alerting/notifications"},
+			{Text: "告警列表", Url: setting.AppSubUrl + "/alerting/list"},
+			{Text: "通知渠道", Url: setting.AppSubUrl + "/alerting/notifications"},
 		}
 
 		data.MainNavLinks = append(data.MainNavLinks, &dtos.NavLink{
-			Text:     "Alerting",
+			Text:     "告警",
 			Icon:     "icon-gf icon-gf-alert",
 			Url:      setting.AppSubUrl + "/alerting/list",
 			Children: alertChildNavs,
@@ -119,13 +119,13 @@ func setIndexViewData(c *middleware.Context) (*dtos.IndexViewData, error) {
 
 	if c.OrgRole == m.ROLE_ADMIN {
 		data.MainNavLinks = append(data.MainNavLinks, &dtos.NavLink{
-			Text: "Data Sources",
+			Text: "数据源",
 			Icon: "icon-gf icon-gf-datasources",
 			Url:  setting.AppSubUrl + "/datasources",
 		})
 
 		data.MainNavLinks = append(data.MainNavLinks, &dtos.NavLink{
-			Text: "Plugins",
+			Text: "插件",
 			Icon: "icon-gf icon-gf-apps",
 			Url:  setting.AppSubUrl + "/plugins",
 		})
@@ -179,14 +179,14 @@ func setIndexViewData(c *middleware.Context) (*dtos.IndexViewData, error) {
 
 	if c.IsGrafanaAdmin {
 		data.MainNavLinks = append(data.MainNavLinks, &dtos.NavLink{
-			Text: "Admin",
+			Text: "管理员",
 			Icon: "fa fa-fw fa-cogs",
 			Url:  setting.AppSubUrl + "/admin",
 			Children: []*dtos.NavLink{
-				{Text: "Global Users", Url: setting.AppSubUrl + "/admin/users"},
-				{Text: "Global Orgs", Url: setting.AppSubUrl + "/admin/orgs"},
-				{Text: "Server Settings", Url: setting.AppSubUrl + "/admin/settings"},
-				{Text: "Server Stats", Url: setting.AppSubUrl + "/admin/stats"},
+				{Text: "全局用户", Url: setting.AppSubUrl + "/admin/users"},
+				{Text: "全局组织", Url: setting.AppSubUrl + "/admin/orgs"},
+				{Text: "服务器设置", Url: setting.AppSubUrl + "/admin/settings"},
+				{Text: "服务器统计", Url: setting.AppSubUrl + "/admin/stats"},
 			},
 		})
 	}
