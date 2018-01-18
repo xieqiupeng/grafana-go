@@ -2,17 +2,17 @@
 
 <div class="page-container" >
 	<div class="page-header">
-		<h1>Notification channels</h1>
+		<h1>配置通知渠道</h1>
     <a href="alerting/notification/new" class="btn btn-success pull-right">
       <i class="fa fa-plus"></i>
-      New Channel
+      新建渠道
     </a>
   </div>
 
 	<table class="grafana-options-table">
 		<thead>
-			<th style="min-width: 200px"><strong>Name</strong></th>
-			<th style="min-width: 100px">Type</th>
+			<th style="min-width: 200px"><strong>名称</strong></th>
+			<th style="min-width: 100px">类型</th>
 			<th style="width: 1%"></th>
 		</thead>
 		<tr ng-repeat="notification in ctrl.notifications">
