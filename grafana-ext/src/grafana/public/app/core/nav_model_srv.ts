@@ -93,8 +93,8 @@ export class NavModelSrv {
         icon: 'icon-gf icon-gf-users'
       },
       menu: [
-        {title: 'Preferences', active: subPage === 0, url: 'org', icon: 'fa fa-fw fa-cog'},
-        {title: 'Org Users', active: subPage === 1, url: 'org/users', icon: 'fa fa-fw fa-users'},
+        {title: '个性化', active: subPage === 0, url: 'org', icon: 'fa fa-fw fa-cog'},
+        {title: '机构 用户', active: subPage === 1, url: 'org/users', icon: 'fa fa-fw fa-users'},
         {title: 'API Keys', active: subPage === 2, url: 'org/apikeys', icon: 'fa fa-fw fa-key'},
       ]
     };
