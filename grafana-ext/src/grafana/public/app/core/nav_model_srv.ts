@@ -66,7 +66,7 @@ export class NavModelSrv {
   getProfileNav() {
     return {
       section: {
-        title: 'User Profile',
+        title: '用户 资料',
         url: 'profile',
         icon: 'fa fa-fw fa-user'
       },
@@ -88,7 +88,7 @@ export class NavModelSrv {
   getOrgNav(subPage) {
     return {
       section: {
-        title: 'Organization',
+        title: '机构',
         url: 'org',
         icon: 'icon-gf icon-gf-users'
       },
