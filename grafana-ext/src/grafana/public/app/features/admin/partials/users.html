@@ -2,16 +2,16 @@
 
 <div class="page-container">
   <div class="page-header">
-    <h1>Users</h1>
+    <h1>用户</h1>
 
     <a class="btn btn-success" href="admin/users/create">
       <i class="fa fa-plus"></i>
-      Add new user
+      添加新用户
     </a>
   </div>
 
   <div class="gf-form pull-right gf-form-group">
-		<label class="gf-form-label">Search</label>
+		<label class="gf-form-label">搜索</label>
     <span style="position: relative;">
       <input class="gf-form-input width-15" type="text" placeholder="Find user by name/login/email" tabindex="1" give-focus="true" ng-model="ctrl.query" ng-model-options="{ debounce: 500 }" spellcheck='false' ng-change="ctrl.getUsers()" />
     </span>
