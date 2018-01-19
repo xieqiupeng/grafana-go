@@ -1,6 +1,6 @@
 FROM golang:1.9.2
-RUN mkdir /app/grafana-ext
-WORKDIR /app/
+RUN mkdir /var/grafana-ext
+WORKDIR /var/
 RUN mkdir ./grafana-ext/bin/
 RUN mkdir ./grafana-ext/pkg/
 RUN mkdir ./grafana-ext/src/
