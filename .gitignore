@@ -8,4 +8,16 @@ target/
 monitor-log-add/dist/
 monitor-log-add/node_modules/
 
-grafana-ext/
+beats/
+influx-proxy/
+log-consumer/
+monitor-console/
+monitor-manage/
+monitor-manage-app/
+monitor-manage-application/
+monitor-manage-datasource/
+monitor-manage-machine/
+monitor-manage-project/
+monitor-manage-task/
+grafana-ext/bin/
+grafana-ext/pkg/
