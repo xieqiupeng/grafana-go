@@ -1,3 +1,0 @@
-=== Docker network metricset
-
-The Docker `network` metricset collects network metrics.

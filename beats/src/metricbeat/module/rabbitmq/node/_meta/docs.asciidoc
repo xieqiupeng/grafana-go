@@ -1,3 +1,0 @@
-=== RabbitMQ node metricset
-
-This is the `node` metricset of the RabbitMQ module.

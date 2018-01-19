@@ -1,3 +1,0 @@
-=== Docker cpu metricset
-
-The Docker `cpu` metricset collects runtime CPU metrics.

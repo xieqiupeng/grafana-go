@@ -1,4 +1,0 @@
-== graphite Module
-
-This is the graphite Module.
-

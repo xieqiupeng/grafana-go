@@ -1,3 +1,0 @@
-=== MongoDB dbstats metricset
-
-This is the `dbstats` metricset of the MongoDB module.

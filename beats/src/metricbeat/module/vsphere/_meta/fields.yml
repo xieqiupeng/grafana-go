@@ -1,9 +1,0 @@
-- key: vsphere
-  title: "vSphere"
-  description: >
-    vSphere module
-  fields:
-    - name: vsphere
-      type: group
-      description: >
-      fields:

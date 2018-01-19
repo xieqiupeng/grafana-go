@@ -1,9 +1,0 @@
-.bigtext { height: 38px; width: 350px; }
-.div{border:1px solid #F00}
-.div-inline{ display:inline}
-.ui-dialog-titlebar-close{
-    display: none;
-}
-.active {
-    background-color: orange;
-}

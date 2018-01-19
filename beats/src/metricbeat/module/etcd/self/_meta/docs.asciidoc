@@ -1,3 +1,0 @@
-=== etcd self MetricSet
-
-This is the self metricset of the module etcd.
