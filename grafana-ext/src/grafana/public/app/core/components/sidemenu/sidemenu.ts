@@ -45,22 +45,22 @@ export class SideMenuCtrl {
 
  openUserDropdown() {
    this.orgMenu = [
-     {section: 'You', cssClass: 'dropdown-menu-title'},
-     {text: 'Profile', url: this.getUrl('/profile')},
+     {section: '你的', cssClass: 'dropdown-menu-title'},
+     {text: '资料', url: this.getUrl('/profile')},
    ];
 
    if (this.showSignout) {
-     this.orgMenu.push({text: "Sign out", url: this.getUrl("/logout"), target: "_self"});
+     this.orgMenu.push({text: "登出", url: this.getUrl("/logout"), target: "_self"});
    }
 
    if (this.contextSrv.hasRole('Admin')) {
      this.orgMenu.push({section: this.user.orgName, cssClass: 'dropdown-menu-title'});
      this.orgMenu.push({
-       text: "Preferences",
+       text: "个性化",
        url: this.getUrl("/org")
      });
      this.orgMenu.push({
-       text: "Users",
+       text: "用户",
        url: this.getUrl("/org/users")
      });
      this.orgMenu.push({
@@ -89,7 +89,7 @@ export class SideMenuCtrl {
 
      if (this.orgFilter === '' || (org.name.toLowerCase().indexOf(this.orgFilter.toLowerCase()) !== -1)) {
        this.orgItems.push({
-         text: "Switch to " + org.name,
+         text: "切换 " + org.name,
          icon: "fa fa-fw fa-random",
          url: this.getUrl('/profile/switch-org/' + org.orgId),
          target: '_self'
@@ -97,7 +97,7 @@ export class SideMenuCtrl {
      }
    });
    if (config.allowOrgCreate) {
-     this.orgItems.push({text: "New organization", icon: "fa fa-fw fa-plus", url: this.getUrl('/org/new')});
+     this.orgItems.push({text: "新建 机构", icon: "fa fa-fw fa-plus", url: this.getUrl('/org/new')});
    }
  }
 }
